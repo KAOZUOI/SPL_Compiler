@@ -1,15 +1,22 @@
 CC=gcc
 FLEX=flex
 BISON=bison
-SRC_DIR=./src
 
-ip:
-	$(BISON) -d $(SRC_DIR)/syntax.y
-	$(FLEX) $(SRC_DIR)/lex.l
-	$(CC) $(SRC_DIR)/syntax.tab.c -lfl -ly -o test.out
+DEBUG ?= 0
+VERBOSE ?= 0
+ifeq ($(DEBUG), 1)
+    CFLAGS:=-DDEBUG -g $(CFLAGS)
+endif
 
+ifeq ($(VERBOSE), 1)
+    CFLAGS:=-DVERBOSE $(CFLAGS)
+endif
+
+build: src/syntax.y src/flex.l src/APT.c src/APT.h
+	$(BISON) -t -d src/syntax.y
+	$(FLEX) src/flex.l
+	$(CC) syntax.tab.c src/APT.c -o splc -ly -lfl $(CFLAGS)
+	rm -f *.yy.* *.tab.*
 clean:
-	@rm -f $(SRC_DIR)/lex.yy.c $(SRC_DIR)/syntax.tab.c $(SRC_DIR)/syntax.tab.h *.out
-
-.PHONY: ip clean
-
+	@rm -f *.yy.* *.tab.* splc
+.PHONY: clean
