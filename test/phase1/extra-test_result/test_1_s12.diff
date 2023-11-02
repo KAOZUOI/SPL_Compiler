@@ -1,0 +1,21 @@
+1,3c1,3
+< Error type B at Line 3: Missing semicolon ';'
+< Error type B at Line 5: Missing semicolon ';'
+< Error type B at Line 1: Missing semicolon ';'
+---
+> Error type B at Line 3 Missing semicolon ';'
+> Error type B at Line 5 Missing semicolon ';'
+> Error type B at Line 1 Missing semicolon ';'
+5c5
+< Error type B at Line 10: Missing semicolon ';'
+---
+> Error type B at Line 10 Missing semicolon ';'
+7,9c7,9
+< Error type B at Line 12: Missing semicolon ';'
+< Error type B at Line 8: Missing semicolon ';'
+< Error type B at Line 13: Missing semicolon ';'
+---
+> Error type B at Line 15: Missing closing parenthesis ')'
+> Error type B at Line 22: Missing semicolon ';'
+> Error type B at Line 28: Missing closing brace '}'
+\ No newline at end of file

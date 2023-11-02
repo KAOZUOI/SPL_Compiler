@@ -1,0 +1,6 @@
+1c1,2
+< Error type B at Line 1: Missing semicolon ';'
+---
+> Error type B at Line 11: no 'if' before 'else'
+> //Allow other statement
+\ No newline at end of file

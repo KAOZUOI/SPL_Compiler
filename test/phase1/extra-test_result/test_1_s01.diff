@@ -1,0 +1,6 @@
+2c2,4
+< Error type B at Line 1: Missing semicolon ';'
+---
+> Error type B at Line 4: Missing Exp after +
+> Error type B at Line 4: Missing Exp after *
+> Error type B at Line 4: Missing Exp after /

@@ -73,18 +73,22 @@ MULTI_LINE_COMMENT  \/\*.*\*\/
 {HEX_INT}   __ASSIGN_LEAF_NODE(HEX_INT);
 {FLOAT}     __ASSIGN_LEAF_NODE(FLOAT);
 {WRONG_HEX_INT} { 
-    fprintf(fout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+    // fprintf(fout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+    printf("Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
     __ASSIGN_LEAF_NODE(ERROR);
 }
     /* single character (printable or hex-form) */
 {CHAR}  __ASSIGN_LEAF_NODE(CHAR);
 {WRONG_HEX_CHAR} {
-    fprintf(fout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+    // fprintf(fout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+    printf("Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
     __ASSIGN_LEAF_NODE(ERROR);
 }
 {ID}  __ASSIGN_LEAF_NODE(ID);
 {WRONG_ID} {
-    fprintf(fout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+    // fprintf(fout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+    printf("Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+
     __ASSIGN_LEAF_NODE(ERROR);
 }
 {DOT}  __ASSIGN_LEAF_NODE(DOT);
@@ -118,7 +122,8 @@ MULTI_LINE_COMMENT  \/\*.*\*\/
 \n      ;
 [\t ]+ ;
 .       {
-    fprintf(fout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+    // fprintf(fout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
+    printf("Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
     __ASSIGN_LEAF_NODE(ERROR);
 }
 <IN_COMMENT>{

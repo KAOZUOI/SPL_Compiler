@@ -6,13 +6,15 @@
 
     #define MISSING_SEMI_ERROR(e) { \
         ++errors; \
-        fprintf(fout, "Error type B at Line %d: Missing semicolon ';'\n", e->lineno); \
+        printf("Error type B at Line %d: Missing semicolon ';'\n", e->lineno); \
     }
+    // fprintf(fout, "Error type B at Line %d: Missing semicolon ';'\n", e->lineno);
 
     #define MISSING_RP_ERROR(e) { \
         ++errors; \
-        fprintf(fout, "Error type B at Line %d: Missing closing parenthesis ')'\n", e->lineno); \
+        printf("Error type B at Line %d: Missing closing parenthesis ')'\n", e->lineno); \
     }
+    // fprintf(fout, "Error type B at Line %d: Missing closing parenthesis ')'\n", e->lineno);  
 
     uint32_t errors = 0;
 
@@ -258,17 +260,14 @@ Args: Exp COMMA Args    { $$ = newAnnotatedParseNode("Args", 3, $1, $2, $3); }
     |   Exp    { $$ = newAnnotatedParseNode("Args", 1, $1); }
     ;
 %%
-void
-yyerror (char const *s)
-{
+void yyerror (char const *s) {
   #ifdef VERBOSE
-  fprintf (stderr, "ERROR: Line %d, %s \"%s\"\n", yylineno, s, yytext);
+//   fprintf (stderr, "ERROR: Line %d, %s \"%s\"\n", yylineno, s, yytext);
+     printf("ERROR: Line %d, %s \"%s\"\n", yylineno, s, yytext);
   #endif
 }
 
-int
-main (int argc, char **argv)
-{
+int main (int argc, char **argv) {
     #ifdef DEBUG
     fout = stdout;
     #else

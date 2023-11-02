@@ -1,0 +1,5 @@
+1,2c1
+< Error type B at Line 1: Missing semicolon ';'
+< Error type B at Line 5: Missing semicolon ';'
+---
+> Error type B at Line 4: Missing specifier

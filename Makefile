@@ -12,9 +12,9 @@ ifeq ($(VERBOSE), 1)
     CFLAGS:=-DVERBOSE $(CFLAGS)
 endif
 
-build: src/syntax.y src/flex.l src/APT.c src/APT.h
+build: src/syntax.y src/lexical.l src/APT.c src/APT.h
 	$(BISON) -t -d src/syntax.y
-	$(FLEX) src/flex.l
+	$(FLEX) src/lexical.l
 	$(CC) syntax.tab.c src/APT.c -o splc -ly -lfl $(CFLAGS)
 	rm -f *.yy.* *.tab.*
 clean:
