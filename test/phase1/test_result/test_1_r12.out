@@ -31,7 +31,7 @@ Program (1)
                     ID: hex_int
                   ASSIGN
                   Exp (4)
-                    HEX_INT: -77336816
+                    HEX_INT: 746635024
               SEMI
             DefList (5)
               Def (5)

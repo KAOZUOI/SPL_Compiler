@@ -16,6 +16,7 @@
     }
     // fprintf(fout, "Error type B at Line %d: Missing closing parenthesis ')'\n", e->lineno);  
 
+
     uint32_t errors = 0;
 
     void yyerror (const char*);
@@ -132,8 +133,8 @@ VarDec:
         ++errors;
         $$ = newAnnotatedParseNode("VarDec", 1, $1);
     }
-    |   VarDec LB INT RB    { $$ = newAnnotatedParseNode("VarDec", 3, $1, $2, $3, $4); }
-    |   VarDec LB HEX_INT RB    { $$ = newAnnotatedParseNode("VarDec", 3, $1, $2, $3, $4); }
+    |   VarDec LB INT RB    { $$ = newAnnotatedParseNode("VarDec", 4, $1, $2, $3, $4); }
+    |   VarDec LB HEX_INT RB    { $$ = newAnnotatedParseNode("VarDec", 4, $1, $2, $3, $4); }
     ;
 FunDec:
         ID LP VarList RP    { $$ = newAnnotatedParseNode("FunDec", 4, $1, $2, $3, $4); }

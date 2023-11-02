@@ -1,1 +1,6 @@
-Binary files test/phase1/extra-test_result/test_1_s10.out and test/phase1/extra-test_ans/test_1_s10.out differ
+1c1,2
+< Error type B at Line 1: Missing semicolon ';'
+---
+> Error type B at line 1: Unexpected ','
+> //Allow other statement
+\ No newline at end of file

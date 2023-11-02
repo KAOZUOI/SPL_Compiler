@@ -44,6 +44,7 @@ Program (1)
                         ID: x
                       LB
                       INT: 5
+                      RB
                   COMMA
                   DecList (5)
                     Dec (5)
@@ -52,6 +53,7 @@ Program (1)
                           ID: y
                         LB
                         INT: 10
+                        RB
                 SEMI
         StmtList (6)
           Stmt (6)
