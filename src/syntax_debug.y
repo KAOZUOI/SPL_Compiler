@@ -99,13 +99,28 @@ Program:
             }
     ;
 ExtDefList: 
-        ExtDef ExtDefList    { $$ = newAnnotatedParseNode("ExtDefList", 2, $1, $2); }
-    |      { $$ = newAnnotatedParseNode("Epsilon", -1); }
+        ExtDef ExtDefList    { 
+            $$ = newAnnotatedParseNode("ExtDefList", 2, $1, $2); 
+            printf("ExtDefList: %s %s\n", $1->name, $2->name);
+        }
+    |      { 
+            $$ = newAnnotatedParseNode("Epsilon", -1); 
+            printf("ExtDefList: Epsilon\n");
+            }
     ;
 ExtDef:
-        Specifier ExtDecList SEMI    { $$ = newAnnotatedParseNode("ExtDef", 3, $1, $2, $3); }
-    |   Specifier SEMI    { $$ = newAnnotatedParseNode("ExtDef", 2, $1, $2); }
-    |   Specifier FunDec CompSt    { $$ = newAnnotatedParseNode("ExtDef", 3, $1, $2, $3); }
+        Specifier ExtDecList SEMI    { 
+            $$ = newAnnotatedParseNode("ExtDef", 3, $1, $2, $3); 
+            printf("ExtDef: %s %s %s\n", $1->name, $2->name, $3->name);
+        }
+    |   Specifier SEMI    { 
+            $$ = newAnnotatedParseNode("ExtDef", 2, $1, $2); 
+            printf("ExtDef: %s %s\n", $1->name, $2->name);
+        }
+    |   Specifier FunDec CompSt    { 
+            $$ = newAnnotatedParseNode("ExtDef", 3, $1, $2, $3); 
+            printf("ExtDef: %s %s %s\n", $1->name, $2->name, $3->name);
+        }
     |   Specifier error {
         $$ = newAnnotatedParseNode("ExtDef", 1, $1);
         MISSING_SEMI_ERROR($1);
@@ -121,35 +136,68 @@ ExtDef:
     }
     ;
 ExtDecList:
-        VarDec    { $$ = newAnnotatedParseNode("ExtDecList", 1, $1); }
-    |   VarDec COMMA ExtDecList    { $$ = newAnnotatedParseNode("ExtDecList", 3, $1, $2, $3); }
+        VarDec    { 
+            $$ = newAnnotatedParseNode("ExtDecList", 1, $1); 
+            printf("ExtDecList: %s\n", $1->name);
+        }
+    |   VarDec COMMA ExtDecList    { 
+            $$ = newAnnotatedParseNode("ExtDecList", 3, $1, $2, $3); 
+            printf("ExtDecList: %s %s %s\n", $1->name, $2->name, $3->name);
+        }
     ;
 
     /* specifier */
 Specifier:
-        TYPE    { $$ = newAnnotatedParseNode("Specifier", 1, $1); }
-    |   StructSpecifier    { $$ = newAnnotatedParseNode("Specifier", 1, $1); }
+        TYPE    { 
+            $$ = newAnnotatedParseNode("Specifier", 1, $1); 
+            printf("Specifier: %s\n", $1->name);
+        }
+    |   StructSpecifier    { 
+            $$ = newAnnotatedParseNode("Specifier", 1, $1); 
+            printf("Specifier: %s\n", $1->name);
+        }
     ;
 StructSpecifier:
-        STRUCT ID LC DefList RC    { $$ = newAnnotatedParseNode("StructSpecifier", 5, $1, $2, $3, $4, $5); }
-    |   STRUCT ID    { $$ = newAnnotatedParseNode("StructSpecifier", 2, $1, $2); }
+        STRUCT ID LC DefList RC    { 
+            $$ = newAnnotatedParseNode("StructSpecifier", 5, $1, $2, $3, $4, $5); 
+            printf("StructSpecifier: %s %s %s %s %s\n", $1->name, $2->name, $3->name, $4->name, $5->name);
+        }
+    |   STRUCT ID    { 
+            $$ = newAnnotatedParseNode("StructSpecifier", 2, $1, $2); 
+            printf("StructSpecifier: %s %s\n", $1->name, $2->name);
+        }
     ;
 
     /* declarator */
 
 VarDec: 
-        ID    { $$ = newAnnotatedParseNode("VarDec", 1, $1); }
+        ID    { 
+            $$ = newAnnotatedParseNode("VarDec", 1, $1); 
+            printf("VarDec: %s\n", $1->name);
+        }
     // |   VarDec ASSIGN Exp    { $$ = newAnnotatedParseNode("VarDec", 3, $1, $2, $3); }
     |   ERROR {
         ++errors;
         $$ = newAnnotatedParseNode("VarDec", 1, $1);
     }
-    |   VarDec LB INT RB    { $$ = newAnnotatedParseNode("VarDec", 4, $1, $2, $3, $4); }
-    |   VarDec LB HEX_INT RB    { $$ = newAnnotatedParseNode("VarDec", 4, $1, $2, $3, $4); }
+    |   VarDec LB INT RB    { 
+            $$ = newAnnotatedParseNode("VarDec", 4, $1, $2, $3, $4); 
+            printf("VarDec: %s %s %s %s\n", $1->name, $2->name, $3->name, $4->name);
+        }
+    |   VarDec LB HEX_INT RB    { 
+            $$ = newAnnotatedParseNode("VarDec", 4, $1, $2, $3, $4); 
+            printf("VarDec: %s %s %s %s\n", $1->name, $2->name, $3->name, $4->name);
+        }
     ;
 FunDec:
-        ID LP VarList RP    { $$ = newAnnotatedParseNode("FunDec", 4, $1, $2, $3, $4); }
-    |   ID LP RP    { $$ = newAnnotatedParseNode("FunDec", 3, $1, $2, $3); }
+        ID LP VarList RP    { 
+            $$ = newAnnotatedParseNode("FunDec", 4, $1, $2, $3, $4); 
+            printf("FunDec: %s %s %s %s\n", $1->name, $2->name, $3->name, $4->name);
+        }
+    |   ID LP RP    { 
+            $$ = newAnnotatedParseNode("FunDec", 3, $1, $2, $3); 
+            printf("FunDec: %s %s %s\n", $1->name, $2->name, $3->name);
+        }
     |   ID LP VarList error    {
         $$ = newAnnotatedParseNode("FunDec", 3, $1, $2, $3);
         MISSING_RP_ERROR($3);
@@ -160,19 +208,34 @@ FunDec:
     }
     ;
 VarList:
-        ParamDec COMMA VarList    { $$ = newAnnotatedParseNode("VarList", 3, $1, $2, $3); }
-    |   ParamDec    { $$ = newAnnotatedParseNode("VarList", 1, $1); }
+        ParamDec COMMA VarList    { 
+            $$ = newAnnotatedParseNode("VarList", 3, $1, $2, $3); 
+            printf("VarList: %s %s %s\n", $1->name, $2->name, $3->name);
+        }
+    |   ParamDec    { 
+            $$ = newAnnotatedParseNode("VarList", 1, $1); 
+            printf("VarList: %s\n", $1->name);
+        }
     ;
 ParamDec:
-        Specifier VarDec    { $$ = newAnnotatedParseNode("ParamDec", 2, $1, $2); }
+        Specifier VarDec    { 
+            $$ = newAnnotatedParseNode("ParamDec", 2, $1, $2); 
+            printf("ParamDec: %s %s\n", $1->name, $2->name);
+        }
     ;
 
     /* statement */
 CompSt: 
-        LC DefList StmtList RC    { $$ = newAnnotatedParseNode("CompSt", 4, $1, $2, $3, $4); }
+        LC DefList StmtList RC    { 
+            $$ = newAnnotatedParseNode("CompSt", 4, $1, $2, $3, $4); 
+            printf("CompSt: %s %s %s %s\n", $1->name, $2->name, $3->name, $4->name);
+        }
     ;
 StmtList: 
-        Stmt StmtList    { $$ = newAnnotatedParseNode("StmtList", 2, $1, $2); }
+        Stmt StmtList    { 
+            $$ = newAnnotatedParseNode("StmtList", 2, $1, $2); 
+            printf("StmtList: %s %s\n", $1->name, $2->name);
+        }
     |      { $$ = newAnnotatedParseNode("Epsilon", -1); }
     ;
 Stmt:
@@ -202,27 +265,51 @@ Stmt:
 
     /* local definition */
 DefList: 
-        Def DefList   { $$ = newAnnotatedParseNode("DefList", 2, $1, $2); }
-    |      { $$ = newAnnotatedParseNode("Epsilon", -1); }
+        Def DefList   { 
+            $$ = newAnnotatedParseNode("DefList", 2, $1, $2); 
+            printf("DefList: %s %s\n", $1->name, $2->name);
+        }
+    |      { 
+            $$ = newAnnotatedParseNode("Epsilon", -1); 
+            printf("DefList: Epsilon\n");
+        }
     ;
 Def:
-        Specifier DecList SEMI    { $$ = newAnnotatedParseNode("Def", 3, $1, $2, $3); }
+        Specifier DecList SEMI    { 
+            $$ = newAnnotatedParseNode("Def", 3, $1, $2, $3); 
+            printf("Def: %s %s %s\n", $1->name, $2->name, $3->name);
+        }
     |   Specifier DecList error    {
         $$ = newAnnotatedParseNode("Def", 2, $1, $2);
         MISSING_SEMI_ERROR($1);
     }
     ;
 DecList: 
-        Dec    { $$ = newAnnotatedParseNode("DecList", 1, $1); }
-    |   Dec COMMA DecList    { $$ = newAnnotatedParseNode("DecList", 3, $1, $2, $3); }
+        Dec    { 
+            $$ = newAnnotatedParseNode("DecList", 1, $1); 
+            printf("DecList: %s\n", $1->name);
+        }
+    |   Dec COMMA DecList    { 
+            $$ = newAnnotatedParseNode("DecList", 3, $1, $2, $3); 
+            printf("DecList: %s %s %s\n", $1->name, $2->name, $3->name);
+        }
     ;
 Dec: 
-        VarDec    { $$ = newAnnotatedParseNode("Dec", 1, $1); }
-    |   VarDec ASSIGN Exp    { $$ = newAnnotatedParseNode("Dec", 3, $1, $2, $3); }
+        VarDec    { 
+            $$ = newAnnotatedParseNode("Dec", 1, $1); 
+            printf("Dec: %s\n", $1->name);
+        }
+    |   VarDec ASSIGN Exp    { 
+            $$ = newAnnotatedParseNode("Dec", 3, $1, $2, $3); 
+            printf("Dec: %s %s %s\n", $1->name, $2->name, $3->name);
+        }
     ;
     /* Expression */
 Exp:  
-        Exp ASSIGN Exp    { $$ = newAnnotatedParseNode("Exp", 3, $1, $2, $3); }
+        Exp ASSIGN Exp    { 
+            $$ = newAnnotatedParseNode("Exp", 3, $1, $2, $3); 
+            printf("Exp: %s %s %s\n", $1->name, $2->name, $3->name);
+        }
     |   Exp AND Exp    { $$ = newAnnotatedParseNode("Exp", 3, $1, $2, $3); }
     |   Exp OR Exp    { $$ = newAnnotatedParseNode("Exp", 3, $1, $2, $3); }
     |   Exp LT Exp    { $$ = newAnnotatedParseNode("Exp", 3, $1, $2, $3); }
@@ -242,8 +329,14 @@ Exp:
     |   ID LP RP    { $$ = newAnnotatedParseNode("Exp", 3, $1, $2, $3); }
     |   Exp LB Exp RB    { $$ = newAnnotatedParseNode("Exp", 4, $1, $2, $3, $4); }
     |   Exp DOT ID    { $$ = newAnnotatedParseNode("Exp", 3, $1, $2, $3); }
-    |   ID    { $$ = newAnnotatedParseNode("Exp", 1, $1); }
-    |   INT    { $$ = newAnnotatedParseNode("Exp", 1, $1); }
+    |   ID    { 
+            $$ = newAnnotatedParseNode("Exp", 1, $1); 
+            printf("Exp: %s\n", $1->name);
+        }
+    |   INT    { 
+            $$ = newAnnotatedParseNode("Exp", 1, $1); 
+            printf("Exp: %s\n", $1->name);
+            }
     |   HEX_INT    { $$ = newAnnotatedParseNode("Exp", 1, $1); }
     |   FLOAT    { $$ = newAnnotatedParseNode("Exp", 1, $1); }
     |   CHAR    { $$ = newAnnotatedParseNode("Exp", 1, $1); }

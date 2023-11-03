@@ -1,6 +1,6 @@
 %{
     #include "src/APT.h"
-    #include "syntax.tab.h"
+    #include "syntax_debug.tab.h"
 
     #define __ASSIGN_LEAF_NODE(NAME)    { \
         yylval.AptNode = newAnnotatedParseLeafNode(#NAME, yylineno); \
@@ -54,8 +54,8 @@ FLOAT               [-+]?(([0-9]+\.?[0-9]*)|([0-9]*\.?[0-9]+))
     /* single character (printable or hex-form) */
 CHAR                '(([ -~])|(\\x[0-9a-fA-F]{2}))'
 WRONG_HEX_CHAR      '\\x[0-9a-zA-Z]*'
-ID                  [_a-zA-Z][_a-zA-Zs0-9]*
-WRONG_ID            [_a-zA-Zs0-9]*
+ID                  [_a-zA-Z][_a-zA-Z0-9]*
+WRONG_ID            [0-9][_a-zA-Z0-9]*|[_a-zA-Z0-9]*[%$&]+[_a-zA-Z0-9]*|[_a-zA-Z][_a-zA-Z0-9]{63,}
 
     /* comments */
 SINGLE_LINE_COMMENT \/\/[^\n]*
@@ -84,6 +84,10 @@ MULTI_LINE_COMMENT  \/\*.*\*\/
     printf("Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
     __ASSIGN_LEAF_NODE(ERROR);
 }
+{AND}  __ASSIGN_LEAF_NODE(AND);
+{OR}   __ASSIGN_LEAF_NODE(OR);
+{NOT}  __ASSIGN_LEAF_NODE(NOT);
+
 {ID}  __ASSIGN_LEAF_NODE(ID);
 {WRONG_ID} {
     // fprintf(fout, "Error type A at Line %d: unknown lexeme %s\n", yylineno, yytext);
@@ -105,9 +109,7 @@ MULTI_LINE_COMMENT  \/\*.*\*\/
 {MINUS}  __ASSIGN_LEAF_NODE(MINUS);
 {MUL}  __ASSIGN_LEAF_NODE(MUL);
 {DIV}  __ASSIGN_LEAF_NODE(DIV);
-{AND}  __ASSIGN_LEAF_NODE(AND);
-{OR}   __ASSIGN_LEAF_NODE(OR);
-{NOT}  __ASSIGN_LEAF_NODE(NOT);
+
 {LP}  __ASSIGN_LEAF_NODE(LP);
 {RP}  __ASSIGN_LEAF_NODE(RP);
 {LB}  __ASSIGN_LEAF_NODE(LB);
