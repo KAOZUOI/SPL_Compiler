@@ -1,0 +1,69 @@
+47,60c47,60
+<             StmtList (9)
+<               Stmt (9)
+<                 Def (9)
+<                   Specifier (9)
+<                     StructSpecifier (9)
+<                       STRUCT
+<                       ID: my_struct
+<                   DecList (9)
+<                     Dec (9)
+<                       VarDec (9)
+<                         ID: obj
+<                   SEMI
+<               StmtList (10)
+<                 Stmt (10)
+---
+>             DefList (9)
+>               Def (9)
+>                 Specifier (9)
+>                   StructSpecifier (9)
+>                     STRUCT
+>                     ID: my_struct
+>                 DecList (9)
+>                   Dec (9)
+>                     VarDec (9)
+>                       ID: obj
+>                 SEMI
+>             StmtList (10)
+>               Stmt (10)
+>                 Exp (10)
+63,68c63,73
+<                       Exp (10)
+<                         ID: obj
+<                       DOT
+<                       ID: code
+<                     ASSIGN
+<                     Exp (10)
+---
+>                       ID: obj
+>                     DOT
+>                     ID: code
+>                   ASSIGN
+>                   Exp (10)
+>                     ID: global
+>                 SEMI
+>               StmtList (11)
+>                 Stmt (11)
+>                   Exp (11)
+>                     Exp (11)
+70,72c75
+<                   SEMI
+<                 StmtList (11)
+<                   Stmt (11)
+---
+>                     ASSIGN
+76c79
+<                       ASSIGN
+---
+>                       PLUS
+78,83c81,82
+<                         Exp (11)
+<                           ID: global
+<                         PLUS
+<                         Exp (11)
+<                           INT: 1
+<                     SEMI
+---
+>                         INT: 1
+>                   SEMI

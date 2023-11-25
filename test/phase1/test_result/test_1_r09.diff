@@ -1,4 +1,170 @@
-34c34
-<                     FLOAT: 2.200000
+12,20c12,31
+<         StmtList (3)
+<           Stmt (3)
+<             Def (3)
+<               Specifier (3)
+<                 TYPE: int
+<               DecList (3)
+<                 Dec (3)
+<                   VarDec (3)
+<                     ID: m
 ---
+>         DefList (3)
+>           Def (3)
+>             Specifier (3)
+>               TYPE: int
+>             DecList (3)
+>               Dec (3)
+>                 VarDec (3)
+>                   ID: m
+>                 ASSIGN
+>                 Exp (3)
+>                   INT: 1
+>             SEMI
+>           DefList (4)
+>             Def (4)
+>               Specifier (4)
+>                 TYPE: float
+>               DecList (4)
+>                 Dec (4)
+>                   VarDec (4)
+>                     ID: n
+22,23c33,34
+<                   Exp (3)
+<                     INT: 1
+---
+>                   Exp (4)
 >                     FLOAT: 2.2
+25,44c36,42
+<           StmtList (4)
+<             Stmt (4)
+<               Def (4)
+<                 Specifier (4)
+<                   TYPE: float
+<                 DecList (4)
+<                   Dec (4)
+<                     VarDec (4)
+<                       ID: n
+<                     ASSIGN
+<                     Exp (4)
+<                       FLOAT: 2.200000
+<                 SEMI
+<             StmtList (5)
+<               Stmt (5)
+<                 Def (5)
+<                   Specifier (5)
+<                     TYPE: int
+<                   DecList (5)
+<                     Dec (5)
+---
+>             DefList (5)
+>               Def (5)
+>                 Specifier (5)
+>                   TYPE: int
+>                 DecList (5)
+>                   Dec (5)
+>                     VarDec (5)
+46,65d43
+<                         VarDec (5)
+<                           ID: x
+<                         LB
+<                         INT: 5
+<                         RB
+<                     COMMA
+<                     DecList (5)
+<                       Dec (5)
+<                         VarDec (5)
+<                           VarDec (5)
+<                             ID: y
+<                           LB
+<                           INT: 10
+<                           RB
+<                   SEMI
+<               StmtList (6)
+<                 Stmt (6)
+<                   Exp (6)
+<                     Exp (6)
+<                       Exp (6)
+68,69c46
+<                       Exp (6)
+<                         ID: m
+---
+>                       INT: 5
+71,79c48,52
+<                     ASSIGN
+<                     Exp (6)
+<                       INT: 7
+<                   SEMI
+<                 StmtList (7)
+<                   Stmt (7)
+<                     Exp (7)
+<                       Exp (7)
+<                         Exp (7)
+---
+>                   COMMA
+>                   DecList (5)
+>                     Dec (5)
+>                       VarDec (5)
+>                         VarDec (5)
+82,97c55
+<                         Exp (7)
+<                           ID: n
+<                         RB
+<                       ASSIGN
+<                       Exp (7)
+<                         INT: 8
+<                     SEMI
+<                   StmtList (8)
+<                     Stmt (8)
+<                       RETURN
+<                       Exp (8)
+<                         Exp (8)
+<                           ID: x
+<                         LB
+<                         Exp (8)
+<                           ID: y
+---
+>                         INT: 10
+99c57,96
+<                       SEMI
+---
+>                 SEMI
+>         StmtList (6)
+>           Stmt (6)
+>             Exp (6)
+>               Exp (6)
+>                 Exp (6)
+>                   ID: x
+>                 LB
+>                 Exp (6)
+>                   ID: m
+>                 RB
+>               ASSIGN
+>               Exp (6)
+>                 INT: 7
+>             SEMI
+>           StmtList (7)
+>             Stmt (7)
+>               Exp (7)
+>                 Exp (7)
+>                   Exp (7)
+>                     ID: y
+>                   LB
+>                   Exp (7)
+>                     ID: n
+>                   RB
+>                 ASSIGN
+>                 Exp (7)
+>                   INT: 8
+>               SEMI
+>             StmtList (8)
+>               Stmt (8)
+>                 RETURN
+>                 Exp (8)
+>                   Exp (8)
+>                     ID: x
+>                   LB
+>                   Exp (8)
+>                     ID: y
+>                   RB
+>                 SEMI

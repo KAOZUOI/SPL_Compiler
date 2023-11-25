@@ -12,14 +12,14 @@ ifeq ($(VERBOSE), 1)
     CFLAGS:=-DVERBOSE $(CFLAGS)
 endif
 # # test
-# build: src/syntax.y src/lexical.l src/APT.c src/APT.h
-# 	$(BISON) -t -d src/syntax.y
-# 	$(FLEX) src/lexical.l
-# 	$(CC) syntax.tab.c src/APT.c -o splc -ly -lfl $(CFLAGS)
-# 	rm -f *.yy.* *.tab.*
-# clean:
-# 	@rm -f *.yy.* *.tab.* splc
-# .PHONY: clean
+build: src/syntax.y src/lexical.l src/APT.c src/APT.h
+	$(BISON) -t -d src/syntax.y
+	$(FLEX) src/lexical.l
+	$(CC) syntax.tab.c src/APT.c -o splc -ly -lfl $(CFLAGS)
+	rm -f *.yy.* *.tab.*
+clean:
+	@rm -f *.yy.* *.tab.* splc
+.PHONY: clean
 
 # # test -v
 # build: src/syntax.y src/lexical.l src/APT.c src/APT.h
@@ -42,11 +42,11 @@ endif
 # .PHONY: clean
 
 # debug bison
-build: src/syntax_debug.y src/lexical.l src/APT.c src/APT.h
-	$(BISON) -t -d src/syntax_debug.y
-	$(FLEX) src/lexical.l
-	$(CC) syntax_debug.tab.c src/APT.c -o splc -ly -lfl $(CFLAGS)
-	rm -f *.yy.* *.tab.*
-clean:
-	@rm -f *.yy.* *.tab.* splc
-.PHONY: clean
+# build: src/syntax_debug.y src/lexical_debug.l src/APT.c src/APT.h
+# 	$(BISON) -t -d src/syntax_debug.y
+# 	$(FLEX) src/lexical_debug.l
+# 	$(CC) syntax_debug.tab.c src/APT.c -o splc -ly -lfl $(CFLAGS)
+# 	rm -f *.yy.* *.tab.*
+# clean:
+# 	@rm -f *.yy.* *.tab.* splc
+# .PHONY: clean

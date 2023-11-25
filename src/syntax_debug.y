@@ -123,13 +123,13 @@ ExtDef:
         }
     |   Specifier error {
         $$ = newAnnotatedParseNode("ExtDef", 1, $1);
-        MISSING_SEMI_ERROR($1);
-        // MISSING_SEMI_ERROR_LOC2($1);
+        // MISSING_SEMI_ERROR($1);
+        MISSING_SEMI_ERROR_LOC2($1);
     }
     |   Specifier ExtDecList error {
         $$ = newAnnotatedParseNode("ExtDef", 2, $1, $2);
-        MISSING_SEMI_ERROR($1);
-        // MISSING_SEMI_ERROR_LOC1($1);
+        // MISSING_SEMI_ERROR($1);
+        MISSING_SEMI_ERROR_LOC1($1);
     }
     |   error SEMI {
         ++errors;

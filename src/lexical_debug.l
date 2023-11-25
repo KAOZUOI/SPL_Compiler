@@ -1,6 +1,6 @@
 %{
     #include "src/APT.h"
-    #include "syntax.tab.h"
+    #include "syntax_debug.tab.h"
 
     #define __ASSIGN_LEAF_NODE(NAME)    { \
         yylval.AptNode = newAnnotatedParseLeafNode(#NAME, yylineno); \

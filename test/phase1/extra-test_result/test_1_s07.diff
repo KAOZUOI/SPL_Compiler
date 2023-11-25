@@ -1,5 +1,5 @@
 1c1,4
-< Error type B at Line 1: Missing semicolon ';'
+< Error type B at Line 1: Missing semicolon ';' LOC2
 ---
 > Error type B at Line 5: Missing closing bracket ']'
 > Error type B at Line 6: Missing right value

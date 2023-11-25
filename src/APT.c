@@ -45,8 +45,9 @@ AnnotatedParseTreeNode* newAnnotatedParseLeafNode(char* name, int lineno) {
 
     if (!strcmp(node->name, "INT")) {
         node->int_value = atoi(yytext);
-    } else if (!strcmp(node->name, "HEXINT")) {
+    } else if (!strcmp(node->name, "HEX_INT")) {
         node->int_value = strtol(yytext, NULL, 16);
+        printf("HEX_INT: %d\n", node->int_value);
     } else if (!strcmp(node->name, "FLOAT")) {
         node->float_value = atof(yytext);
     } else {

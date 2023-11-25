@@ -1,12 +1,172 @@
-22c22,24
-<                   INT: -1
+12,16c12,25
+<         StmtList (3)
+<           Stmt (3)
+<             Def (3)
+<               Specifier (3)
+<                 TYPE: int
 ---
+>         DefList (3)
+>           Def (3)
+>             Specifier (3)
+>               TYPE: int
+>             DecList (3)
+>               Dec (3)
+>                 VarDec (3)
+>                   ID: res
+>                 ASSIGN
+>                 Exp (3)
 >                   MINUS
 >                   Exp (3)
 >                     INT: 1
-30c32,34
-<                     INT: 1
+>               COMMA
+20c29
+<                     ID: res
+---
+>                     ID: n
+23,29c32
+<                     INT: -1
+<                 COMMA
+<                 DecList (3)
+<                   Dec (3)
+<                     VarDec (3)
+<                       ID: n
+<                     ASSIGN
 ---
 >                     PLUS
->                     Exp (3)
->                       INT: 1
+32,33c35,46
+<               SEMI
+<           StmtList (4)
+---
+>             SEMI
+>         StmtList (4)
+>           Stmt (4)
+>             IF
+>             LP
+>             Exp (4)
+>               Exp (4)
+>                 ID: b
+>               NE
+>               Exp (4)
+>                 ID: c
+>             RP
+35c48,62
+<               IF
+---
+>               CompSt (4)
+>                 LC
+>                 StmtList (5)
+>                   Stmt (5)
+>                     Exp (5)
+>                       Exp (5)
+>                         ID: a
+>                       ASSIGN
+>                       Exp (5)
+>                         INT: 0
+>                     SEMI
+>                 RC
+>           StmtList (7)
+>             Stmt (7)
+>               WHILE
+37,42c64,69
+<               Exp (4)
+<                 Exp (4)
+<                   ID: b
+<                 NE
+<                 Exp (4)
+<                   ID: c
+---
+>               Exp (7)
+>                 Exp (7)
+>                   ID: n
+>                 GT
+>                 Exp (7)
+>                   INT: 0
+44,45c71,72
+<               Stmt (4)
+<                 CompSt (4)
+---
+>               Stmt (8)
+>                 CompSt (8)
+47,51c74,78
+<                   StmtList (5)
+<                     Stmt (5)
+<                       Exp (5)
+<                         Exp (5)
+<                           ID: a
+---
+>                   StmtList (9)
+>                     Stmt (9)
+>                       Exp (9)
+>                         Exp (9)
+>                           ID: res
+53,72d79
+<                         Exp (5)
+<                           INT: 0
+<                       SEMI
+<                   RC
+<             StmtList (7)
+<               Stmt (7)
+<                 WHILE
+<                 LP
+<                 Exp (7)
+<                   Exp (7)
+<                     ID: n
+<                   GT
+<                   Exp (7)
+<                     INT: 0
+<                 RP
+<                 Stmt (8)
+<                   CompSt (8)
+<                     LC
+<                     StmtList (9)
+<                       Stmt (9)
+76c83
+<                           ASSIGN
+---
+>                           MUL
+78,85c85,92
+<                             Exp (9)
+<                               ID: res
+<                             MUL
+<                             Exp (9)
+<                               ID: n
+<                         SEMI
+<                       StmtList (10)
+<                         Stmt (10)
+---
+>                             ID: n
+>                       SEMI
+>                     StmtList (10)
+>                       Stmt (10)
+>                         Exp (10)
+>                           Exp (10)
+>                             ID: n
+>                           ASSIGN
+89c96
+<                             ASSIGN
+---
+>                             MINUS
+91,103c98,106
+<                               Exp (10)
+<                                 ID: n
+<                               MINUS
+<                               Exp (10)
+<                                 INT: 1
+<                           SEMI
+<                     RC
+<               StmtList (12)
+<                 Stmt (12)
+<                   RETURN
+<                   Exp (12)
+<                     ID: res
+<                   SEMI
+---
+>                               INT: 1
+>                         SEMI
+>                   RC
+>             StmtList (12)
+>               Stmt (12)
+>                 RETURN
+>                 Exp (12)
+>                   ID: res
+>                 SEMI

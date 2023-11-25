@@ -1,94 +1,493 @@
-114c114
-<                           FLOAT: 0.010000
+80,83c80,94
+<             StmtList (9)
+<               Stmt (9)
+<                 Def (9)
+<                   Specifier (9)
 ---
+>             DefList (9)
+>               Def (9)
+>                 Specifier (9)
+>                   TYPE: int
+>                 DecList (9)
+>                   Dec (9)
+>                     VarDec (9)
+>                       ID: a
+>                     ASSIGN
+>                     Exp (9)
+>                       INT: 100
+>                 SEMI
+>               DefList (10)
+>                 Def (10)
+>                   Specifier (10)
+85,88c96,99
+<                   DecList (9)
+<                     Dec (9)
+<                       VarDec (9)
+<                         ID: a
+---
+>                   DecList (10)
+>                     Dec (10)
+>                       VarDec (10)
+>                         ID: b
+90c101
+<                       Exp (9)
+---
+>                       Exp (10)
+93,101c104,111
+<               StmtList (10)
+<                 Stmt (10)
+<                   Def (10)
+<                     Specifier (10)
+<                       TYPE: int
+<                     DecList (10)
+<                       Dec (10)
+<                         VarDec (10)
+<                           ID: b
+---
+>                 DefList (11)
+>                   Def (11)
+>                     Specifier (11)
+>                       TYPE: float
+>                     DecList (11)
+>                       Dec (11)
+>                         VarDec (11)
+>                           ID: c
+103,104c113,114
+<                         Exp (10)
+<                           INT: 100
+---
+>                         Exp (11)
 >                           FLOAT: 0.01
-193,198c193,194
-<                               Exp (17)
-<                                 ID: e
-<                               GT
-<                               Exp (17)
-<                                 ID: c
-<                             OR
+106,114c116,123
+<                 StmtList (11)
+<                   Stmt (11)
+<                     Def (11)
+<                       Specifier (11)
+<                         TYPE: float
+<                       DecList (11)
+<                         Dec (11)
+<                           VarDec (11)
+<                             ID: c
 ---
+>                   DefList (12)
+>                     Def (12)
+>                       Specifier (12)
+>                         TYPE: int
+>                       DecList (12)
+>                         Dec (12)
+>                           VarDec (12)
+>                             ID: d
+116,117c125,135
+<                           Exp (11)
+<                             FLOAT: 0.010000
+---
+>                           Exp (12)
+>                             ID: add
+>                             LP
+>                             Args (12)
+>                               Exp (12)
+>                                 ID: a
+>                               COMMA
+>                               Args (12)
+>                                 Exp (12)
+>                                   ID: b
+>                             RP
+119,127c137,158
+<                   StmtList (12)
+<                     Stmt (12)
+<                       Def (12)
+<                         Specifier (12)
+<                           TYPE: int
+<                         DecList (12)
+<                           Dec (12)
+<                             VarDec (12)
+<                               ID: d
+---
+>             StmtList (13)
+>               Stmt (13)
+>                 IF
+>                 LP
+>                 Exp (13)
+>                   Exp (13)
+>                     ID: d
+>                   GT
+>                   Exp (13)
+>                     ID: c
+>                 RP
+>                 Stmt (13)
+>                   CompSt (13)
+>                     LC
+>                     DefList (14)
+>                       Def (14)
+>                         Specifier (14)
+>                           TYPE: float
+>                         DecList (14)
+>                           Dec (14)
+>                             VarDec (14)
 >                               ID: e
->                             GT
-201,202c197,198
-<                                 ID: a
-<                               EQ
+129c160
+<                             Exp (12)
 ---
+>                             Exp (14)
+132,133c163,164
+<                               Args (12)
+<                                 Exp (12)
+---
+>                               Args (14)
+>                                 Exp (14)
+136,138c167,169
+<                                 Args (12)
+<                                   Exp (12)
+<                                     ID: b
+---
+>                                 Args (14)
+>                                   Exp (14)
+>                                     ID: c
+141,180c172,189
+<                     StmtList (13)
+<                       Stmt (13)
+<                         IF
+<                         LP
+<                         Exp (13)
+<                           Exp (13)
+<                             ID: d
+<                           GT
+<                           Exp (13)
+<                             ID: c
+<                         RP
+<                         Stmt (13)
+<                           CompSt (13)
+<                             LC
+<                             StmtList (14)
+<                               Stmt (14)
+<                                 Def (14)
+<                                   Specifier (14)
+<                                     TYPE: float
+<                                   DecList (14)
+<                                     Dec (14)
+<                                       VarDec (14)
+<                                         ID: e
+<                                       ASSIGN
+<                                       Exp (14)
+<                                         ID: add
+<                                         LP
+<                                         Args (14)
+<                                           Exp (14)
+<                                             ID: a
+<                                           COMMA
+<                                           Args (14)
+<                                             Exp (14)
+<                                               ID: c
+<                                         RP
+<                                   SEMI
+<                             RC
+<                       StmtList (16)
+<                         Stmt (16)
+<                           WHILE
+---
+>                     RC
+>               StmtList (16)
+>                 Stmt (16)
+>                   WHILE
+>                   LP
+>                   Exp (16)
+>                     Exp (16)
+>                       ID: d
+>                     GT
+>                     Exp (16)
+>                       ID: a
+>                   RP
+>                   Stmt (16)
+>                     CompSt (16)
+>                       LC
+>                       StmtList (17)
+>                         Stmt (17)
+>                           IF
+182,184c191,193
+<                           Exp (16)
+<                             Exp (16)
+<                               ID: d
+---
+>                           Exp (17)
+>                             Exp (17)
+>                               ID: e
+186,187c195,204
+<                             Exp (16)
+<                               ID: a
+---
+>                             Exp (17)
+>                               Exp (17)
 >                                 ID: c
 >                               OR
-204c200,204
-<                                 ID: b
----
+>                               Exp (17)
 >                                 Exp (17)
 >                                   ID: a
 >                                 EQ
 >                                 Exp (17)
 >                                   ID: b
-215,217c215,217
-<                                       Exp (18)
-<                                         ID: c
-<                                       GT
+189,190c206,207
+<                           Stmt (16)
+<                             CompSt (16)
 ---
+>                           Stmt (17)
+>                             CompSt (17)
+192,193c209,210
+<                               StmtList (17)
+<                                 Stmt (17)
+---
+>                               StmtList (18)
+>                                 Stmt (18)
+196,198c213,218
+<                                   Exp (17)
+<                                     Exp (17)
+<                                       Exp (17)
+---
+>                                   Exp (18)
+>                                     Exp (18)
 >                                       ID: c
 >                                     GT
 >                                     Exp (18)
-220,222c220
+>                                       Exp (18)
+200,209c220,229
+<                                       GT
+<                                       Exp (17)
+<                                         ID: c
 <                                     OR
-<                                     Exp (18)
-<                                       LP
+<                                     Exp (17)
+<                                       Exp (17)
+<                                         ID: a
+<                                       EQ
+<                                       Exp (17)
+<                                         ID: b
 ---
 >                                       OR
-223a222
+>                                       Exp (18)
 >                                         LP
-225,229c224,229
-<                                           ID: a
-<                                         GT
-<                                         Exp (18)
-<                                           INT: 10
-<                                       RP
----
+>                                         Exp (18)
 >                                           Exp (18)
 >                                             ID: a
 >                                           GT
 >                                           Exp (18)
 >                                             INT: 10
 >                                         RP
-293,295c293,295
-<                                               Exp (24)
-<                                                 ID: e
-<                                               GE
+211,212c231,232
+<                                   Stmt (17)
+<                                     CompSt (17)
 ---
+>                                   Stmt (18)
+>                                     CompSt (18)
+214,215c234,288
+<                                       StmtList (18)
+<                                         Stmt (18)
+---
+>                                       StmtList (19)
+>                                         Stmt (19)
+>                                           Exp (19)
+>                                             Exp (19)
+>                                               ID: a
+>                                             ASSIGN
+>                                             Exp (19)
+>                                               INT: 0
+>                                           SEMI
+>                                         StmtList (20)
+>                                           Stmt (20)
+>                                             Exp (20)
+>                                               Exp (20)
+>                                                 ID: a
+>                                               ASSIGN
+>                                               Exp (20)
+>                                                 Exp (20)
+>                                                   ID: b
+>                                                 MUL
+>                                                 Exp (20)
+>                                                   ID: c
+>                                             SEMI
+>                                           StmtList (21)
+>                                             Stmt (21)
+>                                               Exp (21)
+>                                                 Exp (21)
+>                                                   ID: b
+>                                                 ASSIGN
+>                                                 Exp (21)
+>                                                   Exp (21)
+>                                                     ID: c
+>                                                   MINUS
+>                                                   Exp (21)
+>                                                     ID: a
+>                                               SEMI
+>                                             StmtList (22)
+>                                               Stmt (22)
+>                                                 Exp (22)
+>                                                   Exp (22)
+>                                                     ID: a
+>                                                   ASSIGN
+>                                                   Exp (22)
+>                                                     Exp (22)
+>                                                       ID: b
+>                                                     DIV
+>                                                     Exp (22)
+>                                                       ID: d
+>                                                 SEMI
+>                                       RC
+>                                   ELSE
+>                                   Stmt (23)
+>                                     CompSt (23)
+>                                       LC
+>                                       StmtList (24)
+>                                         Stmt (24)
+218,220c291,296
+<                                           Exp (18)
+<                                             Exp (18)
+<                                               Exp (18)
+---
+>                                           Exp (24)
+>                                             Exp (24)
 >                                               ID: e
 >                                             GE
 >                                             Exp (24)
-298,300c298
-<                                             AND
-<                                             Exp (24)
-<                                               NOT
+>                                               Exp (24)
+222,294c298,301
+<                                               GT
+<                                               Exp (18)
+<                                                 ID: e
+<                                             OR
+<                                             Exp (18)
+<                                               LP
+<                                               Exp (18)
+<                                                 Exp (18)
+<                                                   ID: a
+<                                                 GT
+<                                                 Exp (18)
+<                                                   INT: 10
+<                                               RP
+<                                           RP
+<                                           Stmt (18)
+<                                             CompSt (18)
+<                                               LC
+<                                               StmtList (19)
+<                                                 Stmt (19)
+<                                                   Exp (19)
+<                                                     Exp (19)
+<                                                       ID: a
+<                                                     ASSIGN
+<                                                     Exp (19)
+<                                                       INT: 0
+<                                                   SEMI
+<                                                 StmtList (20)
+<                                                   Stmt (20)
+<                                                     Exp (20)
+<                                                       Exp (20)
+<                                                         ID: a
+<                                                       ASSIGN
+<                                                       Exp (20)
+<                                                         Exp (20)
+<                                                           ID: b
+<                                                         MUL
+<                                                         Exp (20)
+<                                                           ID: c
+<                                                     SEMI
+<                                                   StmtList (21)
+<                                                     Stmt (21)
+<                                                       Exp (21)
+<                                                         Exp (21)
+<                                                           ID: b
+<                                                         ASSIGN
+<                                                         Exp (21)
+<                                                           Exp (21)
+<                                                             ID: c
+<                                                           MINUS
+<                                                           Exp (21)
+<                                                             ID: a
+<                                                       SEMI
+<                                                     StmtList (22)
+<                                                       Stmt (22)
+<                                                         Exp (22)
+<                                                           Exp (22)
+<                                                             ID: a
+<                                                           ASSIGN
+<                                                           Exp (22)
+<                                                             Exp (22)
+<                                                               ID: b
+<                                                             DIV
+<                                                             Exp (22)
+<                                                               ID: d
+<                                                         SEMI
+<                                               RC
+<                                           ELSE
+<                                           Stmt (23)
+<                                             CompSt (23)
+<                                               LC
+<                                               StmtList (24)
+<                                                 Stmt (24)
+<                                                   IF
 ---
 >                                               AND
-302c300
-<                                                 LP
----
+>                                               Exp (24)
 >                                                 NOT
-303a302
->                                                   LP
-305,309c304,309
-<                                                     ID: c
-<                                                   GT
-<                                                   Exp (24)
-<                                                     ID: a
-<                                                 RP
+>                                                 Exp (24)
+298,303c305,306
+<                                                       Exp (24)
+<                                                         ID: e
+<                                                       GE
+<                                                       Exp (24)
+<                                                         ID: c
+<                                                     AND
 ---
->                                                     Exp (24)
 >                                                       ID: c
 >                                                     GT
->                                                     Exp (24)
->                                                       ID: a
->                                                   RP
-321c321
-<                                                       FLOAT: 0.010000
+305,314c308
+<                                                       NOT
+<                                                       Exp (24)
+<                                                         LP
+<                                                         Exp (24)
+<                                                           Exp (24)
+<                                                             ID: c
+<                                                           GT
+<                                                           Exp (24)
+<                                                             ID: a
+<                                                         RP
 ---
+>                                                       ID: a
+316,328c310,322
+<                                                   Stmt (24)
+<                                                     CompSt (24)
+<                                                       LC
+<                                                       StmtList (25)
+<                                                         Stmt (25)
+<                                                           Exp (25)
+<                                                             Exp (25)
+<                                                               ID: e
+<                                                             ASSIGN
+<                                                             Exp (25)
+<                                                               FLOAT: 0.010000
+<                                                           SEMI
+<                                                       RC
+---
+>                                           RP
+>                                           Stmt (24)
+>                                             CompSt (24)
+>                                               LC
+>                                               StmtList (25)
+>                                                 Stmt (25)
+>                                                   Exp (25)
+>                                                     Exp (25)
+>                                                       ID: e
+>                                                     ASSIGN
+>                                                     Exp (25)
 >                                                       FLOAT: 0.01
+>                                                   SEMI
+332,337c326,332
+<                         StmtList (30)
+<                           Stmt (30)
+<                             RETURN
+<                             Exp (30)
+<                               INT: 0
+<                             SEMI
+---
+>                       RC
+>                 StmtList (30)
+>                   Stmt (30)
+>                     RETURN
+>                     Exp (30)
+>                       INT: 0
+>                     SEMI

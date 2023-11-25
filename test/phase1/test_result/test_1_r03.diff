@@ -1,0 +1,4 @@
+2c2
+< Error type B at Line 6: Missing semicolon ';' LOC1
+---
+> Error type B at Line 6: Missing semicolon ';'

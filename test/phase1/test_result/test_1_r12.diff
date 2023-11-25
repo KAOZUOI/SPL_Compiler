@@ -1,4 +1,99 @@
-34c34
-<                     HEX_INT: -829055216
+1d0
+< HEX_INT: 4095
+13,16c12,26
+<         StmtList (3)
+<           Stmt (3)
+<             Def (3)
+<               Specifier (3)
 ---
+>         DefList (3)
+>           Def (3)
+>             Specifier (3)
+>               TYPE: int
+>             DecList (3)
+>               Dec (3)
+>                 VarDec (3)
+>                   ID: dec_int
+>                 ASSIGN
+>                 Exp (3)
+>                   INT: 323
+>             SEMI
+>           DefList (4)
+>             Def (4)
+>               Specifier (4)
+18,21c28,31
+<               DecList (3)
+<                 Dec (3)
+<                   VarDec (3)
+<                     ID: dec_int
+---
+>               DecList (4)
+>                 Dec (4)
+>                   VarDec (4)
+>                     ID: hex_int
+23,24c33,34
+<                   Exp (3)
+<                     INT: 323
+---
+>                   Exp (4)
 >                     INT: 4095
+26,34c36,43
+<           StmtList (4)
+<             Stmt (4)
+<               Def (4)
+<                 Specifier (4)
+<                   TYPE: int
+<                 DecList (4)
+<                   Dec (4)
+<                     VarDec (4)
+<                       ID: hex_int
+---
+>             DefList (5)
+>               Def (5)
+>                 Specifier (5)
+>                   TYPE: char
+>                 DecList (5)
+>                   Dec (5)
+>                     VarDec (5)
+>                       ID: ch
+36,37c45,46
+<                     Exp (4)
+<                       HEX_INT: 4095
+---
+>                     Exp (5)
+>                       CHAR: '\xC0'
+39,61c48,57
+<             StmtList (5)
+<               Stmt (5)
+<                 Def (5)
+<                   Specifier (5)
+<                     TYPE: char
+<                   DecList (5)
+<                     Dec (5)
+<                       VarDec (5)
+<                         ID: ch
+<                       ASSIGN
+<                       Exp (5)
+<                         CHAR: '\xC0'
+<                   SEMI
+<               StmtList (6)
+<                 Stmt (6)
+<                   RETURN
+<                   Exp (6)
+<                     Exp (6)
+<                       ID: hex_int
+<                     MINUS
+<                     Exp (6)
+<                       ID: dec_int
+<                   SEMI
+---
+>         StmtList (6)
+>           Stmt (6)
+>             RETURN
+>             Exp (6)
+>               Exp (6)
+>                 ID: hex_int
+>               MINUS
+>               Exp (6)
+>                 ID: dec_int
+>             SEMI

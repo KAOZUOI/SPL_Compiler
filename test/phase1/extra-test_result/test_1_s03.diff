@@ -1,14 +1,17 @@
 1,4d0
 < Error type A at Line 1: unknown lexeme 
-< Error type B at Line 1: Missing semicolon ';'
+< Error type B at Line 1: Missing semicolon ';' LOC2
 < Error type A at Line 2: unknown lexeme 
 < Error type A at Line 3: unknown lexeme 
 6d1
 < Error type A at Line 4: unknown lexeme 
-8,23c3,7
+8,26c3,7
 < Error type A at Line 5: unknown lexeme 
+< HEX_INT: 255
 < Error type A at Line 6: unknown lexeme 
+< HEX_INT: 144470
 < Error type A at Line 7: unknown lexeme 
+< HEX_INT: 0
 < Error type A at Line 8: unknown lexeme 
 < Error type A at Line 9: unknown lexeme 
 < Error type A at Line 10: unknown lexeme 

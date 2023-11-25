@@ -1,24 +1,20 @@
-1,2c1
-< Error type B at Line 1: Missing semicolon ';'
-< Error type B at Line 4: Missing semicolon ';'
----
+0a1
 > Error type B at Line 3: Missing specifier
-4c3
-< Error type B at Line 11: Missing semicolon ';'
+6c7
+< Error type B at Line 23: Missing semicolon ';' LOC1
 ---
-> Error type B at Line 9: Missing semicolon ';'
-6,7c5,11
-< Error type B at Line 29: Missing semicolon ';'
-< Error type B at Line 37: Missing semicolon ';'
----
-> Error type B at Line 17: Missing closing parenthesis ')'
-> Error type B at Line 22: Missing closing parenthesis ')'
 > Error type B at Line 23: Missing semicolon ';'
-> Error type B at Line 31: Missing semicolon ';'
+8,13c9,14
+< Error type B at Line 32: Missing semicolon ';' LOC1
+< Error type B at Line 42: Missing semicolon ';' LOC1
+< Error type B at Line 45: Missing semicolon ';' LOC2
+< Error type B at Line 53: Missing semicolon ';' LOC1
+< Error type B at Line 55: Missing semicolon ';' LOC1
+< Error type B at Line 59: Missing semicolon ';' LOC3
+---
 > Error type B at Line 32: Missing semicolon ';'
 > Error type B at Line 42: Missing semicolon ';'
 > Error type B at Line 46: Missing specifier
-10c14
-< Error type B at Line 59: Missing semicolon ';'
----
+> Error type B at Line 53: Missing semicolon ';'
+> Error type B at Line 55: Missing semicolon ';'
 > Error type B at Line 60: Missing semicolon ';'
