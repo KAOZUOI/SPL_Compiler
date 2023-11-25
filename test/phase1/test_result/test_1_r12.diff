@@ -1,6 +1,4 @@
-1d0
-< HEX_INT: 4095
-13,16c12,26
+12,15c12,26
 <         StmtList (3)
 <           Stmt (3)
 <             Def (3)
@@ -21,7 +19,7 @@
 >           DefList (4)
 >             Def (4)
 >               Specifier (4)
-18,21c28,31
+17,20c28,31
 <               DecList (3)
 <                 Dec (3)
 <                   VarDec (3)
@@ -31,13 +29,13 @@
 >                 Dec (4)
 >                   VarDec (4)
 >                     ID: hex_int
-23,24c33,34
+22,23c33,34
 <                   Exp (3)
 <                     INT: 323
 ---
 >                   Exp (4)
 >                     INT: 4095
-26,34c36,43
+25,33c36,43
 <           StmtList (4)
 <             Stmt (4)
 <               Def (4)
@@ -56,13 +54,13 @@
 >                   Dec (5)
 >                     VarDec (5)
 >                       ID: ch
-36,37c45,46
+35,36c45,46
 <                     Exp (4)
 <                       HEX_INT: 4095
 ---
 >                     Exp (5)
 >                       CHAR: '\xC0'
-39,61c48,57
+38,60c48,57
 <             StmtList (5)
 <               Stmt (5)
 <                 Def (5)

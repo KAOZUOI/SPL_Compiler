@@ -1,6 +1,3 @@
-/*
- * Annotated Parse Tree
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -39,15 +36,11 @@ AnnotatedParseTreeNode* newAnnotatedParseLeafNode(char* name, int lineno) {
     node->right = NULL;
     node->is_token = 1;
     
-    #ifdef VERBOSE
-    printf("<%s, L%d>: %s\n", name, lineno, yytext);
-    #endif
 
     if (!strcmp(node->name, "INT")) {
         node->int_value = atoi(yytext);
     } else if (!strcmp(node->name, "HEX_INT")) {
         node->int_value = strtol(yytext, NULL, 16);
-        printf("HEX_INT: %d\n", node->int_value);
     } else if (!strcmp(node->name, "FLOAT")) {
         node->float_value = atof(yytext);
     } else {

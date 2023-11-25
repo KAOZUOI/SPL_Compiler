@@ -1,0 +1,8 @@
+Assumptions:
+Assumption 1 char variables only occur in assignment operations or function parameters/arguments
+Assumption 2 only int variables can do boolean operations
+Assumption 3 only int and float variables can do arithmetic operations
+Assumption 4 no nested function definitions
+Assumption 5 field names in struct definitions are unique (in any scope), i.e., the names of struct fields, and variables never overlap
+Assumption 6 there is only the global scope, i.e., all variable names are unique
+Assumption 7 using named equivalence to determine whether two struct types are equivalent

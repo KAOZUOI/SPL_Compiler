@@ -1,8 +1,9 @@
-/*
- * Annotated Parse Tree
- */
-#ifndef _LT_APT_H
-#define _LT_APT_H
+#ifndef APT_H
+#define APT_H
+
+
+
+
 
 extern char* yytext;
 
@@ -24,6 +25,7 @@ typedef struct AnnotatedParseTreeNode {
     short is_token;
     
 } AnnotatedParseTreeNode;
+typedef AnnotatedParseTreeNode* Node;
 
 AnnotatedParseTreeNode* newAnnotatedParseNode(char* name, int cnt, ...);
 
@@ -31,4 +33,4 @@ AnnotatedParseTreeNode* newAnnotatedParseLeafNode(char* name, int lineno);
 
 void printAnnotatedParseTree(AnnotatedParseTreeNode* apt, int indent);
 
-#endif
+#endif // APT_H

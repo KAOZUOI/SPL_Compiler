@@ -1,5 +1,5 @@
 %{
-    #include "src/APT.h"
+    #include "APT.h"
     #include "lex.yy.c"
 
     FILE* fout = NULL;
@@ -305,20 +305,16 @@ Args: Exp COMMA Args    { $$ = newAnnotatedParseNode("Args", 3, $1, $2, $3); }
     ;
 %%
 void yyerror (char const *s) {
-  #ifdef VERBOSE
+
 //   fprintf (stderr, "ERROR: Line %d, %s \"%s\"\n", yylineno, s, yytext);
-     printf("ERROR: Line %d, %s \"%s\"\n", yylineno, s, yytext);
-  #endif
+    //  printf("ERROR: Line %d, %s \"%s\"\n", yylineno, s, yytext);
+
 }
 
 int main (int argc, char **argv) {
-    #ifdef DEBUG
-    fout = stdout;
-    #else
     char* tmp = (char *)malloc(sizeof(char) * (strlen(argv[1]) + 3));
     strcpy(tmp, argv[1]);
     char *end = tmp + strlen(tmp);
-
     while (end > tmp && *end != '.') {
         --end;
     }
@@ -329,19 +325,11 @@ int main (int argc, char **argv) {
     }
     fout = fopen(tmp, "w");
     printf("%s\n", tmp);
-    #endif
-
     yyin = fopen(argv[1], "r");
-    #ifdef VERBOSE
-    yydebug = 1;
-    #endif
     yyparse();
     /*while(1) {
         int token = yylex();
         if (token == 0) break;
         printf("Token: %d, value: '%s'\n", token, yytext);
     }*/
-    #ifndef DEBUG
-    fclose(fout);
-    #endif
 }

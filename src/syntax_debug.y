@@ -1,5 +1,5 @@
 %{
-    #include "src/APT.h"
+    #include "APT.h"
     #include "lex.yy.c"
 
     FILE* fout = NULL;

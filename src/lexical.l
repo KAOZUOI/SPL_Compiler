@@ -1,5 +1,5 @@
 %{
-    #include "src/APT.h"
+    #include "APT.h"
     #include "syntax.tab.h"
 
     #define __ASSIGN_LEAF_NODE(NAME)    { \

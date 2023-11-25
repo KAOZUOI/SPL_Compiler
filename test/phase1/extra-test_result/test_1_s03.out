@@ -6,11 +6,8 @@ Error type A at Line 4: unknown lexeme '\xr0'
 Error type A at Line 4: unknown lexeme 
 Error type A at Line 5: unknown lexeme 2_A
 Error type A at Line 5: unknown lexeme 
-HEX_INT: 255
 Error type A at Line 6: unknown lexeme 
-HEX_INT: 144470
 Error type A at Line 7: unknown lexeme 
-HEX_INT: 0
 Error type A at Line 8: unknown lexeme 
 Error type A at Line 9: unknown lexeme 
 Error type A at Line 10: unknown lexeme 
