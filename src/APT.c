@@ -15,7 +15,6 @@ AnnotatedParseTreeNode* newAnnotatedParseNode(char* name, int cnt, ...) {
     va_list childs;
     if (cnt < 0) return node; // fault
     va_start(childs, cnt);
-
     AnnotatedParseTreeNode* child = va_arg(childs, AnnotatedParseTreeNode*);
     node->left = child;
     node->lineno = child->lineno;
@@ -23,7 +22,6 @@ AnnotatedParseTreeNode* newAnnotatedParseNode(char* name, int cnt, ...) {
         child->right = va_arg(childs, AnnotatedParseTreeNode*);
         child = child->right;
     }
-
     va_end(childs);
     return node;
 }

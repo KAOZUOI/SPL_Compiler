@@ -46,29 +46,34 @@ Dec -> VarDec
     | VarDec ASSIGN Exp
 
 
-Exp -> Exp ASSIGN Exp
-    | Exp AND Exp
-    | Exp OR Exp
-    | Exp LT Exp
-    | Exp LE Exp
-    | Exp GT Exp
-    | Exp GE Exp
-    | Exp NE Exp
-    | Exp EQ Exp
-    | Exp PLUS Exp
-    | Exp MINUS Exp
-    | Exp MUL Exp
-    | Exp DIV Exp
-    | LP Exp RP
-    | MINUS Exp
-    | NOT Exp
-    | ID LP Args RP
-    | ID LP RP
-    | Exp LB Exp RB
-    | Exp DOT ID
-    | ID
-    | INT
-    | FLOAT
-    | CHAR
+/*
+Exp:  
+        Exp ASSIGN Exp    
+    |   Exp AND Exp    
+    |   Exp OR Exp    
+    |   Exp LT Exp    
+    |   Exp LE Exp    
+    |   Exp GT Exp    
+    |   Exp GE Exp    
+    |   Exp NE Exp    
+    |   Exp EQ Exp    
+    |   Exp PLUS Exp    
+    |   Exp MINUS Exp    
+    |   Exp MUL Exp    
+    |   Exp DIV Exp    
+    |   LP Exp RP    
+    |   MINUS Exp    
+    |   NOT Exp    
+    |   ID LP Args RP    
+    |   ID LP RP    
+    |   Exp LB Exp RB    
+    |   Exp DOT ID    
+    |   ID    
+    |   INT    
+    |   HEX_INT    
+    |   FLOAT    
+    |   CHAR    
+*/
+
 Args -> Exp COMMA Args
     | Exp

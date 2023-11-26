@@ -1,6 +1,7 @@
 %{
     #include "APT.h"
     #include "lex.yy.c"
+    #include "semantic.h"
 
     FILE* fout = NULL;
 
@@ -101,6 +102,7 @@ Program:
         ExtDefList    { 
                 $$ = newAnnotatedParseNode("Program", 1, $1);
                 if (errors == 0)    printAnnotatedParseTree($$, 0);
+                programSemaParser($$);
             }
     ;
 ExtDefList: 

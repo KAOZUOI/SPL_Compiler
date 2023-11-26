@@ -1,8 +1,10 @@
+#ifndef TYPE_H
+#define TYPE_H
 typedef struct Type{
     char name[20];
     enum {PRIMITIVE, ARRAY, STRUCTURE, FUNCTION} category;
     union{
-        enum {INT, FLOAT, CHAR, BOOL} primitive;
+        enum {TYPE_INT, TYPE_FLOAT, TYPE_CHAR, TYPE_BOOL} primitive;
         struct Array* array;
         struct FieldList* structure;
     };
@@ -19,3 +21,5 @@ typedef struct FieldList{
     struct Type* type;
     struct FieldList* next;
 } FieldList;
+
+#endif

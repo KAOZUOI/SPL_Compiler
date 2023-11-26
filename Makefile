@@ -8,13 +8,15 @@ DEBUG ?= 0
 VERBOSE ?= 0
 
 # # test
-build: src/syntax.y src/lexical.l src/APT.c include/APT.h
+build: src/syntax.y src/lexical.l src/APT.c include/APT.h src/semantic.c include/semantic.h src/symbolTable.c include/symbolTable.h include/type.h
+	@mkdir -p bin/
 	$(BISON) -t -d src/syntax.y
 	$(FLEX) src/lexical.l
-	$(CC) syntax.tab.c src/APT.c -o splc -ly -lfl $(CFLAGS) 
+	$(CC) syntax.tab.c src/APT.c src/symbolTable.c src/semantic.c -o bin/splc -ly -lfl $(CFLAGS) 
 	rm -f *.yy.* *.tab.*
 clean:
-	@rm -f *.yy.* *.tab.* splc
+	@rm -rf bin/
+	@rm -f *.yy.* *.tab.* splc	
 .PHONY: clean
 
 # # test -v
