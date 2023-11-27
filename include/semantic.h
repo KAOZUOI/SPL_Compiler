@@ -17,4 +17,11 @@ FieldList* funDecSemaParser(Node node, Type* type);
 FieldList* varListSemaParser(Node node);
 FieldList* paramDecSemaParser(Node node);
 
+
+
+
+FieldList* defListSemaParser(Node node, FieldList* fieldList);
+FieldList* defSemaParser(Node node, FieldList* fieldList);
+FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList);
+FieldList* decSemaParser(Node node, Type* type, FieldList* fieldList);
 #endif

@@ -54,10 +54,103 @@ Type* specifierSemaParser(Node node) {
             type->primitive = TYPE_CHAR;
             printf("Char \n");
         }
-        // TODO Bool
         return type;
     } else if (strcmp(node->left->name, "StructSpecifier") == 0) {
-        // TODO StructSpecifier
+
+        Node structId = node->left->right;
+        Symbol* symbol = findSymbol(structId->string_value);
+        // Struct ID LC DefList RC
+        if (structId->right != NULL) {
+            if (symbol != NULL) {
+                printf("Error type %d at Line %d: redefine the same structure type \"%s\".\n", 15, node->left->right->lineno, node->left->right->string_value);
+                indent = indent - 2;
+                return NULL;
+            }
+            type = (Type*)malloc(sizeof(Type));
+            type->category = STRUCTURE;
+            // DefList
+            Node defL = structId->right->right;
+            type->structure = defListSemaParser(defL, NULL);
+            // insert symbol
+            symbol = (Symbol*)malloc(sizeof(Symbol));
+            symbol->name = structId->string_value;
+            symbol->type = type;
+            insertSymbol(symbol);
+        }else {
+            // Struct ID
+            // TODO: check if the struct is defined and if the id is a struct
+            type = (Type*)malloc(sizeof(Type));
+            type = symbol->type;
+        }
     }
     return type;
 }
+
+    /* DefList */
+FieldList* defListSemaParser(Node node, FieldList* fieldList) {
+    // $
+    if (node->name == "Epsilon") {
+        return fieldList;
+    }
+    // Def DefList
+    if (fieldList == NULL) {
+        fieldList = defSemaParser(node->left, fieldList);
+    }else {
+        fieldList->next = defSemaParser(node->left, fieldList);
+    }
+    defListSemaParser(node->right, fieldList);
+    return fieldList;
+}
+
+FieldList* defSemaParser(Node node, FieldList* fieldList) {
+    Type* type = specifierSemaParser(node->left);
+    fieldList = decListSemaParser(node->left->right, type, fieldList);
+    return fieldList;
+}
+
+    /* DecList */
+FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList) {
+    // Dec
+    if (node->left->right = NULL) {
+        fieldList = decSemaParser(node->left, type, fieldList);
+    }else {
+        // Dec COMMA DecList
+        fieldList = decSemaParser(node->left, type, fieldList);
+        decListSemaParser(node->left->right->right, type, fieldList);
+    }
+    return fieldList;
+}
+
+FieldList* decSemaParser(Node node, Type* type, FieldList* fieldList) {
+    // VarDec
+    if (node->left->right == NULL) {
+        fieldList = varDecSemaParser(node->left, type);
+        
+    }else {
+        // VarDec ASSIGN Exp
+        Type* expType = expSemaParser(node->left->right->right);
+        if ()
+        
+        
+    }
+}
+
+static typeCmp(Type* type1, Type* type2) {
+    if (type1->category == PRIMITIVE && type2->category == PRIMITIVE) {
+        if (type1->primitive == type2->primitive) {
+            return 1;
+        }else {
+            return 0;
+        }
+    }else if (type1->category == STRUCTURE && type2->category == STRUCTURE) {
+        if (strcmp(type1->structure->name, type2->structure->name) == 0) {
+            return 1;
+        }else {
+            return 0;
+        }
+    }else {
+        return 0;
+    }
+}
+
+    /* VarDec */
