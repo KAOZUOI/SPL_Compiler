@@ -16,7 +16,7 @@ void programSemaParser(Node node) {
 void extDefListSemaParser(Node node) {
     if (node->left == NULL) return;
     extDefSemaParser(node->left);
-    extDefListSemaParser(node->right->right);
+    extDefListSemaParser(node->left->right);
 }
 
 void extDefSemaParser(Node node) {
@@ -89,7 +89,7 @@ Type* specifierSemaParser(Node node) {
     /* DefList */
 FieldList* defListSemaParser(Node node, FieldList* fieldList) {
     // $
-    if (node->name == "Epsilon") {
+    if (!strcmp(node->name, "Epsilon")) {
         return fieldList;
     }
     // Def DefList
@@ -111,7 +111,7 @@ FieldList* defSemaParser(Node node, FieldList* fieldList) {
     /* DecList */
 FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList) {
     // Dec
-    if (node->left->right = NULL) {
+    if (node->left->right == NULL) {
         fieldList = decSemaParser(node->left, type, fieldList);
     }else {
         // Dec COMMA DecList
@@ -124,18 +124,21 @@ FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList) {
 FieldList* decSemaParser(Node node, Type* type, FieldList* fieldList) {
     // VarDec
     if (node->left->right == NULL) {
-        fieldList = varDecSemaParser(node->left, type);
+        // TODO
+        // fieldList = varDecSemaParser(node->left, type);
         
     }else {
         // VarDec ASSIGN Exp
-        Type* expType = expSemaParser(node->left->right->right);
-        if ()
+        // Type* expType = expSemaParser(node->left->right->right);
+        // TODO
         
         
     }
+    return fieldList;
 }
 
-static typeCmp(Type* type1, Type* type2) {
+static uint32_t typeCmp(Type* type1, Type* type2) {
+    // TODO
     if (type1->category == PRIMITIVE && type2->category == PRIMITIVE) {
         if (type1->primitive == type2->primitive) {
             return 1;
