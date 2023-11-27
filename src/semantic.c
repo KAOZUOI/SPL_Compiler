@@ -12,13 +12,13 @@ uint32_t indent;
 void programSemaParser(Node node) {
     extDefListSemaParser(node->left);
 }
-
+    /* ExtDefList */
 void extDefListSemaParser(Node node) {
     if (node->left == NULL) return;
     extDefSemaParser(node->left);
     extDefListSemaParser(node->left->right);
 }
-
+    /* ExtDef */
 void extDefSemaParser(Node node) {
     Type* type = specifierSemaParser(node->left);
     if (strcmp(node->left->right->name, "ExtDecList") == 0) {
@@ -29,7 +29,7 @@ void extDefSemaParser(Node node) {
         // TODO SEMI
     }
 }
-
+    /* ExtDecList */
 void extDecListSemaParser(Node node, Type* type) {
     if (node->left->right == NULL) {
         // TODO varDec
@@ -101,7 +101,7 @@ FieldList* defListSemaParser(Node node, FieldList* fieldList) {
     defListSemaParser(node->right, fieldList);
     return fieldList;
 }
-
+    /* Def */
 FieldList* defSemaParser(Node node, FieldList* fieldList) {
     Type* type = specifierSemaParser(node->left);
     fieldList = decListSemaParser(node->left->right, type, fieldList);
@@ -120,40 +120,128 @@ FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList) {
     }
     return fieldList;
 }
-
+    /* Dec */
 FieldList* decSemaParser(Node node, Type* type, FieldList* fieldList) {
     // VarDec
     if (node->left->right == NULL) {
-        // TODO
-        // fieldList = varDecSemaParser(node->left, type);
-        
+        FieldList* varDecField = varDecSemaParser(node->left, type);
+        return varDecField;
     }else {
         // VarDec ASSIGN Exp
-        // Type* expType = expSemaParser(node->left->right->right);
-        // TODO
-        
-        
+        Type* expType = expSemaParser(node->left->right->right);
+        if (!typeCmp(type, expType)) {
+            printf("Error type %d at Line %d: unmatching types appear at both sides of the assignment operator (=) \n", 5, node->left->right->lineno);
+            indent = indent - 2;
+            return NULL;
+        }
     }
+}
+    /* varDec */
+FieldList* varDecSemaParser(Node node, Type* type) {
+    Type* oldType = type;
+    Node varDec = node->left;
+    while (strcmp(varDec->name, "VarDec") == 0) {
+        Type* currentType = (Type*)malloc(sizeof(Type));
+        currentType->array = (Array*)malloc(sizeof(Array));
+        currentType->category = ARRAY;
+        currentType->array->size = varDec->right->right->int_value;
+        currentType->array->type = oldType;
+        oldType = currentType;
+        varDec = varDec->left;
+    }
+
+    FieldList* fieldList = (FieldList*)malloc(sizeof(FieldList));
+    fieldList->name = varDec->string_value; // ID->string_value
+    fieldList->type = oldType;
+    fieldList->next = NULL;
+    Symbol* symbol = findSymbol(fieldList->name);
+    if (symbol != NULL) {
+        printf("Error type %d at Line %d: a variable is redefined in the same scope \"%s\".\n", 3, varDec->lineno, varDec->name);
+    }
+    // insert symbol
+    symbol = (Symbol*)malloc(sizeof(Symbol));
+    symbol->name = fieldList->name;
+    symbol->type = fieldList->type;
+    insertSymbol(symbol);
     return fieldList;
 }
-
-static uint32_t typeCmp(Type* type1, Type* type2) {
-    // TODO
-    if (type1->category == PRIMITIVE && type2->category == PRIMITIVE) {
-        if (type1->primitive == type2->primitive) {
-            return 1;
-        }else {
-            return 0;
-        }
-    }else if (type1->category == STRUCTURE && type2->category == STRUCTURE) {
-        if (strcmp(type1->structure->name, type2->structure->name) == 0) {
-            return 1;
-        }else {
-            return 0;
-        }
+    /* varList */
+FieldList* varListSemaParser(Node node, FieldList* fieldList) {
+    // ParamDec COMMA VarList
+    if (node->left->right != NULL) {
+        FieldList* paramDecField = paramDecSemaParser(node->left, fieldList);
+        FieldList* varListField = varListSemaParser(node->left->right->right, fieldList);
+        return paramDecField;
     }else {
-        return 0;
+        // ParamDec
+        FieldList* paramDecField = paramDecSemaParser(node->left, fieldList);
+        return paramDecField;
+    }
+}
+    /* paramDec */
+FieldList* paramDecSemaParser(Node node, FieldList* fieldList) {
+    Type* type = specifierSemaParser(node->left);
+    FieldList* varDecField = varDecSemaParser(node->left->right, type);
+    return varDecField;
+}
+
+    /* funDec */
+FieldList* funDecSemaParser(Node node, Type* type) {
+    Type* funDecType = (Type*)malloc(sizeof(Type));
+    funDecType->category = FUNCTION;
+    funDecType->structure = (FieldList*)malloc(sizeof(FieldList));
+    funDecType->structure->type = type;
+    funDecType->structure->name = node->left->string_value;
+    FieldList* varListField = funDecType->structure;
+    // ID LP RP
+    if (strcmp(node->left->right->right->name, "RP") == 0) {
+        varListField->next = NULL;
+    // ID LP VarList RP
+    }else {
+        FieldList* fieldList = varListSemaParser(node->left->right->right, varListField);
+    }
+    return type;
+}
+
+// TODO: Exp
+// TODO: CompSt
+// TODO: StmtList
+// TODO: Stmt
+
+
+
+
+    /* Static Function*/
+static uint32_t typeCmp(Type* typeA, Type* typeB) {
+    if (!typeA || !typeB) return 0;
+
+    switch (typeA->category) {
+        case PRIMITIVE:
+            return (typeB->category == PRIMITIVE && typeA->primitive == typeB->primitive);
+
+        case ARRAY:
+            return (typeB->category == ARRAY && 
+                    typeA->array->size == typeB->array->size && 
+                    typeCmp(typeA->array->type, typeB->array->type));
+
+        case STRUCTURE:
+        case FUNCTION:
+            if (typeB->category != typeA->category) return 0;
+
+            FieldList* fieldListA = typeA->structure;
+            FieldList* fieldListB = typeB->structure;
+
+            while (fieldListA && fieldListB) {
+                if (!typeCmp(fieldListA->type, fieldListB->type)) return 0;
+                fieldListA = fieldListA->next;
+                fieldListB = fieldListB->next;
+            }
+
+            return (fieldListA == NULL && fieldListB == NULL);
+
+        default:
+            return 0;
     }
 }
 
-    /* VarDec */
+

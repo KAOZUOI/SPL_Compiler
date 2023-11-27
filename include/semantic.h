@@ -14,8 +14,8 @@ Type* structSpecifierSemaParser(Node node);
 
 FieldList* varDecSemaParser(Node node, Type* type);
 FieldList* funDecSemaParser(Node node, Type* type);
-FieldList* varListSemaParser(Node node);
-FieldList* paramDecSemaParser(Node node);
+FieldList* varListSemaParser(Node node, FieldList* fieldList);
+FieldList* paramDecSemaParser(Node node, FieldList* fieldList);
 
 
 
