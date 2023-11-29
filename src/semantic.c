@@ -6,7 +6,7 @@
 #include "symbolTable.h"
 
 extern FILE* fout;
-uint32_t indent;
+int indent;
 
     /* Program */
 void programSemaParser(Node node) {
@@ -20,12 +20,13 @@ void extDefListSemaParser(Node node) {
 }
     /* ExtDef */
 void extDefSemaParser(Node node) {
+    if (node->left == NULL || node->left->right == NULL) return;
     Type* type = specifierSemaParser(node->left);
     if (strcmp(node->left->right->name, "ExtDecList") == 0) {
         extDecListSemaParser(node->left->right, type);
     } else if (strcmp(node->left->right->name, "FunDec") == 0) {
-        Node funDec = node->left;
-        Node compSt = node->left->right;
+        Node funDec = node->left->right;
+        Node compSt = node->left->right->right;
         Type* funDecType = funDecSemaParser(funDec, type);
 
         if(funDecType != NULL){
@@ -212,13 +213,21 @@ FieldList* paramDecSemaParser(Node node, FieldList* fieldList) {
 }
 
     /* funDec */
-FieldList* funDecSemaParser(Node node, Type* type) {
+Type* funDecSemaParser(Node node, Type* type) {
     Type* funDecType = (Type*)malloc(sizeof(Type));
     funDecType->category = FUNCTION;
     funDecType->structure = (FieldList*)malloc(sizeof(FieldList));
     funDecType->structure->type = type;
     funDecType->structure->name = node->left->string_value;
+    printf("FunDec: %s\n", funDecType->structure->name);
     FieldList* varListField = funDecType->structure;
+    // check if node->left->right is NULL
+    if (node->left->right == NULL) {
+        printf("NULL1\n");
+    }
+    if (node->left->right->right == NULL) {
+        printf("NULL2\n");
+    }
     // ID LP RP
     if (strcmp(node->left->right->right->name, "RP") == 0) {
         varListField->next = NULL;
@@ -357,7 +366,7 @@ Type* expSemaParser(Node node){
                         }
                     }
                 } else {
-                    if(funDecType->structure->next = NULL){
+                    if(funDecType->structure->next == NULL){
                         type = funDecType->structure->type;
                     }else{
                         printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
@@ -430,7 +439,7 @@ void stmtParser(Node node, Type* type){
 
 
     /* Static Function*/
-static uint32_t typeCmp(Type* typeA, Type* typeB) {
+int typeCmp(Type* typeA, Type* typeB) {
     if (!typeA || !typeB) return 0;
 
     switch (typeA->category) {

@@ -13,7 +13,7 @@ Type* specifierSemaParser(Node node);
 Type* structSpecifierSemaParser(Node node);
 
 FieldList* varDecSemaParser(Node node, Type* type);
-FieldList* funDecSemaParser(Node node, Type* type);
+Type* funDecSemaParser(Node node, Type* type);
 FieldList* varListSemaParser(Node node, FieldList* fieldList);
 FieldList* paramDecSemaParser(Node node, FieldList* fieldList);
 
@@ -28,4 +28,6 @@ FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList);
 FieldList* decSemaParser(Node node, Type* type, FieldList* fieldList);
 
 Type* expSemaParser(Node node);
+
+int typeCmp(Type* typeA, Type* typeB);
 #endif
