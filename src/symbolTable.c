@@ -1,5 +1,5 @@
 #include "symbolTable.h"
-
+#include <stdio.h>
 Symbol* symbolTable = NULL;
 
 void insertSymbol(Symbol* s) {
@@ -8,7 +8,9 @@ void insertSymbol(Symbol* s) {
 
 Symbol* findSymbol(const char* name) {
     Symbol* s;
+    printf("findSymbol_in\n");
     HASH_FIND_STR(symbolTable, name, s);
+    printf("findSymbol_out\n");
     return s;
 }
 

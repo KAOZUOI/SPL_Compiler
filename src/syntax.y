@@ -192,7 +192,7 @@ ParamDec:
 //该语句块内部先是一系列的变量定义DefList，然后是一系列的语句StmtList。
 //对CompSt这样的定义，是不允许在程序的任意位置定义变量的，必须在每一个语句块的开头才可以定义。
 CompSt: 
-        LC StmtList RC    { $$ = newAnnotatedParseNode("CompSt", 3, $1, $2, $3); }
+        LC DefList StmtList RC    { $$ = newAnnotatedParseNode("CompSt", 3, $1, $2, $3); }
     ;
 StmtList: 
         Stmt StmtList    { $$ = newAnnotatedParseNode("StmtList", 2, $1, $2); }
@@ -200,8 +200,8 @@ StmtList:
     ;
 //每个Stmt都表示一条语句，包括赋值语句、条件语句、循环语句、返回语句、语句块等等。
 Stmt:
-        Def   { $$ = newAnnotatedParseNode("Stmt", 1, $1); }
-    |   Exp SEMI    { $$ = newAnnotatedParseNode("Stmt", 2, $1, $2); }
+        // Def   { $$ = newAnnotatedParseNode("Stmt", 1, $1); }
+       Exp SEMI    { $$ = newAnnotatedParseNode("Stmt", 2, $1, $2); }
     |   CompSt    { $$ = newAnnotatedParseNode("Stmt", 1, $1); }
     |   RETURN Exp SEMI    { $$ = newAnnotatedParseNode("Stmt", 3, $1, $2, $3); }
     |   IF LP Exp RP Stmt    { $$ = newAnnotatedParseNode("Stmt", 5, $1, $2, $3, $4, $5); }

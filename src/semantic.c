@@ -36,15 +36,17 @@ void extDefSemaParser(Node node) {
         printf("FunDecType_inExtDef: %s\n", funDecType->structure->name);
 
         if(funDecType != NULL){
+            printf("if_inExtDef\n");
             Symbol* symbol = findSymbol(funDecType->structure->name);
             if(symbol != NULL){
                 printf("Error type %d at Line %d: redefine the same function \"%s\".\n", 4, funDec->left->lineno, funDec->left->string_value);
             }else{
+                printf("else_inExtDef\n");
                 symbol = (Symbol*)malloc(sizeof(Symbol));
                 symbol->name = funDecType->structure->name;
                 symbol->type = funDecType;
                 insertSymbol(symbol);
-
+                printf("insertSymbol_inExtDef: %s\n", symbol->name);
                 compStParser(compSt, type);
             }
         }
@@ -127,17 +129,22 @@ FieldList* defListSemaParser(Node node, FieldList* fieldList) {
     }
     // Def DefList
     if (fieldList == NULL) {
+        printf("Def_inDefList: %s\n", node->left->name);
         fieldList = defSemaParser(node->left, fieldList);
     }else {
+        printf("Def_next_inDefList: %s\n", node->left->name);
         fieldList->next = defSemaParser(node->left, fieldList);
     }
+    printf("DefList_inDefList: %s\n", node->left->right->name);
     defListSemaParser(node->right, fieldList);
     return fieldList;
 }
     /* Def */
 FieldList* defSemaParser(Node node, FieldList* fieldList) {
     Type* type = specifierSemaParser(node->left);
+    printf("decList_inDef: %s\n", node->left->right->name);
     fieldList = decListSemaParser(node->left->right, type, fieldList);
+    printf("decList_outDef: %s\n", node->left->right->name);
     return fieldList;
 }
 
@@ -145,11 +152,18 @@ FieldList* defSemaParser(Node node, FieldList* fieldList) {
 FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList) {
     // Dec
     if (node->left->right == NULL) {
+        printf("Dec_inDecList_up: %s\n", node->left->name);
+
         fieldList = decSemaParser(node->left, type, fieldList);
+        printf("Dec_outDecList_up: %s\n", node->left->name);
     }else {
         // Dec COMMA DecList
+        printf("Dec_inDecList: %s\n", node->left->name);
         fieldList = decSemaParser(node->left, type, fieldList);
+        printf("Dec_outDecList: %s\n", node->left->name);
+        printf("DecList_inDecList: %s\n", node->left->right->right->name);
         decListSemaParser(node->left->right->right, type, fieldList);
+        printf("DecList_outDecList: %s\n", node->left->right->right->name);
     }
     return fieldList;
 }
@@ -157,15 +171,17 @@ FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList) {
 FieldList* decSemaParser(Node node, Type* type, FieldList* fieldList) {
     // VarDec
     if (node->left->right == NULL) {
+        printf("VarDec_inDec_up: %s\n", node->left->name);
         FieldList* varDecField = varDecSemaParser(node->left, type);
+        printf("VarDec_outDec_up: %s\n", node->left->name);
         return varDecField;
     }else {
         // VarDec ASSIGN Exp
+        printf("VarDec_inDec: %s\n", node->left->name);
         Type* expType = expSemaParser(node->left->right->right);
+        printf("VarDec_outDec: %s\n", node->left->name);
         if (!typeCmp(type, expType)) {
             printf("Error type %d at Line %d: unmatching types appear at both sides of the assignment operator (=) \n", 5, node->left->right->lineno);
-            indent = indent - 2;
-            return NULL;
         }
     }
 }
@@ -251,8 +267,11 @@ Type* expSemaParser(Node node){
     Type* type = NULL;
     if(strcmp(node->left->name, "Exp") == 0){
         if(strcmp(node->left->right->name, "ASSIGN") == 0){
+            printf("ASSIGN_in\n");
             Type* expType = expSemaParser(node->left->right->right);
+            printf("ASSIGN_expType: %s\n", expType->name);
             Type* leftType = expSemaParser(node->left);
+            printf("ASSIGN_leftType: %s\n", leftType->name);
             if (!((strcmp(node->left->left->name, "ID") == 0 && node->left->left->right == NULL) || 
             (strcmp(node->left->left->name, "Exp") == 0 && strcmp(node->left->left->right->name, "DOT") == 0) || 
             (strcmp(node->left->left->name, "Exp") == 0 && strcmp(node->left->left->right->name, "LB") == 0))) {
@@ -262,6 +281,7 @@ Type* expSemaParser(Node node){
             } else {
                 type = leftType;
             }
+            printf("ASSIGN_out\n");
         } else if(strcmp(node->left->right->name, "AND") == 0 || strcmp(node->left->right->name, "OR") == 0){
             Type* expType1 = expSemaParser(node->left);
             Type* expType2 = expSemaParser(node->left->right->right);
@@ -402,8 +422,11 @@ Type* expSemaParser(Node node){
 }
 
 void compStParser(Node node, Type* type){
+    printf("CompSt: %s\n", node->name);
     defListSemaParser(node->left->right, NULL);
+    printf("DefList_inCompSt: %s\n", node->left->right->name);
     stmtListParser(node->left->right->right, type);
+    printf("StmtList_inCompSt: %s\n", node->left->right->right->name);
 }
 
 void stmtListParser(Node node, Type* type){
