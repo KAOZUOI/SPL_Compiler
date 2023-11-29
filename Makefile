@@ -12,7 +12,7 @@ build: src/syntax.y src/lexical.l src/APT.c include/APT.h src/semantic.c include
 	@mkdir -p bin/
 	$(BISON) -t -d src/syntax.y
 	$(FLEX) src/lexical.l
-	$(CC) syntax.tab.c src/APT.c src/symbolTable.c src/semantic.c -o bin/splc -ly -lfl $(CFLAGS) 
+	$(CC) syntax.tab.c src/APT.c src/symbolTable.c src/semantic.c -o bin/splc -ly -lfl -g $(CFLAGS) 
 	rm -f *.yy.* *.tab.*
 clean:
 	@rm -rf bin/

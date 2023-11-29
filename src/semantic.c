@@ -20,14 +20,20 @@ void extDefListSemaParser(Node node) {
 }
     /* ExtDef */
 void extDefSemaParser(Node node) {
+    printf("ExtDef: %s\n", node->name);
     if (node->left == NULL || node->left->right == NULL) return;
     Type* type = specifierSemaParser(node->left);
+    printf("Specifier_inExtDef: %s\n", node->left->string_value);
     if (strcmp(node->left->right->name, "ExtDecList") == 0) {
         extDecListSemaParser(node->left->right, type);
+        printf("ExtDecList_inExtDef: %s\n", node->left->right->name);
     } else if (strcmp(node->left->right->name, "FunDec") == 0) {
         Node funDec = node->left->right;
         Node compSt = node->left->right->right;
+        printf("FunDec_inExtDef: %s\n", funDec->left->string_value);
+        printf("CompSt_inExtDef: %s\n", compSt->left->name);
         Type* funDecType = funDecSemaParser(funDec, type);
+        printf("FunDecType_inExtDef: %s\n", funDecType->structure->name);
 
         if(funDecType != NULL){
             Symbol* symbol = findSymbol(funDecType->structure->name);
@@ -231,11 +237,14 @@ Type* funDecSemaParser(Node node, Type* type) {
     // ID LP RP
     if (strcmp(node->left->right->right->name, "RP") == 0) {
         varListField->next = NULL;
+        printf("RP_inFunDec\n");
     // ID LP VarList RP
     }else {
+        printf("VarList_inFunDec\n");
         FieldList* fieldList = varListSemaParser(node->left->right->right, varListField);
+        printf("VarList_outFunDec\n");
     }
-    return type;
+    return funDecType;
 }
 
 Type* expSemaParser(Node node){
@@ -394,7 +403,7 @@ Type* expSemaParser(Node node){
 
 void compStParser(Node node, Type* type){
     defListSemaParser(node->left->right, NULL);
-    stmtListParser(node->left->right, type);
+    stmtListParser(node->left->right->right, type);
 }
 
 void stmtListParser(Node node, Type* type){
