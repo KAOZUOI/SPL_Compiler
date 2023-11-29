@@ -17,11 +17,15 @@ FieldList* funDecSemaParser(Node node, Type* type);
 FieldList* varListSemaParser(Node node, FieldList* fieldList);
 FieldList* paramDecSemaParser(Node node, FieldList* fieldList);
 
-
+void compStParser(Node node, Type* type);
+void stmtListParser(Node node, Type* type);
+void stmtParser(Node node, Type* type);
 
 
 FieldList* defListSemaParser(Node node, FieldList* fieldList);
 FieldList* defSemaParser(Node node, FieldList* fieldList);
 FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList);
 FieldList* decSemaParser(Node node, Type* type, FieldList* fieldList);
+
+Type* expSemaParser(Node node);
 #endif

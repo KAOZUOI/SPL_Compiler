@@ -24,17 +24,34 @@ void extDefSemaParser(Node node) {
     if (strcmp(node->left->right->name, "ExtDecList") == 0) {
         extDecListSemaParser(node->left->right, type);
     } else if (strcmp(node->left->right->name, "FunDec") == 0) {
-        // TODO FunDec
+        Node funDec = node->left;
+        Node compSt = node->left->right;
+        Type* funDecType = funDecSemaParser(funDec, type);
+
+        if(funDecType != NULL){
+            Symbol* symbol = findSymbol(funDecType->structure->name);
+            if(symbol != NULL){
+                printf("Error type %d at Line %d: redefine the same function \"%s\".\n", 4, funDec->left->lineno, funDec->left->string_value);
+            }else{
+                symbol = (Symbol*)malloc(sizeof(Symbol));
+                symbol->name = funDecType->structure->name;
+                symbol->type = funDecType;
+                insertSymbol(symbol);
+
+                compStParser(compSt, type);
+            }
+        }
     } else if (strcmp(node->left->right->name, "SEMI") == 0) {
-        // TODO SEMI
+
     }
 }
     /* ExtDecList */
 void extDecListSemaParser(Node node, Type* type) {
     if (node->left->right == NULL) {
-        // TODO varDec
+        varDecSemaParser(node->left, type);
     } else {
-        // TODO varDec COMMA extDecList
+        varDecSemaParser(node->left, type);
+        extDecListSemaParser(node->left->right->right, type);
     }
 }
 
@@ -78,8 +95,17 @@ Type* specifierSemaParser(Node node) {
             insertSymbol(symbol);
         }else {
             // Struct ID
-            // TODO: check if the struct is defined and if the id is a struct
             type = (Type*)malloc(sizeof(Type));
+            if (symbol == NULL) {
+                printf("Error type %d at Line %d: undefined structure type \"%s\".\n", 17, node->left->right->lineno, node->left->right->string_value);
+                indent = indent - 2;
+                return NULL;
+            }
+            if(symbol->type->category != STRUCTURE) {
+                printf("Error type %d at Line %d: \"%s\" is not a structure.\n", 16, node->left->right->lineno, node->left->right->string_value);
+                indent = indent - 2;
+                return NULL;
+            }
             type = symbol->type;
         }
     }
@@ -203,12 +229,204 @@ FieldList* funDecSemaParser(Node node, Type* type) {
     return type;
 }
 
-// TODO: Exp
-// TODO: CompSt
-// TODO: StmtList
-// TODO: Stmt
+Type* expSemaParser(Node node){
+    Type* type = NULL;
+    if(strcmp(node->left->name, "Exp") == 0){
+        if(strcmp(node->left->right->name, "ASSIGN") == 0){
+            Type* expType = expSemaParser(node->left->right->right);
+            Type* leftType = expSemaParser(node->left);
+            if (!((strcmp(node->left->left->name, "ID") == 0 && node->left->left->right == NULL) || 
+            (strcmp(node->left->left->name, "Exp") == 0 && strcmp(node->left->left->right->name, "DOT") == 0) || 
+            (strcmp(node->left->left->name, "Exp") == 0 && strcmp(node->left->left->right->name, "LB") == 0))) {
+                printf("Error type %d at Line %d: the left-hand side of an assignment must be a variable.\n", 6, node->left->lineno);
+            } else if (expType != NULL && !typeCmp(leftType, expType)) {
+                printf("Error type %d at Line %d: unmatching types appear at both sides of the assignment operator (=) \n", 5, node->left->lineno);
+            } else {
+                type = leftType;
+            }
+        } else if(strcmp(node->left->right->name, "AND") == 0 || strcmp(node->left->right->name, "OR") == 0){
+            Type* expType1 = expSemaParser(node->left);
+            Type* expType2 = expSemaParser(node->left->right->right);
+            if(typeCmp(expType1, expType2) == 0){
+                printf("Error type %d at Line %d: the type of operands of logical operator must be integer.\n", 7, node->left->lineno);
+            }else{
+                type = expType1;
+            }
+        } else if(strcmp(node->left->right->name, "LT") == 0 ||
+        strcmp(node->left->right->name, "LE") == 0 ||
+        strcmp(node->left->right->name, "GT") == 0 ||
+        strcmp(node->left->right->name, "GE") == 0 ||
+        strcmp(node->left->right->name, "NE") == 0 ||
+        strcmp(node->left->right->name, "EQ") == 0 ||
+        strcmp(node->left->right->name, "PLUS") == 0 ||
+        strcmp(node->left->right->name, "MINUS") == 0 ||
+        strcmp(node->left->right->name, "MUL") == 0 ||
+        strcmp(node->left->right->name, "DIV") == 0){
+            Type* expType1 = expSemaParser(node->left);
+            Type* expType2 = expSemaParser(node->left->right->right);
+            if(typeCmp(expType1, expType2) == 0 && expType1->category != PRIMITIVE && (expType1->primitive == TYPE_INT || expType1->primitive == TYPE_FLOAT)){
+                printf("Error type %d at Line %d: the type of operands of relational operator must be integer.\n", 7, node->left->lineno);
+            }else{
+                type = expType1;
+            }
+        } else if(strcmp(node->left->right->name, "LB") == 0){
+            Type* expType1 = expSemaParser(node->left);
+            Type* expType2 = expSemaParser(node->left->right->right);
+            if(expType1->category != ARRAY){
+                printf("Error type %d at Line %d: the type of operands of \"[]\" must be an array.\n", 10, node->left->lineno);
+            }else if(expType2->category != PRIMITIVE || expType2->primitive != TYPE_INT){
+                printf("Error type %d at Line %d: the type of operands of \"[]\" must be an integer.\n", 12, node->left->lineno);
+                type = expType1->array->type;
+            }else{
+                type = expType1->array->type;
+            }
+        } else if(strcmp(node->left->right->name, "DOT") == 0){
+            Type* expType1 = expSemaParser(node->left);
+            if(expType1->category != STRUCTURE){
+                printf("Error type %d at Line %d: the type of operands of \".\" must be a structure.\n", 13, node->left->lineno);
+            }else{
+                FieldList* fieldList = expType1->structure;
+                while(fieldList != NULL){
+                    if(strcmp(fieldList->name, node->left->right->right->string_value) == 0){
+                        break;
+                    }
+                    fieldList = fieldList->next;
+                }
+                if(fieldList == NULL){
+                    printf("Error type %d at Line %d: the structure does not have the field \"%s\".\n", 14, node->left->lineno, node->left->right->right->string_value);
+                } else {
+                    type = fieldList->type;
+                }
+            }
+        } else if(strcmp(node->left->right->name, "LP") == 0){
+            Type* expType1 = expSemaParser(node->left->right->right);
+        } else if(strcmp(node->left->right->name, "MINUS") == 0){
+            Type* expType1 = expSemaParser(node->left);
+            if(expType1->category != PRIMITIVE){
+                printf("Error type %d at Line %d: the type of operands of unary operator \"-\" must be an integer or a float.\n", 7, node->left->lineno);
+            }else{
+                type = expType1;
+            }
+        } else if(strcmp(node->left->right->name, "NOT") == 0){
+            Type* expType1 = expSemaParser(node->left);
+            if(expType1->category != PRIMITIVE || expType1->primitive != TYPE_INT){
+                printf("Error type %d at Line %d: the type of operands of unary operator \"!\" must be an integer.\n", 7, node->left->lineno);
+            }else{
+                type->category = PRIMITIVE;
+                type->primitive = TYPE_INT;
+            }
+        } else if(strcmp(node->left->right->name, "ID") == 0){
+            Symbol* symbol = findSymbol(node->left->string_value);
+            if(node->left->right != NULL){
+                if(symbol == NULL){
+                    printf("Error type %d at Line %d: undefined variable \"%s\".\n", 1, node->left->lineno, node->left->string_value);
+                }else if(symbol->type->category != FUNCTION){
+                    printf("Error type %d at Line %d: \"%s\" is not a function.\n", 11, node->left->lineno, node->left->string_value);
+                    return NULL;
+                }
+                Type* funDecType = symbol->type;
+                if(strcmp(node->left->right->right->name, "Args") == 0){
+                    Node args = node->left->right->right;
+                    FieldList* fieldList = funDecType->structure->next;
+                    if(fieldList == NULL){
+                        printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
+                    }else{
+                        Node exp = args->left;
+                        while(1){
+                            Type* expType = expSemaParser(exp);
+                            if(expType == NULL){
+                                break;
+                            }
+                            if(!typeCmp(fieldList->type, expType)){
+                                printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
+                                break;
+                            } else {
+                                fieldList = fieldList->next;
+                                if(fieldList == NULL && exp->right == NULL){
+                                    type = funDecType->structure->type;
+                                    break;
+                                } else if(fieldList == NULL && exp->right != NULL){
+                                    printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
+                                    break;
+                                } else if(fieldList != NULL && exp->right == NULL){
+                                    printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
+                                    break;
+                                }
+                                exp = exp->right->right->left;
+                            }
+                        }
+                    }
+                } else {
+                    if(funDecType->structure->next = NULL){
+                        type = funDecType->structure->type;
+                    }else{
+                        printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
+                    }
+                } 
+            } else{
+                if(symbol == NULL){
+                    printf("Error type %d at Line %d: undefined variable \"%s\".\n", 1, node->left->lineno, node->left->string_value);
+                }else{
+                    type = symbol->type;
+                }
+            }
+        } else if(strcmp(node->left->right->name, "INT") == 0){
+            type->category = PRIMITIVE;
+            type->primitive = TYPE_INT;
+        } else if(strcmp(node->left->right->name, "FLOAT") == 0){
+            type->category = PRIMITIVE;
+            type->primitive = TYPE_FLOAT;
+        } else if(strcmp(node->left->right->name, "CHAR") == 0){
+            type->category = PRIMITIVE;
+            type->primitive = TYPE_CHAR;
+        }
+    }
+}
 
+void compStParser(Node node, Type* type){
+    defListSemaParser(node->left->right, NULL);
+    stmtListParser(node->left->right, type);
+}
 
+void stmtListParser(Node node, Type* type){
+    if (node->left == NULL) return;
+    stmtParser(node->left, type);
+    stmtListParser(node->left->right, type);
+}
+
+void stmtParser(Node node, Type* type){
+    if(strcmp(node->left->name, "Exp") == 0){
+        expSemaParser(node->left);
+    }else if(strcmp(node->left->name, "CompSt") == 0){
+        compStParser(node->left, type);
+    }else if(strcmp(node->left->name, "RETURN") == 0){
+        Type* expType = expSemaParser(node->left->right);
+        if (expType != NULL && !typeCmp(type, expType)) {
+            printf("Error type %d at Line %d: unmatching types appear at both sides of the assignment operator (=) \n", 8, node->left->right->lineno);
+        }
+    } else if(strcmp(node->left->name, "IF") == 0){
+        Type* expType = expSemaParser(node->left->right->right);
+        if(expType != NULL){
+            if (expType->category != PRIMITIVE || expType->primitive != TYPE_INT) {
+                printf("Error type %d at Line %d: the condition expression of \"if\" statement must be an integer.\n", 7, node->left->right->lineno);
+            } else {
+                stmtParser(node->left->right->right->right->right, type);
+                if(node->left->right->right->right->right->right->right != NULL){
+                    stmtParser(node->left->right->right->right->right->right->right->right->right, type);
+                }
+            }
+        }
+    } else if(strcmp(node->left->name, "WHILE") == 0){
+        Type* expType = expSemaParser(node->left->right->right);
+        if(expType != NULL){
+            if (expType->category != PRIMITIVE || expType->primitive != TYPE_INT) {
+                printf("Error type %d at Line %d: the condition expression of \"while\" statement must be an integer.\n", 7, node->left->right->lineno);
+            } else {
+                stmtParser(node->left->right->right->right->right, type);
+            }
+        }
+    }
+}
 
 
     /* Static Function*/
