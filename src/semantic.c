@@ -116,37 +116,39 @@ Type* specifierSemaParser(Node node) {
         printf("Specifier_inStructSpecifier \n");
         #endif
         Node structId = node->left->right;
-        Symbol* symbol = findSymbol(structId->string_value);
-        // Struct ID LC DefList RC
-        if (structId->right != NULL) {
-            if (symbol != NULL) {
-                printf("Error type %d at Line %d: redefine the same structure type \"%s\".\n", 15, node->left->right->lineno, node->left->right->string_value);
-                return NULL;
+        if(structId != NULL){
+            Symbol* symbol = findSymbol(structId->string_value);
+            // Struct ID LC DefList RC
+            if (structId->right != NULL) {
+                if (symbol != NULL) {
+                    printf("Error type %d at Line %d: redefine the same structure type \"%s\".\n", 15, node->left->right->lineno, node->left->right->string_value);
+                    return NULL;
+                }
+                type = (Type*)malloc(sizeof(Type));
+                type->category = STRUCTURE;
+                // DefList
+                Node defL = structId->right->right;
+                type->structure = defListSemaParser(defL, NULL);
+                // insert symbol
+                symbol = (Symbol*)malloc(sizeof(Symbol));
+                symbol->name = structId->string_value;
+                symbol->type = type;
+                insertSymbol(symbol);
+            }else {
+                // Struct ID
+                type = (Type*)malloc(sizeof(Type));
+                if (symbol == NULL) {
+                    printf("Error type %d at Line %d: undefined structure type \"%s\".\n", 17, node->left->right->lineno, node->left->right->string_value);
+                    indent = indent - 2;
+                    return NULL;
+                }
+                if(symbol->type->category != STRUCTURE) {
+                    printf("Error type %d at Line %d: \"%s\" is not a structure.\n", 16, node->left->right->lineno, node->left->right->string_value);
+                    indent = indent - 2;
+                    return NULL;
+                }
+                type = symbol->type;
             }
-            type = (Type*)malloc(sizeof(Type));
-            type->category = STRUCTURE;
-            // DefList
-            Node defL = structId->right->right;
-            type->structure = defListSemaParser(defL, NULL);
-            // insert symbol
-            symbol = (Symbol*)malloc(sizeof(Symbol));
-            symbol->name = structId->string_value;
-            symbol->type = type;
-            insertSymbol(symbol);
-        }else {
-            // Struct ID
-            type = (Type*)malloc(sizeof(Type));
-            if (symbol == NULL) {
-                printf("Error type %d at Line %d: undefined structure type \"%s\".\n", 17, node->left->right->lineno, node->left->right->string_value);
-                indent = indent - 2;
-                return NULL;
-            }
-            if(symbol->type->category != STRUCTURE) {
-                printf("Error type %d at Line %d: \"%s\" is not a structure.\n", 16, node->left->right->lineno, node->left->right->string_value);
-                indent = indent - 2;
-                return NULL;
-            }
-            type = symbol->type;
         }
     }
     #ifdef DEBUG
@@ -179,7 +181,11 @@ FieldList* defListSemaParser(Node node, FieldList* fieldList) {
         #endif
 
         //print fieldList
-        fieldList->next = defSemaParser(node->left, fieldList);
+        if(defSemaParser(node->left, fieldList) != NULL){
+            fieldList->next = defSemaParser(node->left, fieldList);
+        } else {
+            printf("fdefSemaParser(node->left, fieldList);\n");
+        }
         #ifdef DEBUG
         printf("Def_next_outDefList\n");
         #endif
@@ -362,7 +368,7 @@ Type* funDecSemaParser(Node node, Type* type) {
 }
 
 Type* expSemaParser(Node node){
-    Type* type = NULL;
+    Type* type = malloc(sizeof(Type));
     #ifdef DEBUG
     printf("Exp\n");
     printf("Exp_left\n");

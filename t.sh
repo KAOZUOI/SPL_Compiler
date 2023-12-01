@@ -1,1 +1,1 @@
-./bin/splc test/phase2/test/test_2_r03.spl
+./bin/splc test/phase2/test/test_2_r01.spl
