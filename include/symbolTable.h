@@ -16,5 +16,7 @@ extern Symbol* symbolTable;
 void insertSymbol(Symbol* s); // insert symbol into hash table
 Symbol* findSymbol(const char* name); // find symbol according to name
 void deleteAll(); // delete all symbols in hash table
+void printSymbolTable(); // print all symbols in hash table
+void deleteSymbol(Symbol* s); // delete a symbol in hash table
 
 #endif
