@@ -1,0 +1,152 @@
+test/phase2/test/test_2_r04.out
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: int
+      FunDec (1)
+        ID: sum
+        LP
+        VarList (1)
+          ParamDec (1)
+            Specifier (1)
+              TYPE: int
+            VarDec (1)
+              ID: x
+          COMMA
+          VarList (1)
+            ParamDec (1)
+              Specifier (1)
+                TYPE: int
+              VarDec (1)
+                ID: y
+        RP
+      CompSt (2)
+        LC
+        DefList (3)
+          Def (3)
+            Specifier (3)
+              TYPE: int
+            DecList (3)
+              Dec (3)
+                VarDec (3)
+                  ID: res
+                ASSIGN
+                Exp (3)
+                  Exp (3)
+                    ID: x
+                  PLUS
+                  Exp (3)
+                    ID: y
+            SEMI
+        StmtList (4)
+          Stmt (4)
+            RETURN
+            Exp (4)
+              ID: res
+            SEMI
+        RC
+    ExtDefList (6)
+      ExtDef (6)
+        Specifier (6)
+          TYPE: float
+        FunDec (6)
+          ID: sum
+          LP
+          VarList (6)
+            ParamDec (6)
+              Specifier (6)
+                TYPE: int
+              VarDec (6)
+                ID: x
+            COMMA
+            VarList (6)
+              ParamDec (6)
+                Specifier (6)
+                  TYPE: int
+                VarDec (6)
+                  ID: y
+          RP
+        CompSt (7)
+          LC
+          DefList (8)
+            Def (8)
+              Specifier (8)
+                TYPE: int
+              DecList (8)
+                Dec (8)
+                  VarDec (8)
+                    ID: res
+                  ASSIGN
+                  Exp (8)
+                    Exp (8)
+                      ID: x
+                    PLUS
+                    Exp (8)
+                      ID: y
+              SEMI
+          StmtList (9)
+            Stmt (9)
+              RETURN
+              Exp (9)
+                ID: res
+              SEMI
+          RC
+      ExtDefList (11)
+        ExtDef (11)
+          Specifier (11)
+            TYPE: int
+          FunDec (11)
+            ID: test_2_r04
+            LP
+            RP
+          CompSt (12)
+            LC
+            DefList (13)
+              Def (13)
+                Specifier (13)
+                  TYPE: int
+                DecList (13)
+                  Dec (13)
+                    VarDec (13)
+                      ID: a1
+                  COMMA
+                  DecList (13)
+                    Dec (13)
+                      VarDec (13)
+                        ID: a2
+                SEMI
+              DefList (14)
+                Def (14)
+                  Specifier (14)
+                    TYPE: int
+                  DecList (14)
+                    Dec (14)
+                      VarDec (14)
+                        ID: b
+                      ASSIGN
+                      Exp (14)
+                        ID: sum
+                        LP
+                        Args (14)
+                          Exp (14)
+                            ID: a
+                          COMMA
+                          Args (14)
+                            Exp (14)
+                              ID: b
+                        RP
+                  SEMI
+            StmtList (15)
+              Stmt (15)
+                RETURN
+                Exp (15)
+                  INT: 0
+                SEMI
+            RC
+Error type 3 at Line 6: a variable is redefined in the same scope "x".
+Error type 3 at Line 6: a variable is redefined in the same scope "y".
+Error type 4 at Line 6: redefine the same function "sum".
+Error type 9 at Line 14: the function "sum" is not applicable for arguments.
+Error type 3 at Line 14: a variable is redefined in the same scope "b".
+Error type 9 at Line 14: the function "sum" is not applicable for arguments.

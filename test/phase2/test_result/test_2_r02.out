@@ -1,0 +1,106 @@
+test/phase2/test/test_2_r02.out
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: int
+      FunDec (1)
+        ID: sum
+        LP
+        VarList (1)
+          ParamDec (1)
+            Specifier (1)
+              TYPE: int
+            VarDec (1)
+              ID: x
+          COMMA
+          VarList (1)
+            ParamDec (1)
+              Specifier (1)
+                TYPE: int
+              VarDec (1)
+                ID: y
+        RP
+      CompSt (2)
+        LC
+        DefList (3)
+          Def (3)
+            Specifier (3)
+              TYPE: int
+            DecList (3)
+              Dec (3)
+                VarDec (3)
+                  ID: res
+                ASSIGN
+                Exp (3)
+                  Exp (3)
+                    ID: x
+                  PLUS
+                  Exp (3)
+                    ID: y
+            SEMI
+        StmtList (4)
+          Stmt (4)
+            RETURN
+            Exp (4)
+              ID: res
+            SEMI
+        RC
+    ExtDefList (6)
+      ExtDef (6)
+        Specifier (6)
+          TYPE: int
+        FunDec (6)
+          ID: test_2_r02
+          LP
+          RP
+        CompSt (7)
+          LC
+          DefList (8)
+            Def (8)
+              Specifier (8)
+                TYPE: int
+              DecList (8)
+                Dec (8)
+                  VarDec (8)
+                    ID: a1
+                COMMA
+                DecList (8)
+                  Dec (8)
+                    VarDec (8)
+                      ID: a2
+              SEMI
+            DefList (9)
+              Def (9)
+                Specifier (9)
+                  TYPE: float
+                DecList (9)
+                  Dec (9)
+                    VarDec (9)
+                      ID: b
+                    ASSIGN
+                    Exp (9)
+                      ID: diff
+                      LP
+                      Args (9)
+                        Exp (9)
+                          ID: a1
+                        COMMA
+                        Args (9)
+                          Exp (9)
+                            ID: a2
+                      RP
+                SEMI
+          StmtList (10)
+            Stmt (10)
+              RETURN
+              Exp (10)
+                ID: b
+              SEMI
+          RC
+Error type 1 at Line 9: undefined variable "diff".
+Error type 5 at Line 9: unmatching types appear at both sides of the assignment operator (=) 
+Error type 3 at Line 9: a variable is redefined in the same scope "b".
+Error type 1 at Line 9: undefined variable "diff".
+Error type 5 at Line 9: unmatching types appear at both sides of the assignment operator (=) 
+Error type 8 at Line 10: unmatching types appear at both sides of the assignment operator (=) 

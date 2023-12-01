@@ -1,0 +1,78 @@
+test/phase2/test/test_2_r11.out
+Program (1)
+  ExtDefList (1)
+    ExtDef (1)
+      Specifier (1)
+        TYPE: int
+      FunDec (1)
+        ID: test_2_r11
+        LP
+        RP
+      CompSt (2)
+        LC
+        DefList (3)
+          Def (3)
+            Specifier (3)
+              TYPE: int
+            DecList (3)
+              Dec (3)
+                VarDec (3)
+                  ID: abc
+            SEMI
+          DefList (4)
+            Def (4)
+              Specifier (4)
+                TYPE: int
+              DecList (4)
+                Dec (4)
+                  VarDec (4)
+                    VarDec (4)
+                      VarDec (4)
+                        ID: a
+                      LB
+                      INT: 1
+                      RB
+                    LB
+                    INT: 5
+                    RB
+              SEMI
+        StmtList (5)
+          Stmt (5)
+            Exp (5)
+              Exp (5)
+                Exp (5)
+                  Exp (5)
+                    ID: a
+                  LB
+                  Exp (5)
+                    INT: 0
+                  RB
+                LB
+                Exp (5)
+                  INT: 1
+                RB
+              ASSIGN
+              Exp (5)
+                ID: abc
+                LP
+                RP
+            SEMI
+          StmtList (6)
+            Stmt (6)
+              RETURN
+              Exp (6)
+                Exp (6)
+                  Exp (6)
+                    ID: a
+                  LB
+                  Exp (6)
+                    ID: abc
+                  RB
+                LB
+                Exp (6)
+                  ID: abc
+                RB
+              SEMI
+        RC
+Error type 3 at Line 4: a variable is redefined in the same scope "a".
+Error type 11 at Line 5: "abc" is not a function.
