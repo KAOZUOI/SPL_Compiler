@@ -10,7 +10,9 @@ int indent;
 
     /* Program */
 void programSemaParser(Node node) {
+    pushScope();
     extDefListSemaParser(node->left);
+    popScope();
 }
     /* ExtDefList */
 void extDefListSemaParser(Node node) {
@@ -329,6 +331,7 @@ FieldList* paramDecSemaParser(Node node, FieldList* fieldList) {
 
     /* funDec */
 Type* funDecSemaParser(Node node, Type* type) {
+    pushScope();
     Type* funDecType = (Type*)malloc(sizeof(Type));
     funDecType->category = FUNCTION;
     funDecType->structure = (FieldList*)malloc(sizeof(FieldList));
@@ -605,8 +608,10 @@ void compStParser(Node node, Type* type){
     #ifdef DEBUG
     printf("CompSt");
     #endif
+    pushScope();
     defListSemaParser(node->left->right, NULL);
     stmtListParser(node->left->right->right, type);
+    popScope();
     #ifdef DEBUG
     printf("StmtList_inCompSt");
     #endif

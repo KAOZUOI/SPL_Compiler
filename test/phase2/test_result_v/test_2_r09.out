@@ -168,4 +168,17 @@ Program (1)
                         ID: a
                     RP
                   SEMI
-          
+                StmtList (15)
+                  Stmt (15)
+                    RETURN
+                    Exp (15)
+                      ID: compare
+                      LP
+                      RP
+                    SEMI
+          RC
+Error type 3 at Line 10: a variable is redefined in the same scope "b".
+Error type 3 at Line 11: a variable is redefined in the same scope "c".
+Error type 9 at Line 12: the function "compare" is not applicable for arguments.
+Error type 9 at Line 13: the function "compare" is not applicable for arguments.
+Error type 9 at Line 14: the function "compare" is not applicable for arguments.

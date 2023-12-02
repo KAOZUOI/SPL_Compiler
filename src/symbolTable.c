@@ -1,45 +1,38 @@
 #include "symbolTable.h"
 #include <stdio.h>
-Symbol* symbolTable = NULL;
+#include <stdlib.h>
+
+ScopeNode* scopeStack = NULL;
+
+void pushScope() {
+    ScopeNode* newNode = (ScopeNode*)malloc(sizeof(ScopeNode));
+    newNode->symbolTable = NULL;
+    newNode->next = scopeStack;
+    scopeStack = newNode;
+}
+
+void popScope() {
+    if (scopeStack != NULL) {
+        ScopeNode* tmp = scopeStack;
+        scopeStack = scopeStack->next;
+    } else {
+        printf("Error: Attempted to pop empty scope stack\n");
+    }
+}
 
 void insertSymbol(Symbol* s) {
-    HASH_ADD_STR(symbolTable, name, s);
+    if (scopeStack != NULL) {
+        HASH_ADD_STR(scopeStack->symbolTable, name, s);
+    }
 }
 
 Symbol* findSymbol(const char* name) {
-    Symbol* s;
-    #ifdef DEBUG
-    printf("findSymbol_in\n");
-    #endif
-    HASH_FIND_STR(symbolTable, name, s);
-    #ifdef DEBUG
-    printf("findSymbol_out\n");
-    #endif
+    Symbol* s = NULL;
+    ScopeNode* currentNode = scopeStack;
+    while (currentNode != NULL && s == NULL) {
+        HASH_FIND_STR(currentNode->symbolTable, name, s);
+        currentNode = currentNode->next;
+    }
     return s;
-}
-
-void deleteAll() {
-    Symbol* currentSymbol;
-    Symbol* tmp;
-    HASH_ITER(hh, symbolTable, currentSymbol, tmp) {
-        HASH_DEL(symbolTable, currentSymbol);
-        free(currentSymbol->name);
-        free(currentSymbol);
-    }
-}
-
-void printSymbolTable() {
-    Symbol* currentSymbol;
-    Symbol* tmp;
-    HASH_ITER(hh, symbolTable, currentSymbol, tmp) {
-        printf("name: %s\n", currentSymbol->name);
-        printf("type: %s\n", currentSymbol->type->name);
-    }
-}
-
-void deleteSymbol(Symbol* s) {
-    HASH_DEL(symbolTable, s);
-    free(s->name);
-    free(s);
 }
 
