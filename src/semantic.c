@@ -612,13 +612,16 @@ void compStParser(Node node, Type* type){
     #endif
 }
 
-void stmtListParser(Node node, Type* type){
-    if (node->left == NULL) return;
-    stmtParser(node->left, type);
-    stmtListParser(node->left->right, type);
+void stmtListParser(Node node, Type* type) {
+    if (node->left != NULL) {
+        stmtParser(node->left, type);
+        stmtListParser(node->left->right, type);
+    }
+
 }
 
 void stmtParser(Node node, Type* type){
+
     if(strcmp(node->left->name, "Exp") == 0){
         expSemaParser(node->left);
     }else if(strcmp(node->left->name, "CompSt") == 0){
@@ -626,27 +629,31 @@ void stmtParser(Node node, Type* type){
     }else if(strcmp(node->left->name, "RETURN") == 0){
         Type* expType = expSemaParser(node->left->right);
         if (expType != NULL && !typeCmp(type, expType)) {
-            printf("Error type %d at Line %d: unmatching types appear at both sides of the assignment operator (=) \n", 8, node->left->right->lineno);
+            printf("Error type %d at Line %d: a function's return value type mismatches the declared type \n", 8, node->left->lineno);
         }
     } else if(strcmp(node->left->name, "IF") == 0){
-        Type* expType = expSemaParser(node->left->right->right);
+        Node expIf = node->left->right->right;
+        Type* expType = expSemaParser(expIf);
+        //only int variables can do boolean operations
         if(expType != NULL){
             if (expType->category != PRIMITIVE || expType->primitive != TYPE_INT) {
                 printf("Error type %d at Line %d: the condition expression of \"if\" statement must be an integer.\n", 7, node->left->right->lineno);
             } else {
-                stmtParser(node->left->right->right->right->right, type);
-                if(node->left->right->right->right->right->right->right != NULL){
-                    stmtParser(node->left->right->right->right->right->right->right->right->right, type);
+                stmtParser(expIf->right->right, type);
+                if(expIf->right->right->right != NULL){
+                    stmtParser(expIf->right->right->right->right, type);
                 }
             }
         }
     } else if(strcmp(node->left->name, "WHILE") == 0){
-        Type* expType = expSemaParser(node->left->right->right);
+        Node expWhile = node->left->right->right;
+        Type* expType = expSemaParser(expWhile);
+        //only int variables can do boolean operations
         if(expType != NULL){
             if (expType->category != PRIMITIVE || expType->primitive != TYPE_INT) {
-                printf("Error type %d at Line %d: the condition expression of \"while\" statement must be an integer.\n", 7, node->left->right->lineno);
+                printf("Error type %d at Line %d: the condition expression of \"while\" statement must be an integer.\n", 7, expWhile->lineno);
             } else {
-                stmtParser(node->left->right->right->right->right, type);
+                stmtParser(expWhile->right->right, type);
             }
         }
     }
