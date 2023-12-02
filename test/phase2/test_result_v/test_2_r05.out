@@ -1,0 +1,2 @@
+test/phase2/test/test_2_r05.out
+Error type 5 at Line 12: unmatching types appear at both sides of the assignment operator (=) 

@@ -1,0 +1,2 @@
+test/phase2/test/test_2_r14.out
+Error type 14 at Line 11: the structure does not have the field "c".

@@ -1,0 +1,2 @@
+test/phase2/test/test_2_r12.out
+Error type 12 at Line 7: the type of operands of "[]" must be an integer.

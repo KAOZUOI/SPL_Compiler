@@ -1,0 +1,3 @@
+test/phase2/test/test_2_r15.out
+Error type 15 at Line 7: redefine the same structure type "Apple".
+Error type 5 at Line 16: unmatching types appear at both sides of the assignment operator (=) 

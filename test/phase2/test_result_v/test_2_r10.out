@@ -1,0 +1,2 @@
+test/phase2/test/test_2_r10.out
+Error type 10 at Line 12: the type of operands of "[]" must be an array.

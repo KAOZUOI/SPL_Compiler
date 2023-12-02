@@ -1,0 +1,4 @@
+test/phase2/test/test_2_r02.out
+Error type 1 at Line 9: a function is invoked without a definition "diff".
+Error type 5 at Line 9: unmatching types appear at both sides of the assignment operator (=) 
+Error type 8 at Line 10: a function's return value type mismatches the declared type 

@@ -1,0 +1,2 @@
+test/phase2/test/test_2_r08.out
+Error type 8 at Line 19: a function's return value type mismatches the declared type 

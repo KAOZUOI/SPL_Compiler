@@ -1,0 +1,3 @@
+test/phase2/test/test_2_r13.out
+Error type 13 at Line 19: the type of operands of "." must be a structure.
+Error type 13 at Line 19: the type of operands of "." must be a structure.

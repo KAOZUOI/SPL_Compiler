@@ -1,0 +1,5 @@
+test/phase2/test/test_2_r04.out
+Error type 3 at Line 6: a variable is redefined in the same scope "x".
+Error type 3 at Line 6: a variable is redefined in the same scope "y".
+Error type 4 at Line 6: redefine the same function "sum".
+Error type 9 at Line 14: the function "sum" is not applicable for arguments.

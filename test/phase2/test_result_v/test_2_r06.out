@@ -1,0 +1,3 @@
+test/phase2/test/test_2_r06.out
+Error type 5 at Line 9: unmatching types appear at both sides of the assignment operator (=) 
+Error type 6 at Line 10: the left-hand side of an assignment must be a variable.

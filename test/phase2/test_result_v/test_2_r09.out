@@ -1,0 +1,4 @@
+test/phase2/test/test_2_r09.out
+Error type 9 at Line 12: the function "compare" is not applicable for arguments.
+Error type 9 at Line 13: the function "compare" is not applicable for arguments.
+Error type 9 at Line 14: the function "compare" is not applicable for arguments.
