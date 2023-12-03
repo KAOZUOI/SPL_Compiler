@@ -10,6 +10,7 @@ int indent;
 
     /* Program */
 void programSemaParser(Node node) {
+
     extDefListSemaParser(node->left);
 }
     /* ExtDefList */
@@ -65,6 +66,7 @@ void extDefSemaParser(Node node) {
                 printf("name: %s\n", symbol->name);
                 printf("type: %s\n", symbol->type->name);
                 #endif
+                
                 compStParser(compSt, type);
             }
         }
@@ -442,7 +444,7 @@ Type* expSemaParser(Node node){
             #ifdef DEBUG
             printf("AND_OR_expType1\n");
             #endif
-            if(typeCmp(expType1, expType2) == 0){
+            if(typeCmp(expType1, expType2) == 0 && expType1->category != PRIMITIVE && expType1->primitive != TYPE_INT){
                 printf("Error type %d at Line %d: the type of operands of logical operator must be integer.\n", 7, node->left->lineno);
             }else{
                 type = expType1;
@@ -471,7 +473,7 @@ Type* expSemaParser(Node node){
             #ifdef DEBUG
             printf("LT_GE_expType2\n");
             #endif
-            if(typeCmp(expType1, expType2) == 0 && expType1->category != PRIMITIVE && (expType1->primitive == TYPE_INT || expType1->primitive == TYPE_FLOAT)){
+            if((typeCmp(expType1, expType2) == 0) && (expType1->primitive == TYPE_INT || expType1->primitive == TYPE_FLOAT)){
                 printf("Error type %d at Line %d: the type of operands of relational operator must be integer.\n", 7, node->left->lineno);
             }else{
                 type = expType1;
@@ -504,16 +506,15 @@ Type* expSemaParser(Node node){
             if(expType1->category != STRUCTURE){
                 printf("Error type %d at Line %d: the type of operands of \".\" must be a structure.\n", 13, node->left->lineno);
             }else{
-                FieldList* fieldList = expType1->structure;
-                while(fieldList != NULL){
+                FieldList* fieldList;
+                for(fieldList = expType1->structure; fieldList != NULL; fieldList = fieldList->next){
                     if(strcmp(fieldList->name, node->left->right->right->string_value) == 0){
                         break;
                     }
-                    fieldList = fieldList->next;
                 }
                 if(fieldList == NULL){
                     printf("Error type %d at Line %d: the structure does not have the field \"%s\".\n", 14, node->left->lineno, node->left->right->right->string_value);
-                } else {
+                }else{
                     type = fieldList->type;
                 }
             }
@@ -694,33 +695,65 @@ void stmtParser(Node node, Type* type){
 int typeCmp(Type* typeA, Type* typeB) {
     if (!typeA || !typeB) return 0;
 
-    switch (typeA->category) {
-        case PRIMITIVE:
-            return (typeB->category == PRIMITIVE && typeA->primitive == typeB->primitive);
-
-        case ARRAY:
-            return (typeB->category == ARRAY && 
+    if (typeA->category == PRIMITIVE) {
+            if(typeB->category == PRIMITIVE && typeA->primitive == typeB->primitive){
+                return 1;
+            }
+    }
+    else if (typeA->category == ARRAY){
+            if (typeB->category == ARRAY && 
                     typeA->array->size == typeB->array->size && 
-                    typeCmp(typeA->array->type, typeB->array->type));
-
-        case STRUCTURE:
-        case FUNCTION:
-            if (typeB->category != typeA->category) return 0;
+                    typeCmp(typeA->array->type, typeB->array->type)){
+                        return 1;
+                    }
+    }
+    else if (typeA->category == STRUCTURE || typeA->category == FUNCTION) {
+        if (typeB->category != typeA->category) return 0;
 
             FieldList* fieldListA = typeA->structure;
             FieldList* fieldListB = typeB->structure;
 
-            while (fieldListA && fieldListB) {
-                if (!typeCmp(fieldListA->type, fieldListB->type)) return 0;
-                fieldListA = fieldListA->next;
-                fieldListB = fieldListB->next;
+            while(fieldListA != NULL && fieldListB != NULL) {
+				if(!typeCmp(fieldListA->type, fieldListB->type)) {
+					return 0;
+                }
+				fieldListA = fieldListA->next;
+				fieldListB = fieldListB->next;
+			}
+			if(fieldListA != NULL || fieldListB != NULL) {
+				return 0;
             }
-
-            return (fieldListA == NULL && fieldListB == NULL);
-
-        default:
-            return 0;
+			return 1;
     }
+    return 0;
 }
+    // if (typeA == NULL || typeB == NULL) {
+    //     return 0;
+    // }
+    // if (typeA->category == typeB->category) {
+    //     if (typeA->category == PRIMITIVE && typeA->primitive == typeB->primitive) {
+    //         return 1;
+    //     } else if (typeA->category == ARRAY &&
+    //         typeCmp(typeA->array->type, typeB->array->type) &&
+    //         typeA->array->size == typeB->array->size) {
+    //         return 1;
+    //     } else if(typeA->category == STRUCTURE || typeA->category == FUNCTION) {
+	// 		FieldList* field1 = typeA->structure;
+	// 		FieldList* field2 = typeB->structure;
+	// 		while(field1 != NULL && field2 != NULL)
+	// 		{
+	// 			if(!typeCmp(field1->type, field2->type)) {
+	// 				return 0;
+    //             }
+	// 			field1 = field1->next;
+	// 			field2 = field2->next;
+	// 		}
+	// 		if(field1 != NULL || field2 != NULL) {
+	// 			return 0;
+    //         }
+	// 		return 1;
+	// 	}
+    // }
+
 
 

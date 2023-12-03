@@ -7,7 +7,7 @@ CFLAGS = -Iinclude -Wall
 DEBUG ?= 0
 VERBOSE ?= 0
 
-# # test -v
+# # # test -v
 # build: src/syntax.y src/lexical.l src/APT.c include/APT.h src/semantic.c include/semantic.h src/symbolTable.c include/symbolTable.h include/type.h
 # 	@mkdir -p bin/
 # 	$(BISON) -t -d src/syntax.y

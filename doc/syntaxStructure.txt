@@ -25,11 +25,10 @@ VarList -> ParamDec COMMA VarList
 ParamDec -> Specifier VarDec
 
 
-CompSt -> LC StmtList RC
+CompSt -> LC DefList StmtList RC
 StmtList -> Stmt StmtList
     | $
-Stmt ->Def 
-    | Exp SEMI
+Stmt -> Exp SEMI
     | CompSt
     | RETURN Exp SEMI
     | IF LP Exp RP Stmt

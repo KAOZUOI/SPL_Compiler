@@ -1,1 +1,4 @@
 test/phase2/test/test_2_r07.out
+Error type 7 at Line 11: the type of operands of relational operator must be integer.
+Error type 7 at Line 12: the type of operands of relational operator must be integer.
+Error type 5 at Line 12: unmatching types appear at both sides of the assignment operator (=) 
