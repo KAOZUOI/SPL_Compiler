@@ -11,12 +11,17 @@ typedef struct Symbol{
     UT_hash_handle hh; // makes this structure hashable
 } Symbol;
 
-extern Symbol* symbolTable;
+typedef struct ScopeNode {
+    Symbol* symbolTable;
+    struct ScopeNode* next;
+} ScopeNode;
 
-void insertSymbol(Symbol* s); // insert symbol into hash table
-Symbol* findSymbol(const char* name); // find symbol according to name
-void deleteAll(); // delete all symbols in hash table
-void printSymbolTable(); // print all symbols in hash table
-void deleteSymbol(Symbol* s); // delete a symbol in hash table
+extern ScopeNode* scopeStack;
+
+void pushScope();
+void popScope();
+void insertSymbol(Symbol* s);
+Symbol* findSymbol(const char* name);
+void deleteAll(Symbol* symbolTable);
 
 #endif

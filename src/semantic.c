@@ -10,8 +10,9 @@ int indent;
 
     /* Program */
 void programSemaParser(Node node) {
-
+    pushScope();
     extDefListSemaParser(node->left);
+    popScope();
 }
     /* ExtDefList */
 void extDefListSemaParser(Node node) {
@@ -66,8 +67,9 @@ void extDefSemaParser(Node node) {
                 printf("name: %s\n", symbol->name);
                 printf("type: %s\n", symbol->type->name);
                 #endif
-                
+                pushScope();
                 compStParser(compSt, type);
+                popScope();
             }
         }
     } else if (strcmp(node->left->right->name, "SEMI") == 0) {
