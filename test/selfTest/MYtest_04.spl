@@ -1,0 +1,20 @@
+struct Book {
+  int id;
+  char title;
+};
+
+struct Book {
+  float price;
+  int pages;
+};
+
+int printBook(struct Book book) {
+  return book.id;
+}
+
+int main() {
+  struct Book myBook;
+  myBook.id = 123;
+  myBook.title = 'C';
+  printBook(123);
+}

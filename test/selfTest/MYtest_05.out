@@ -1,0 +1,2 @@
+Error type 14 at Line 9: the structure does not have the field "department".
+Error type 5 at Line 9: unmatching types appear at both sides of the assignment operator (=) 

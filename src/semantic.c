@@ -658,7 +658,9 @@ void stmtParser(Node node, Type* type){
     if(strcmp(node->left->name, "Exp") == 0){
         expSemaParser(node->left);
     }else if(strcmp(node->left->name, "CompSt") == 0){
+        pushScope();
         compStParser(node->left, type);
+        popScope();
     }else if(strcmp(node->left->name, "RETURN") == 0){
         Type* expType = expSemaParser(node->left->right);
         if (expType != NULL && !typeCmp(type, expType)) {

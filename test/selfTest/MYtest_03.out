@@ -1,0 +1,4 @@
+Error type 9 at Line 10: the function "add" is not applicable for arguments.
+Error type 3 at Line 11: a variable is redefined in the same scope "result".
+Error type 9 at Line 11: the function "minus" is not applicable for arguments.
+Error type 5 at Line 11: unmatching types appear at both sides of the assignment operator (=) 

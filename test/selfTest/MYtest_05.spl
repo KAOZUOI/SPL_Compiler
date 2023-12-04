@@ -1,0 +1,11 @@
+struct Employee {
+  int id;
+  float salary;
+};
+int main() {
+  struct Employee emp1;
+  emp1.id = 101;
+  emp1.salary = 50000.0;
+  emp1.department = 'S';
+  return 0;
+}

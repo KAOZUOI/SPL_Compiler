@@ -1,0 +1,6 @@
+int main() {
+  int rect;
+  rect.length = 10;
+  rect.width = 20;
+  return 0;
+}
