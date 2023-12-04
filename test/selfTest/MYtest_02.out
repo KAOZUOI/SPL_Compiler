@@ -1,0 +1,4 @@
+Error type 1 at Line 3: undefined variable "z".
+Error type 1 at Line 9: undefined variable "a".
+Error type 9 at Line 10: the function "sum" is not applicable for arguments.
+Error type 1 at Line 16: undefined variable "xx".
