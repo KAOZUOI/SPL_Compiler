@@ -4,7 +4,7 @@ rm -rf test/phase2/test_result && mkdir test/phase2/test_result
 for file in `ls test/phase2/test/`
 do
     echo "test/phase2/test/$file"
-    ./bin/splc test/phase2/test/$file  > test/phase2/test_result_v/${file%.*}.out
+    ./bin/splc test/phase2/test/${file%.*}.spl  > test/phase2/test_result_v/${file%.*}.out
 done
 
 # # NO VERBOSE

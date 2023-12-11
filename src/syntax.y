@@ -101,7 +101,7 @@
 Program: 
         ExtDefList    { 
                 $$ = newAnnotatedParseNode("Program", 1, $1);
-                // if (errors == 0)    printAnnotatedParseTree($$, 0);
+                // if (errors == 0) printAnnotatedParseTree($$, 0);
                 programSemaParser($$);
             }
     ;

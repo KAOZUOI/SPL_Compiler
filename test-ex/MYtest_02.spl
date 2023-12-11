@@ -11,6 +11,7 @@ int test_2_r01()
   while (res < 10)
   {
     int xx = 1;
+    int res = 1;
     res = xx;
   }
   res = xx;

@@ -55,7 +55,7 @@ FLOAT               [-+]?(([0-9]+\.?[0-9]*)|([0-9]*\.?[0-9]+))
 CHAR                '(([ -~])|(\\x[0-9a-fA-F]{2}))'
 WRONG_HEX_CHAR      '\\x[0-9a-zA-Z]*'
 ID                  [_a-zA-Z][_a-zA-Z0-9]*
-WRONG_ID            [0-9][_a-zA-Z0-9]*|[_a-zA-Z0-9]*[%$&]+[_a-zA-Z0-9]*|[_a-zA-Z][_a-zA-Z0-9]{63,}
+WRONG_ID            [0-9][_a-zA-Z0-9]*|[_a-zA-Z0-9]*[_a-zA-Z0-9]*|[_a-zA-Z][_a-zA-Z0-9]{63,}
 
     /* comments */
 SINGLE_LINE_COMMENT \/\/[^\n]*
@@ -134,4 +134,6 @@ MULTI_LINE_COMMENT  \/\*.*\*\/
 "*"       // eat the lone star
 \n        ;
 }
+
+
 %%
