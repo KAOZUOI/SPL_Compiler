@@ -1,6 +1,8 @@
 #ifndef TYPE_H
 #define TYPE_H
 typedef struct Type{
+    int space;
+    char* tag;
     char name[20];
     enum {PRIMITIVE, ARRAY, STRUCTURE, FUNCTION} category;
     union{

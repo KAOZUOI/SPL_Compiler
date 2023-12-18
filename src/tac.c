@@ -1,65 +1,88 @@
 #include "tac.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
+#include "hashmap.h"
+#include "translate.h"
 
-// 全局变量
-Tac *head = NULL; // 链表头部
-Tac *tail = NULL; // 链表尾部
+char* titles[] = {"FUNCTION", "READ", "WRITE", "LABEL", "GOTO",
+                "IF", "ASS", "OPER", "RETURN", "PARAM", "ARG", "DEC"};
 
-// 插入新的Tac结构体到链表中
-Tac *insertTac(char* target, char* op, char* arg1, char* arg2) {
-    // 创建新的Tac结构体
-    Tac *newTac = (Tac *)malloc(sizeof(Tac));
-    if (newTac == NULL) {
-        // 内存分配失败
-        return NULL;
-    }
-
-    // 复制字符串
-    newTac->target = target ? strdup(target) : NULL;
-    newTac->op = op ? strdup(op) : NULL;
-    newTac->arg1 = arg1 ? strdup(arg1) : NULL;
-    newTac->arg2 = arg2 ? strdup(arg2) : NULL;
-
-    // 初始化链表指针
-    newTac->before = NULL;
-    newTac->next = NULL;
-
-    // 插入到链表中
-    if (tail == NULL) {
-        // 链表为空
-        head = tail = newTac;
-    } else {
-        // 链表不为空
-        tail->next = newTac;
-        newTac->before = tail;
-        tail = newTac;
-    }
-
-    return newTac;
+Tac * newTac(char* target, char* op, char* arg1, char* arg2){
+    Tac* instr = (Tac *)malloc(sizeof(Tac));
+    instr->target = target;
+    instr->op = op;
+    instr->arg1 = arg1;
+    instr->arg2 = arg2;
+    instr->next = NULL;
+    return instr;
 }
 
-// 打印整个Tac链表
-void printTacList(FILE *file) {
-    Tac *current = head; // 假设head是您的链表头部全局变量
-
-    while (current != NULL) {
-        // 判断是打印到文件还是标准输出
-        if (file != NULL) {
-            fprintf(file, "%s %s %s %s\n",
-                    current->target, current->op, current->arg1, current->arg2);
-        } else {
-            printf("%s %s %s %s\n",
-                   current->target, current->op, current->arg1, current->arg2);
+void printTacs(Tac* head){
+    head = head->next;
+    int lines = 0;
+    //preparation: t0 := #0, t1 := #1;
+    while (head != NULL){
+        if(head->title == FUNC || head->title ==  READ
+        || head->title ==  WRITE || head->title == LABEL
+        || head->title == RETURN || head->title == PARAM
+        || head->title == ARG){
+            if(head->title == LABEL || head->title == FUNC){
+                if(head->title == FUNC && lines > 0) { printf("\n"); }
+                printf("%s %s :\n", titles[head->title], head->target);
+            }else{
+                printf("%s %s\n", titles[head->title], head->target);
+            }
+        }else if(head->title == GOTO){
+            printf("%s %s\n", titles[head->title], head->target);
+            while (head != NULL && head->title == GOTO) {
+                head = head->next;
+            }
+            lines++;
+            continue;
+        }else if (head->title == IF){
+            printf("IF %s GOTO %s\n", head->arg1, head->target);
+        }else if(head->title == ASS) {
+            printf("%s := %s\n", head->target, head->arg1);
+        }else if (head->title == OPER){
+            printf("%s := %s %s %s\n", head->target, head->arg1, head->op, head->arg2);
+        }else if(head->title == DEC){
+            printf("%s %s %s\n", titles[head->title], head->arg1, head->arg2);
         }
-        current = current->next;
+        lines++;
+        head = head->next;
     }
 }
 
-// 释放整个Tac链表
-void freeTacList() {
-    Tac *current = head; // 假设head是您的链表头部全局变量
+char* generateT(int t){
+    char num[10] = {0};
+    sprintf(num, "%d", t);
+    char target[10] = "t";
+    strcat(target, num);
+    int len = countLength(t) + 1;
+    char* tag = (char*)malloc(sizeof(char) * len);
+    strncpy(tag, target, len);
+    return tag;
+}
 
-    while (current != NULL) {
-        Tac *temp = current;
-        current = current->next;
-    }
+char* generateV(int v){
+    char num[10] = {0};
+    sprintf(num, "%d", v);
+    char value[10] = "v";
+    strcat(value, num);
+    int len = countLength(v) + 1;
+    char* tag = (char*)malloc(sizeof(char) * len);
+    strncpy(tag, value, len);
+    return tag;
+}
+
+char* generateLabel(int lbl){
+    char num[10] = {0};
+    sprintf(num, "%d", lbl);
+    char target[15] = "label";
+    strcat(target, num);
+    int len = countLength(lbl) + 5;
+    char* tag = (char*)malloc(sizeof(char) * len);
+    strncpy(tag, target, len);
+    return tag;
 }

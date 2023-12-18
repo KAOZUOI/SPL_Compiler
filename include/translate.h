@@ -12,7 +12,7 @@ void extDecListSemaParser(Node node, Type* type);
 Type* specifierSemaParser(Node node);
 Type* structSpecifierSemaParser(Node node);
 
-FieldList* varDecSemaParser(Node node, Type* type);
+FieldList* varDecSemaParser(int isStructDef, int isFuncParam, Node node, Type* type);
 Type* funDecSemaParser(Node node, Type* type);
 FieldList* varListSemaParser(Node node, FieldList* fieldList);
 FieldList* paramDecSemaParser(Node node, FieldList* fieldList);
@@ -22,10 +22,10 @@ void stmtListParser(Node node, Type* type);
 void stmtParser(Node node, Type* type);
 
 
-FieldList* defListSemaParser(Node node, FieldList* fieldList);
-FieldList* defSemaParser(Node node, FieldList* fieldList);
-FieldList* decListSemaParser(Node node, Type* type, FieldList* fieldList);
-FieldList* decSemaParser(Node node, Type* type, FieldList* fieldList);
+FieldList* defListSemaParser(int isStructDef, Node node, FieldList* fieldList);
+FieldList* defSemaParser(int isStructDef, Node node, FieldList* fieldList);
+FieldList* decListSemaParser(int isStructDef, Node node, Type* type, FieldList* fieldList);
+FieldList* decSemaParser(int isStructDef, Node node, Type* type, FieldList* fieldList);
 
 Type* expSemaParser(Node node);
 
