@@ -56,54 +56,27 @@ void extDefListSemaParser(Node node) {
 }
     /* ExtDef */
 void extDefSemaParser(Node node) {
-    #ifdef DEBUG
-    printf("ExtDef_in\n");
-    #endif
     if (node->left == NULL || node->left->right == NULL) return;
     Type* type = specifierSemaParser(node->left);
-    #ifdef DEBUG
-    printf("Specifier_inExtDef\n");
-    #endif
     if (strcmp(node->left->right->name, "ExtDecList") == 0) {
         extDecListSemaParser(node->left->right, type);
-        #ifdef DEBUG
-        printf("ExtDecList_inExtDef\n");
-        #endif
     } else if (strcmp(node->left->right->name, "FunDec") == 0) {
         Node funDec = node->left->right;
         Node compSt = node->left->right->right;
-        #ifdef DEBUG
-        printf("FunDec_inExtDef\n");
-        printf("CompSt_inExtDef\n");
-        #endif
         Type* funDecType = funDecSemaParser(funDec, type);
-        #ifdef DEBUG
-        printf("FunDecType_inExtDef\n");
-        #endif
 
         if(funDecType != NULL){
-            #ifdef DEBUG
-            printf("if_inExtDef\n");
-            #endif
             Symbol* symbol = findSymbol(funDecType->structure->name);
             if(symbol != NULL){
                 printf("Error type %d at Line %d: redefine the same function \"%s\".\n", 4, funDec->left->lineno, funDec->left->string_value);
             }else{
-                #ifdef DEBUG
-                printf("else_inExtDef\n");
-                #endif
                 symbol = (Symbol*)malloc(sizeof(Symbol));
                 symbol->name = funDecType->structure->name;
                 symbol->type = funDecType;
                 symbol->offset = -1;
                 insertSymbol(symbol);
-                #ifdef DEBUG
-                printf("insertSymbol_inExtDef:\n");
-                printf("name: %s\n", symbol->name);
-                printf("type: %s\n", symbol->type->name);
-                #endif
                 pushScope();
-                compStParser(compSt, type);
+                compStParser(NULL, compSt, type);
                 popScope();
             }
         }
@@ -124,41 +97,21 @@ void extDecListSemaParser(Node node, Type* type) {
     /* Specifier */
 Type* specifierSemaParser(Node node) {
     Type* type = NULL;
-    #ifdef DEBUG
-    printf("Specifier_in \n");
-    if (node->left == NULL) printf("Specifier_left: NULL\n");
-    else printf("Specifier_left: %s\n", node->left->name);
-    #endif
     if (strcmp(node->left->name, "TYPE") == 0) {
-        #ifdef DEBUG
-        printf("Specifier_inTYPE \n");
-        #endif
         type = (Type*)malloc(sizeof(Type));
         type->category = PRIMITIVE;
         if (strcmp(node->left->string_value, "int") == 0) {
             type->primitive = TYPE_INT;
             type->space = 4;
-            #ifdef DEBUG
-            printf("Int \n");
-            #endif
         } else if (strcmp(node->left->string_value, "float") == 0) {
             type->primitive = TYPE_FLOAT;
             type->space = 4;
-            #ifdef DEBUG
-            printf("Float \n");
-            #endif
         } else if (strcmp(node->left->string_value, "char") == 0) {
             type->primitive = TYPE_CHAR;
             type->space = 1;
-            #ifdef DEBUG
-            printf("Char \n");
-            #endif
         }
         return type;
     } else if (strcmp(node->left->name, "StructSpecifier") == 0) {
-        #ifdef DEBUG
-        printf("Specifier_inStructSpecifier \n");
-        #endif
         Node structId = node->left->left->right;
             Symbol* symbol = findSymbol(structId->string_value);
             // Struct ID LC DefList RC
@@ -171,17 +124,14 @@ Type* specifierSemaParser(Node node) {
                 type->category = STRUCTURE;
                 // DefList
                 Node defL = structId->right->right;
+                pushScope();
                 type->structure = defListSemaParser(1, defL, NULL);
+                popScope();
                 // insert symbol
                 symbol = (Symbol*)malloc(sizeof(Symbol));
                 symbol->name = structId->string_value;
                 symbol->type = type;
                 insertSymbol(symbol);
-                #ifdef DEBUG
-                printf("insertSymbol_inStructSpecifier:\n");
-                printf("name: %s\n", symbol->name);
-                printf("type: %s\n", symbol->type->name);
-                #endif
             }else {
                 // Struct ID
                 type = (Type*)malloc(sizeof(Type));
@@ -196,66 +146,30 @@ Type* specifierSemaParser(Node node) {
                 type = symbol->type;
             }
     }
-    #ifdef DEBUG
-    printf("Specifier_out \n");
-    #endif
     return type;
 }
 
     /* DefList */
 FieldList* defListSemaParser(int isStructDef, Node node, FieldList* fieldList) {
     // $
-    #ifdef DEBUG
-    printf("node->name: %s\n", node->name);
-    #endif
     if (!strcmp(node->name, "Epsilon")) {
         return fieldList;
     }
     // Def DefList
     if (fieldList == NULL) {
-        #ifdef DEBUG
-        printf("Def_inDefList\n");
-        #endif
         fieldList = defSemaParser(isStructDef, node->left, fieldList);
-        #ifdef DEBUG
-        printf("Def_outDefList\n");
-        #endif
     }else {
-        #ifdef DEBUG
-        printf("Def_next_inDefList: %s\n", node->left->name);
-        #endif
-
         //print fieldList
-
         fieldList->next = defSemaParser(isStructDef, node->left, fieldList);
 
-        #ifdef DEBUG
-        printf("Def_next_outDefList\n");
-        #endif
-
     }
-    #ifdef DEBUG
-    printf("DefList_inDefList\n");
-    #endif
     defListSemaParser(isStructDef, node->left->right, fieldList);
-    #ifdef DEBUG
-    printf("DefList_outDefList\n");
-    #endif
     return fieldList;
 }
     /* Def */
 FieldList* defSemaParser(int isStructDef, Node node, FieldList* fieldList) {
-    #ifdef DEBUG
-    printf("Specifier_inDef \n");
-    #endif
     Type* type = specifierSemaParser(node->left);
-    #ifdef DEBUG
-    printf("decList_inDef\n");
-    #endif
     fieldList = decListSemaParser(isStructDef, node->left->right, type, fieldList);
-    #ifdef DEBUG
-    printf("decList_outDef");
-    #endif
     return fieldList;
 }
 
@@ -263,28 +177,11 @@ FieldList* defSemaParser(int isStructDef, Node node, FieldList* fieldList) {
 FieldList* decListSemaParser(int isStructDef, Node node, Type* type, FieldList* fieldList) {
     // Dec
     if (node->left->right == NULL) {
-        #ifdef DEBUG
-        printf("Dec_inDecList_up\n");
-        #endif
-
         fieldList = decSemaParser(isStructDef, node->left, type, fieldList);
-        #ifdef DEBUG
-        printf("Dec_outDecList_up\n");
-        #endif
     }else {
         // Dec COMMA DecList
-        #ifdef DEBUG
-        printf("Dec_inDecList\n");
-        #endif
         fieldList = decSemaParser(isStructDef, node->left, type, fieldList);
-        #ifdef DEBUG
-        printf("Dec_outDecList\n");
-        printf("DecList_inDecList\n");
-        #endif
         decListSemaParser(isStructDef, node->left->right->right, type, fieldList);
-        #ifdef DEBUG
-        printf("DecList_outDecList\n");
-        #endif
     }
     return fieldList;
 }
@@ -292,32 +189,20 @@ FieldList* decListSemaParser(int isStructDef, Node node, Type* type, FieldList* 
 FieldList* decSemaParser(int isStructDef, Node node, Type* type, FieldList* fieldList) {
     //VarDec
     if (node->left->right == NULL) {
-        #ifdef DEBUG
-        printf("VarDec_inDec_up\n");
-        #endif
         FieldList* varDecField = varDecSemaParser(isStructDef, 0, node->left, type);
-        #ifdef DEBUG
-        printf("VarDec_outDec_up\n");
-        #endif
         return varDecField;
     }else {
         // VarDec ASSIGN Exp
-        #ifdef DEBUG
-        printf("VarDec_inDec 00000\n");
-        #endif
         FieldList* varDecField = varDecSemaParser(isStructDef, 0, node->left, type);
-        Type* expType = expSemaParser(node->left->right->right);
-        #ifdef DEBUG
-        printf("VarDec_outDec\n");
-        #endif
+        Type* expType = expSemaParser(0, node->left->right->right);
         if (!typeCmp(type, expType)) {
             printf("Error type %d at Line %d: unmatching types appear at both sides of the assignment operator (=) \n", 5, node->left->right->lineno);
         } else {
             Hashmap* item = findHashmap(varDecField->name);
             if (item != NULL) {
                 curTac->next = newTac(item->value, NULL, expType->tag, NULL);
+                curTac->next->title = ASS;
                 curTac = curTac->next;
-                curTac->title = ASS;
             }
         }
         return varDecField;
@@ -347,7 +232,8 @@ FieldList* varDecSemaParser(int isStructDef, int isFuncParam, Node node, Type* t
         printf("Error type %d at Line %d: a variable is redefined in the same scope \"%s\".\n", 3, varDec->lineno, varDec->string_value);
     } else{
         if (!isStructDef){
-            char* vtg = generateV(vCnt++);
+            char* vtg = generateV(vCnt);
+            vCnt++;
             if(isFuncParam){
                 fieldList->type->tag = vtg;
                 curTac->next = newTac(vtg, NULL, NULL, NULL);
@@ -362,15 +248,16 @@ FieldList* varDecSemaParser(int isStructDef, int isFuncParam, Node node, Type* t
                     strcat(fieldList->type->tag, "&");
                     strcat(fieldList->type->tag, vtg);
                     curTac->next = newTac(NULL, NULL, vtg, arg2);
+                    curTac->next->title = DEC;
                     curTac = curTac->next;
-                    curTac->title = DEC;
                 }else{
                     fieldList->type->tag = vtg;
                 }
             }
-
         }
-
+        insertHashmap(fieldList->name, fieldList->type->tag);
+        //print fieldList->type->tag
+        printf("%s %s\n", fieldList->name, fieldList->type->tag);
     }
     // insert symbol
     symbol = (Symbol*)malloc(sizeof(Symbol));
@@ -379,11 +266,6 @@ FieldList* varDecSemaParser(int isStructDef, int isFuncParam, Node node, Type* t
     symbol->name = buffer;
     symbol->type = fieldList->type;
     insertSymbol(symbol);
-    #ifdef DEBUG
-    printf("insertSymbol_inVarDec:\n");
-    printf("name: %s\n", symbol->name);
-    printf("type: %s\n", symbol->type->name);
-    #endif
     return fieldList;
 }
     /* varList */
@@ -393,29 +275,14 @@ FieldList* varListSemaParser(Node node, FieldList* fieldList) {
     fieldList = paramDecSemaParser(node->left, fieldList);
 
     if (node->left->right != NULL) {
-        #ifdef DEBUG
-        printf("VarList_inVarList\n");
-        #endif
         fieldList->next = varListSemaParser(node->left->right->right, fieldList);
-        #ifdef DEBUG
-        printf("VarList_outVarList\n");
-        #endif
     }
     return fieldList;
 }
     /* paramDec */
 FieldList* paramDecSemaParser(Node node, FieldList* fieldList) {
-    #ifdef DEBUG
-    printf("Specifier_inParamDec\n");
-    #endif
     Type* type = specifierSemaParser(node->left);
-    #ifdef DEBUG
-    printf("Dec_inParamDec\n");
-    #endif
     FieldList* varDecField = varDecSemaParser(0, 1, node->left->right, type);
-    #ifdef DEBUG
-    printf("Dec_outParamDec,FieldList = %s\n", varDecField->name);
-    #endif
     return varDecField;
 }
 
@@ -426,65 +293,33 @@ Type* funDecSemaParser(Node node, Type* type) {
     funDecType->structure = (FieldList*)malloc(sizeof(FieldList));
     funDecType->structure->type = type;
     funDecType->structure->name = node->left->string_value;
-    #ifdef DEBUG
-    printf("FunDec\n");
-    #endif
     FieldList* varListField = funDecType->structure;
     // check if node->left->right is NULL
     if (node->left->right == NULL) {
-        #ifdef DEBUG
-        printf("NULL1\n");
-        #endif
     }
     if (node->left->right->right == NULL) {
-        #ifdef DEBUG
-        printf("NULL2\n");
-        #endif
     }
+    curTac->next = newTac(funDecType->structure->name, NULL, NULL, NULL);
+    curTac->next->title = FUNC;
+    curTac = curTac->next;
     // ID LP RP
     if (strcmp(node->left->right->right->name, "RP") == 0) {
         varListField->next = NULL;
         funDecType->structure->next = NULL;
-        #ifdef DEBUG
-        printf("RP_inFunDec\n");
-        #endif
     // ID LP VarList RP
     }else {
-        #ifdef DEBUG
-        printf("VarList_inFunDec\n");
-        #endif
         funDecType->structure->next = varListSemaParser(node->left->right->right, varListField);
-        #ifdef DEBUG
-        printf("VarList_outFunDec\n");
-        #endif
     }
     return funDecType;
 }
 
-Type* expSemaParser(Node node){
-    Type* type = malloc(sizeof(Type));
-    Type* result = NULL;
-    #ifdef DEBUG
-    printf("Exp\n");
-    printf("Exp_left\n");
-    #endif
-    // printf("Exp_right: %s\n", node->left->right->name);
+Type* expSemaParser(int isAss, Node node){
+    Type* type = NULL;
+
     if(strcmp(node->left->name, "Exp") == 0){
-        #ifdef DEBUG
-        printf("Exp_in\n");
-        #endif
         if(strcmp(node->left->right->name, "ASSIGN") == 0){
-            #ifdef DEBUG
-            printf("ASSIGN_in\n");
-            #endif
-            Type* expType = expSemaParser(node->left->right->right);
-            #ifdef DEBUG
-            printf("ASSIGN_expType\n");
-            #endif
-            Type* leftType = expSemaParser(node->left);
-            #ifdef DEBUG
-            printf("ASSIGN_leftType\n");
-            #endif
+            Type* expType = expSemaParser(0, node->left->right->right);
+            Type* leftType = expSemaParser(1, node->left);
             if (!((strcmp(node->left->left->name, "ID") == 0 && node->left->left->right == NULL) || 
             (strcmp(node->left->left->name, "Exp") == 0 && strcmp(node->left->left->right->name, "DOT") == 0) || 
             (strcmp(node->left->left->name, "Exp") == 0 && strcmp(node->left->left->right->name, "LB") == 0))) {
@@ -493,78 +328,266 @@ Type* expSemaParser(Node node){
                 printf("Error type %d at Line %d: unmatching types appear at both sides of the assignment operator (=) \n", 5, node->left->lineno);
             } else {
                 type = leftType;
+                char* target = leftType->tag;
+                Hashmap* item = findHashmap(target);
+                if(item != NULL) {
+                    target = item->value;
+                }
+                if (strcmp(curTac->target, expType->tag) == 0) {
+                    if(target[0] == '*'){
+                        curTac->next = newTac(target, NULL, expType->tag, NULL);
+                        curTac->next->title = ASS;
+                        curTac = curTac->next;
+                    } else {
+                        curTac->target = target;
+                    }
+                } else {
+                    curTac->next = newTac(target, NULL, expType->tag, NULL);
+                    curTac->next->title = ASS;
+                    curTac = curTac->next;
+                } 
+
             }
-            #ifdef DEBUG
-            printf("ASSIGN_out\n");
-            #endif
         } else if(strcmp(node->left->right->name, "AND") == 0 || strcmp(node->left->right->name, "OR") == 0){
-            #ifdef DEBUG
-            printf("AND_OR_in\n");
-            #endif
-            Type* expType1 = expSemaParser(node->left);
-            Type* expType2 = expSemaParser(node->left->right->right);
-            #ifdef DEBUG
-            printf("AND_OR_expType1\n");
-            #endif
+
+            Type* expType1 = expSemaParser(0, node->left);
+            Type* expType2 = expSemaParser(0, node->left->right->right);
+
             if(typeCmp(expType1, expType2) == 0 && expType1->category != PRIMITIVE && expType1->primitive != TYPE_INT){
                 printf("Error type %d at Line %d: the type of operands of logical operator must be integer.\n", 7, node->left->lineno);
             }else{
-                type = expType1;
+                type = (Type*)malloc(sizeof(Type));
+                type->category = PRIMITIVE;
+                type->primitive = TYPE_INT;
+                int isAnd = !strcmp(node->left->right->name,"AND")? 1 : 0;
+                if (isAnd) {
+                    int otagll = labelCnt;
+                    int ztagl = labelCnt + 1;
+                    int otagrl = labelCnt + 2;
+                    labelCnt += 3;
+                    char* tmpTag = generateLabel(otagll);
+                    char* otag = generateLabel(otagrl);
+                    char* ztag = generateLabel(ztagl);
+                    curTac->next = newTac(tmpTag, NULL, expType1->tag, NULL);
+                    curTac = curTac->next; curTac->next->title = IF;
+                    curTac->next = newTac(ztag, NULL, NULL, NULL);
+                    curTac = curTac->next; curTac->title = GOTO;
+                    curTac->next = newTac(tmpTag, NULL, NULL, NULL);
+                    curTac = curTac->next; curTac->title = LABEL;
+                    curTac->next = newTac(otag, NULL, expType2->tag, NULL);
+                    curTac = curTac->next; curTac->title = IF;
+                    curTac->next = newTac(ztag, NULL, NULL, NULL);
+                    curTac = curTac->next; curTac->title = GOTO;
+                    if(onetag != NULL) free(onetag);
+                    if(zerotag != NULL) free(zerotag);
+                    onetag = (char*)malloc(sizeof(char) * strlen(otag));
+                    strcpy(onetag, otag);
+                    zerotag = (char*)malloc(sizeof(char) * strlen(ztag));
+                    strcpy(zerotag, ztag);
+                }else{
+                    int otagl = labelCnt;
+                    int ztagll = labelCnt + 1;
+                    int ztagrl = labelCnt + 2;
+                    labelCnt += 3;
+                    char* tmpTag = generateLabel(ztagll);
+                    char* otag = generateLabel(otagl);
+                    char* ztag = generateLabel(ztagrl);
+                    curTac->next = newTac(otag, NULL, expType1->tag, NULL);
+                    curTac = curTac->next; curTac->title = IF;
+                    curTac->next = newTac(tmpTag, NULL, NULL, NULL);
+                    curTac = curTac->next; curTac->title = GOTO;
+                    curTac->next = newTac(tmpTag, NULL, NULL, NULL);
+                    curTac = curTac->next; curTac->title = LABEL;
+                    curTac->next = newTac(otag, NULL, expType2->tag, NULL);
+                    curTac = curTac->next; curTac->title = IF;
+                    curTac->next = newTac(ztag, NULL, NULL, NULL);
+                    curTac = curTac->next; curTac->title = GOTO;
+                    if(onetag != NULL) free(onetag);
+                    if(zerotag != NULL) free(zerotag);
+                    onetag = (char*)malloc(sizeof(char) * strlen(otag));
+                    strcpy(onetag, otag);
+                    zerotag = (char*)malloc(sizeof(char) * strlen(ztag));
+                    strcpy(zerotag, ztag);
+                }
             }
-            #ifdef DEBUG
-            printf("AND_OR_out\n");
-            #endif
         } else if(strcmp(node->left->right->name, "LT") == 0 ||
         strcmp(node->left->right->name, "LE") == 0 ||
         strcmp(node->left->right->name, "GT") == 0 ||
         strcmp(node->left->right->name, "GE") == 0 ||
         strcmp(node->left->right->name, "NE") == 0 ||
-        strcmp(node->left->right->name, "EQ") == 0 ||
-        strcmp(node->left->right->name, "PLUS") == 0 ||
-        strcmp(node->left->right->name, "MINUS") == 0 ||
-        strcmp(node->left->right->name, "MUL") == 0 ||
-        strcmp(node->left->right->name, "DIV") == 0) {
-            #ifdef DEBUG
-            printf("LT_GE_in\n");
-            #endif
-            Type* expType1 = expSemaParser(node->left);
-            #ifdef DEBUG
-            printf("LT_GE_expType1\n");
-            #endif
-            Type* expType2 = expSemaParser(node->left->right->right);
-            #ifdef DEBUG
-            printf("LT_GE_expType2\n");
-            #endif
+        strcmp(node->left->right->name, "EQ") == 0) {
+            Type* expType1 = expSemaParser(0, node->left);
+
+            Type* expType2 = expSemaParser(0, node->left->right->right);
+
             if((typeCmp(expType1, expType2) == 0) && (expType1->primitive == TYPE_INT || expType1->primitive == TYPE_FLOAT)){
                 printf("Error type %d at Line %d: the type of operands of relational operator must be integer.\n", 7, node->left->lineno);
             }else{
-                type = expType1;
+                type = (Type*)malloc(sizeof(Type));
+                type->category = PRIMITIVE;
+                type->primitive = TYPE_INT;
+                int len = strlen(expType1->tag) + strlen(expType2->tag);
+                char* oper = NULL;
+                if(!strcmp(node->left->right->name,"LT")){ len += 3; oper = " < ";
+                }else if (!strcmp(node->left->right->name,"LE")){ len += 4; oper = " <= ";
+                }else if (!strcmp(node->left->right->name,"GT")){ len += 3; oper = " > ";
+                }else if (!strcmp(node->left->right->name,"GE")){ len += 4; oper = " >= ";
+                }else if (!strcmp(node->left->right->name,"NE")){ len += 4; oper = " != ";
+                }else{ len += 4; oper = " == "; }
+                type->tag = (char*)malloc(sizeof(char) * len);
+                strcat(type->tag, expType1->tag);
+                strcat(type->tag, oper);
+                strcat(type->tag, expType2->tag);
             }
-            #ifdef DEBUG
-            printf("LT_GE_out\n");
-            #endif
+
+        }else if(strcmp(node->left->right->name, "PLUS") == 0 ||
+        strcmp(node->left->right->name, "MINUS") == 0 ||
+        strcmp(node->left->right->name, "MUL") == 0 ||
+        strcmp(node->left->right->name, "DIV") == 0) {
+
+            Type* expType1 = expSemaParser(0, node->left);
+
+            Type* expType2 = expSemaParser(0, node->left->right->right);
+
+            if((typeCmp(expType1, expType2) == 0) && (expType1->primitive == TYPE_INT || expType1->primitive == TYPE_FLOAT)){
+                printf("Error type %d at Line %d: the type of operands of relational operator must be integer.\n", 7, node->left->lineno);
+            }else{
+                type = (Type*)malloc(sizeof(Type));
+                type->category = PRIMITIVE;
+                if(expType1->primitive == TYPE_FLOAT || expType2->primitive == TYPE_FLOAT){
+                    type->primitive = TYPE_FLOAT;
+                }else{
+                    type->primitive = TYPE_INT;
+                }
+                char* irop = NULL;
+                if (!strcmp(node->left->right->name,"PLUS")){
+                    irop = "+";
+                }else if (!strcmp(node->left->right->name,"MINUS")){
+                    irop = "-";
+                }else if (!strcmp(node->left->right->name,"MUL")){
+                    irop = "*";
+                }else{
+                    irop = "/";
+                }
+                if (expType1->tag[0] == '#' && expType2->tag[0] == '#') {
+                    char lf[10] = {0};
+                    char rg[10] = {0};
+                    for (size_t i = 1; i < strlen(expType1->tag); i++) {
+                        lf[i - 1] = expType1->tag[i];
+                    }
+                    for (size_t i = 1; i < strlen(expType2->tag); i++) {
+                        rg[i - 1] = expType2->tag[i];
+                    }
+                    int left = atoi(lf);
+                    int right = atoi(rg);
+                    int res = 0;
+                    if (irop[0] == '+') res = left + right;
+                    else if (irop[0] == '-') res = left - right;
+                    else if (irop[0] == '*') res = left * right;
+                    else res = left / right;
+                    int len = countLength(res) + 1;
+                    char tmp[10] = {0};
+                    sprintf(tmp, "%d", res);
+                    type->tag = (char*)malloc(sizeof(char) * len);
+                    strcat(type->tag, "#");
+                    strcat(type->tag, tmp);
+                }else{
+                    if (irop[0] == '*'){
+                        if (!strcmp(expType2->tag, "#1")){
+                            type->tag = (char*)malloc(sizeof(char)*strlen(expType1->tag));
+                            strcpy(type->tag, expType1->tag);
+                            return type;
+                        }else if (!strcmp(expType1->tag, "#1")){
+                            type->tag = (char*)malloc(sizeof(char)*strlen(expType2->tag));
+                            strcpy(type->tag, expType2->tag);
+                            return type;
+                        }
+                    }else if (irop[0] == '/'){
+                        if (!strcmp(expType2->tag, "#1")){
+                            type->tag = (char*)malloc(sizeof(char)*strlen(expType1->tag));
+                            strcpy(type->tag, expType1->tag);
+                            return type;
+                        }
+                    }else if (irop[0] == '-' && !strcmp(expType1->tag, expType2->tag)){
+                        type->tag = "#0";
+                        return type;
+                    }
+                    type->tag = generateT(tCnt);
+                    curTac-> next = newTac(type->tag, irop, expType1->tag, expType2->tag);
+                    curTac = curTac->next;
+                    curTac->title = OPER;
+                    tCnt++;
+                }
+            }
+
         } else if(strcmp(node->left->right->name, "LB") == 0){
-            #ifdef DEBUG
-            printf("LB_in\n");
-            #endif
-            Type* expType1 = expSemaParser(node->left);
-            Type* expType2 = expSemaParser(node->left->right->right);
+
+            Type* expType1 = expSemaParser(isAss, node->left);
+            Type* expType2 = expSemaParser(isAss, node->left->right->right);
             if(expType1->category != ARRAY){
                 printf("Error type %d at Line %d: the type of operands of \"[]\" must be an array.\n", 10, node->left->lineno);
             }else if(expType2->category != PRIMITIVE || expType2->primitive != TYPE_INT){
                 printf("Error type %d at Line %d: the type of operands of \"[]\" must be an integer.\n", 12, node->left->lineno);
                 type = expType1->array->type;
             }else{
-                type = expType1->array->type;
+                type = (Type*)malloc(sizeof(Type));
+
+                deepcopyType(type, expType1->array->type);
+                char* addr = NULL;
+                if ((expType2->tag[0] == '#' && expType2->tag[1] != '0')
+                || expType2->tag[0] == 'v'){
+                    // int unit = expType1->array->type->dec;
+                    int unit = 4;
+                    char* decs = NULL;
+                    char num[10] = {0};
+                    char mrk[10] = "#";
+                    int len = countLength(unit) + 1;
+                    sprintf(num, "%d", unit);
+                    strcat(mrk, num);
+                    char* ost = (char*)malloc(sizeof(char) * len);
+                    strncpy(ost, mrk, len);
+                    if (expType2->tag[0] == '#' 
+                    && expType2->tag[1] == '1'
+                    && expType2->tag[2] == '\0'){
+                        decs = ost;
+                    }else{
+                        // t? := unit * INT
+                        decs = generateT(tCnt);
+                        tCnt++;
+                        curTac->next = newTac(decs, "*", expType2->tag, ost);
+                        curTac = curTac->next;
+                        curTac->title = OPER;
+                    }
+                    // t? := addr + decs
+                    addr = generateT(tCnt);
+                    tCnt++;
+                    curTac->next = newTac(addr, "+", expType1->tag, decs);
+                    curTac = curTac->next;
+                    curTac->title = OPER;
+                }else{
+                    addr = expType1->tag;
+                }
+                // t? := *addr
+                if(type->category == ARRAY || type->category == STRUCTURE){
+                    type->tag = addr;
+                }else{
+                    type->tag = generateT(tCnt);
+                    tCnt++;
+                    char* val = (char*)malloc(sizeof(char)*(strlen(addr) + 1));
+                    strcat(val, "*");
+                    strcat(val, addr);
+                    insertHashmap(type->tag, val);
+                    if (!isAss) {
+                        curTac->next = newTac(type->tag, NULL, val, NULL);
+                        curTac = curTac->next;
+                        curTac->title = ASS;
+                    }
+                }
             }
-            #ifdef DEBUG
-            printf("LB_out\n");
-            #endif
+
         } else if(strcmp(node->left->right->name, "DOT") == 0){
-            #ifdef DEBUG
-            printf("DOT_in\n");
-            #endif
-            Type* expType1 = expSemaParser(node->left);
+
+            Type* expType1 = expSemaParser(isAss, node->left);
             if(expType1->category != STRUCTURE){
                 printf("Error type %d at Line %d: the type of operands of \".\" must be a structure.\n", 13, node->left->lineno);
             }else{
@@ -578,47 +601,71 @@ Type* expSemaParser(Node node){
                     printf("Error type %d at Line %d: the structure does not have the field \"%s\".\n", 14, node->left->lineno, node->left->right->right->string_value);
                 }else{
                     type = fieldList->type;
+                    // TODO
                 }
             }
-            #ifdef DEBUG
-            printf("DOT_out\n");
-            #endif
         }
     } else if(strcmp(node->left->name, "LP") == 0){
-        #ifdef DEBUG
-        printf("LP_in\n");
-        #endif
-        type = expSemaParser(node->left->right);
+
+        type = expSemaParser(0, node->left->right);
+        type = type;
     } else if(strcmp(node->left->name, "MINUS") == 0){
-        #ifdef DEBUG
-        printf("MINUS_in\n");
-        #endif
-        Type* expType1 = expSemaParser(node->left->right);
+
+        Type* expType1 = expSemaParser(0, node->left->right);
         if(expType1->category != PRIMITIVE){
             printf("Error type %d at Line %d: the type of operands of unary operator \"-\" must be an integer or a float.\n", 7, node->left->lineno);
         }else{
-            type = expType1;
+            type = (Type*)malloc(sizeof(Type));
+            type->category = PRIMITIVE;
+            type->primitive = expType1->primitive;
+            char* key = (char*)malloc(sizeof(char) * (strlen(expType1->tag) + 3));
+            strcat(key, "#0");
+            strcat(key, "-");
+            strcat(key, expType1->tag);
+            Hashmap* item = findHashmap(key);
+            if (item == NULL){
+                type->tag = generateT(tCnt);
+                curTac-> next = newTac(type->tag, "-", "#0", expType1->tag);
+                curTac = curTac->next;
+                curTac->title = OPER;
+                insertHashmap(key, type->tag);
+                tCnt++;
+            }else{
+                type->tag = item->value;
+            }
         }
     } else if(strcmp(node->left->name, "NOT") == 0){
-        #ifdef DEBUG
-        printf("NOT_in\n");
-        #endif
-        Type* expType1 = expSemaParser(node->left->right);
+
+        Type* expType1 = expSemaParser(0, node->left->right);
         if(expType1->category != PRIMITIVE || expType1->primitive != TYPE_INT){
             printf("Error type %d at Line %d: the type of operands of unary operator \"!\" must be an integer.\n", 7, node->left->lineno);
         }else{
+            type = (Type*)malloc(sizeof(Type));
             type->category = PRIMITIVE;
             type->primitive = TYPE_INT;
+            int len = strlen(expType1->tag);
+            type->tag = (char*)malloc(sizeof(char) * len);
+            for (size_t i = 0; i < len; i++){
+                if (!strncmp(expType1->tag + i, "!=", 2)){
+                    type->tag[i] = '=';
+                    type->tag[i + 1] = '=';
+                    i++;
+                }else if (!strncmp(expType1->tag + i, "==", 2)){
+                    type->tag[i] = '!';
+                    type->tag[i + 1] = '=';
+                    i++;
+                }else if (!strncmp(expType1->tag + i, ">", 1)){
+                    type->tag[i] = '<';
+                }else if (!strncmp(expType1->tag + i, "<", 1)){
+                    type->tag[i] = '>';
+                }else{
+                    type->tag[i] = expType1->tag[i];
+                }
+            }
         }
     } else if(strcmp(node->left->name, "ID") == 0){
-        #ifdef DEBUG
-        printf("ID_in\n");
-        #endif
         Symbol* symbol = findSymbol(node->left->string_value);
         if(node->left->right != NULL){
-            #ifdef DEBUG
-            printf("node->left->right: %s\n", node->left->right->name);
-            #endif
             if(symbol == NULL){
                 printf("Error type %d at Line %d: a function is invoked without a definition \"%s\".\n", 1, node->left->lineno, node->left->string_value);
                 return NULL;
@@ -631,19 +678,14 @@ Type* expSemaParser(Node node){
                 Node args = node->left->right->right;
                 FieldList* fieldList = funDecType->structure->next;
                 if(fieldList == NULL){
-                    #ifdef DEBUG
-                    printf("first in FUNC\n");
-                    #endif
                     printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
                 }else{
                     Node exp = args->left;
                     while(1){
-                        Type* expType = expSemaParser(exp);
+                        Type* expType = expSemaParser(0, exp);
                         if(expType != NULL){
                             if(!typeCmp(fieldList->type, expType)){
-                                #ifdef DEBUG
-                                printf("second in FUNC\n");
-                                #endif
+
                                 printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
                                 break;
                             } else {
@@ -652,15 +694,11 @@ Type* expSemaParser(Node node){
                                     type = funDecType->structure->type;
                                     break;
                                 } else if(fieldList != NULL && exp->right == NULL){
-                                    #ifdef DEBUG
-                                    printf("third in FUNC\n");
-                                    #endif
+
                                     printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
                                     break;
                                 } else if(fieldList == NULL && exp->right != NULL){
-                                    #ifdef DEBUG
-                                    printf("fourth in FUNC\n");
-                                    #endif
+
                                     printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
                                     break;
                                 }
@@ -684,83 +722,192 @@ Type* expSemaParser(Node node){
             }
         }
     } else if(strcmp(node->left->name, "INT") == 0){
-        #ifdef DEBUG
-        printf("INT_in\n");
-        #endif
+        char num[10] = "#";
+        // strcat(num, node->left->int_value);
+        sprintf(num, "#%d", node->left->int_value);
+        type = (Type*)malloc(sizeof(Type));
         type->category = PRIMITIVE;
         type->primitive = TYPE_INT;
+        type->tag = (char*)malloc(sizeof(char) * (countLength(node->left->int_value) + 1));
+        strncpy(type->tag, num, (countLength(node->left->int_value) + 1));
     } else if(strcmp(node->left->name, "FLOAT") == 0){
-        #ifdef DEBUG
-        printf("FLOAT_in\n");
-        #endif
+        type = (Type*)malloc(sizeof(Type));
         type->category = PRIMITIVE;
         type->primitive = TYPE_FLOAT;
     } else if(strcmp(node->left->name, "CHAR") == 0){
-        #ifdef DEBUG
-        printf("CHAR_in\n");
-        #endif
+        type = (Type*)malloc(sizeof(Type));
         type->category = PRIMITIVE;
         type->primitive = TYPE_CHAR;
     }
     return type;
 }
 
-void compStParser(Node node, Type* type){
-    #ifdef DEBUG
-    printf("CompSt");
-    #endif
+void compStParser(Node prev, Node node, Type* type){
     defListSemaParser(0, node->left->right, NULL);
-    stmtListParser(node->left->right->right, type);
-    #ifdef DEBUG
-    printf("StmtList_inCompSt");
-    #endif
+    stmtListParser(prev, node->left->right->right, type);
 }
 
-void stmtListParser(Node node, Type* type) {
+void stmtListParser(Node prev, Node node, Type* type) {
     if (node->left != NULL) {
-        stmtParser(node->left, type);
-        stmtListParser(node->left->right, type);
+        stmtParser(prev, node->left, type);
+        stmtListParser(prev, node->left->right, type);
     }
 
 }
 
-void stmtParser(Node node, Type* type){
+void stmtParser(Node prev, Node node, Type* type){
 
     if(strcmp(node->left->name, "Exp") == 0){
-        expSemaParser(node->left);
+        expSemaParser(0, node->left);
     }else if(strcmp(node->left->name, "CompSt") == 0){
-        pushScope();
-        compStParser(node->left, type);
-        popScope();
+        compStParser(prev, node->left, type);
     }else if(strcmp(node->left->name, "RETURN") == 0){
-        Type* expType = expSemaParser(node->left->right);
+        Type* expType = expSemaParser(0, node->left->right);
         if (expType != NULL && !typeCmp(type, expType)) {
             printf("Error type %d at Line %d: a function's return value type mismatches the declared type \n", 8, node->left->lineno);
+        } else {
+            curTac->next = newTac(expType->tag, NULL, NULL, NULL);
+            curTac->next->title = RETURN;
+            curTac = curTac->next;
         }
     } else if(strcmp(node->left->name, "IF") == 0){
         Node expIf = node->left->right->right;
-        Type* expType = expSemaParser(expIf);
+        Type* expType = expSemaParser(0, expIf);
         //only int variables can do boolean operations
         if(expType != NULL){
             if (expType->category != PRIMITIVE || expType->primitive != TYPE_INT) {
                 printf("Error type %d at Line %d: the condition expression of \"if\" statement must be an integer.\n", 7, node->left->right->lineno);
             } else {
-                stmtParser(expIf->right->right, type);
-                if(expIf->right->right->right != NULL){
-                    stmtParser(expIf->right->right->right->right, type);
+                char* trueTag = NULL;
+                char* falseTag = NULL;
+                if(expType->tag != NULL && strlen(expType->tag) > 0){
+                    int trueLabel = labelCnt;
+                    int falseLabel = labelCnt + 1;
+                    labelCnt += 2;
+                    // true condition
+                    trueTag = generateLabel(trueLabel);
+                    curTac->next = newTac(trueTag, NULL, expType->tag, NULL);
+                    curTac->next->title = IF;
+                    curTac = curTac->next;
+                    // false condition
+                    falseTag = generateLabel(falseLabel);
+                    curTac->next = newTac(falseTag, NULL, NULL, NULL);
+                    curTac->next->title = GOTO;
+                    curTac = curTac->next;
+                    // true label
+                    curTac->next = newTac(trueTag, NULL, NULL, NULL);
+                    curTac->next->title = LABEL;
+                    curTac = curTac->next;
+                    pushScope();
+                    stmtParser(prev, expIf->right->right, type);
+                    popScope();
+                }else{
+                    // true condition
+                    trueTag = (char*)malloc(sizeof(char) * strlen(onetag));
+                    falseTag = (char*)malloc(sizeof(char) * strlen(zerotag));
+                    strcpy(trueTag, onetag);
+                    strcpy(falseTag, zerotag);
+                    curTac->next = newTac(trueTag, NULL, NULL, NULL);
+                    curTac->next->title = IF;
+                    curTac = curTac->next;
+                    pushScope();
+                    stmtParser(prev, expIf->right->right, type);
+                    popScope();
+                }
+                if(expIf->right->right->right->right != NULL){
+                    if(!isEndTagDef){
+                        endTag = generateLabel(labelCnt++);
+                        isEndTagDef++;
+                    }
+                    if(curTac->title != RETURN){
+                        curTac->next = newTac(endTag, NULL, NULL, NULL);
+                        curTac->next->title = GOTO;
+                        curTac = curTac->next;
+                    }
+                    // false label
+                    curTac->next = newTac(falseTag, NULL, NULL, NULL);
+                    curTac->next->title = LABEL;
+                    curTac = curTac->next;
+                    pushScope();
+                    stmtParser(prev, expIf->right->right->right->right, type);
+                    popScope();
+                    if(isEndTagDef){
+                        isEndTagDef--;
+                        if(curTac->title != RETURN){
+                            curTac->next = newTac(endTag, NULL, NULL, NULL);
+                            curTac->next->title = LABEL;
+                            curTac = curTac->next;
+                        }
+                    }
+                } else {
+                    // false label
+                    curTac->next = newTac(falseTag, NULL, NULL, NULL);
+                    curTac->next->title = LABEL;
+                    curTac = curTac->next;
                 }
             }
         }
     } else if(strcmp(node->left->name, "WHILE") == 0){
         Node expWhile = node->left->right->right;
-        Type* expType = expSemaParser(expWhile);
+        int firstLabel = labelCnt;
+        int trueLabel = labelCnt + 1;
+        int falseLabel = labelCnt + 2;
+        int len = 0;
+        labelCnt += 3;
+        char* firstTag = generateLabel(firstLabel);
+        curTac->next = newTac(firstTag, NULL, NULL, NULL);
+        curTac->next->title = LABEL;
+        curTac = curTac->next;
+        Type* expType = expSemaParser(0, expWhile);
         //only int variables can do boolean operations
-        if(expType != NULL){
-            if (expType->category != PRIMITIVE || expType->primitive != TYPE_INT) {
-                printf("Error type %d at Line %d: the condition expression of \"while\" statement must be an integer.\n", 7, expWhile->lineno);
-            } else {
-                stmtParser(expWhile->right->right, type);
-            }
+        if(expType == NULL) return;
+        if (expType->category != PRIMITIVE || expType->primitive != TYPE_INT) {
+            printf("Error type %d at Line %d: the condition expression of \"while\" statement must be an integer.\n", 7, expWhile->lineno);
+        } 
+        if(expType->tag != NULL && strlen(expType->tag) > 0){
+            // true condition
+            char* trueTag = generateLabel(trueLabel);
+            curTac->next = newTac(trueTag, NULL, expType->tag, NULL);
+            curTac->next->title = IF;
+            curTac = curTac->next;
+            // false condition
+            char* falseTag = generateLabel(falseLabel);
+            curTac->next = newTac(falseTag, NULL, NULL, NULL);
+            curTac->next->title = GOTO;
+            curTac = curTac->next;
+            // true label
+            curTac->next = newTac(trueTag, NULL, NULL, NULL);
+            curTac->next->title = LABEL;
+            curTac = curTac->next;
+            pushScope();
+            stmtParser(prev, expWhile->right->right, type);
+            curTac->next = newTac(firstTag, NULL, NULL, NULL);
+            curTac->next->title = GOTO;
+            curTac = curTac->next;
+            // false label
+            curTac->next = newTac(falseTag, NULL, NULL, NULL);
+            curTac->next->title = LABEL;
+            curTac = curTac->next;
+            popScope();
+        } else {
+            // true condition
+            char* trueTag = (char*)malloc(sizeof(char) * strlen(onetag));
+            char* falseTag = (char*)malloc(sizeof(char) * strlen(zerotag));
+            strcpy(trueTag, onetag);
+            strcpy(falseTag, zerotag);
+            curTac->next = newTac(trueTag, NULL, NULL, NULL);
+            curTac->next->title = LABEL;
+            curTac = curTac->next;
+            pushScope();
+            stmtParser(prev, expWhile->right->right, type);
+            curTac->next = newTac(firstTag, NULL, NULL, NULL);
+            curTac->next->title = GOTO;
+            curTac = curTac->next;
+            // false label
+            curTac->next = newTac(falseTag, NULL, NULL, NULL);
+            curTac->next->title = LABEL;
+            curTac = curTac->next;
+            popScope();
         }
     }
 }
@@ -802,33 +949,6 @@ int typeCmp(Type* typeA, Type* typeB) {
     }
     return 0;
 }
-    // if (typeA == NULL || typeB == NULL) {
-    //     return 0;
-    // }
-    // if (typeA->category == typeB->category) {
-    //     if (typeA->category == PRIMITIVE && typeA->primitive == typeB->primitive) {
-    //         return 1;
-    //     } else if (typeA->category == ARRAY &&
-    //         typeCmp(typeA->array->type, typeB->array->type) &&
-    //         typeA->array->size == typeB->array->size) {
-    //         return 1;
-    //     } else if(typeA->category == STRUCTURE || typeA->category == FUNCTION) {
-	// 		FieldList* field1 = typeA->structure;
-	// 		FieldList* field2 = typeB->structure;
-	// 		while(field1 != NULL && field2 != NULL)
-	// 		{
-	// 			if(!typeCmp(field1->type, field2->type)) {
-	// 				return 0;
-    //             }
-	// 			field1 = field1->next;
-	// 			field2 = field2->next;
-	// 		}
-	// 		if(field1 != NULL || field2 != NULL) {
-	// 			return 0;
-    //         }
-	// 		return 1;
-	// 	}
-    // }
 
 
 int countLength(int num){
@@ -840,4 +960,3 @@ int countLength(int num){
     }
     return cnt == 0 ? 1 : cnt;
 }
-

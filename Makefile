@@ -21,11 +21,11 @@ VERBOSE ?= 0
 
 
 # test
-build: src/syntax.y src/lexical.l src/APT.c include/APT.h src/translate.c include/translate.h src/symbolTable.c include/symbolTable.h include/type.h include/tac.h src/tac.c include/hashmap.h src/hashmap.c
+build: src/syntax.y src/lexical.l src/APT.c include/APT.h src/translate.c include/translate.h src/symbolTable.c include/symbolTable.h include/type.h src/type.c include/tac.h src/tac.c include/hashmap.h src/hashmap.c
 	@mkdir -p bin/
 	$(BISON) -t -d src/syntax.y
 	$(FLEX) src/lexical.l
-	$(CC) syntax.tab.c src/APT.c src/symbolTable.c src/translate.c src/tac.c src/hashmap.c -o bin/splc -ly -lfl -g $(CFLAGS) 
+	$(CC) syntax.tab.c src/APT.c src/symbolTable.c src/translate.c src/tac.c src/hashmap.c src/type.c -o bin/splc -ly -lfl -g $(CFLAGS) 
 	rm -f *.yy.* *.tab.*
 clean:
 	@rm -rf bin/

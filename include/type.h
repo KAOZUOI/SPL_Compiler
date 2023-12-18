@@ -24,4 +24,6 @@ typedef struct FieldList{
     struct FieldList* next;
 } FieldList;
 
+int deepcopyType(Type* dest, Type* sour);
+
 #endif
