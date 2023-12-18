@@ -61,10 +61,5 @@ void freeTacList() {
     while (current != NULL) {
         Tac *temp = current;
         current = current->next;
-        free(temp->target);
-        free(temp->op);
-        free(temp->arg1);
-        free(temp->arg2);
-        free(temp);
     }
 }

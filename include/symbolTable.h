@@ -8,6 +8,7 @@
 typedef struct Symbol{
     char* name;
     Type* type;
+    int offset;
     UT_hash_handle hh; // makes this structure hashable
 } Symbol;
 
@@ -22,6 +23,6 @@ void pushScope();
 void popScope();
 void insertSymbol(Symbol* s);
 Symbol* findSymbol(const char* name);
-void deleteAll(Symbol* symbolTable);
+int getOffset(const char* name);
 
 #endif

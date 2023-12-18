@@ -35,3 +35,13 @@ Symbol* findSymbol(const char* name) {
     }
     return s;
 }
+
+int getOffset(const char* name) {
+    Symbol* s = findSymbol(name);
+    if (s != NULL) {
+        return s->offset;
+    } else {
+        printf("Error: Attempted to get offset of non-existent symbol %s\n", name);
+        return -1;
+    }
+}

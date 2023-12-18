@@ -1,9 +1,37 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include "tac.h"
 #include "semantic.h"
 #include "symbolTable.h"
+
+static int tempVarCount = 0;
+char* getNewTemp() {
+    int size = snprintf(NULL, 0, "t%d", tempVarCount) + 1;
+    char* tempVarName = (char*)malloc(size);
+    snprintf(tempVarName, size, "t%d", tempVarCount);
+    tempVarCount++;
+    return tempVarName;
+}
+
+static int tempLabelCount = 0;
+char* getLable() {
+    int size = snprintf(NULL, 0, "label%d", tempLabelCount) + 1;
+    char* tempLabelName = (char*)malloc(size);
+    snprintf(tempLabelName, size, "label%d", tempLabelCount);
+    tempLabelCount++;
+    return tempLabelName;
+}
+
+static int varCount = 0;
+char* getVar(const char *name) {
+    int offset = getOffset(name);
+    int size = snprintf(NULL, 0, "v%d", offset) + 1;
+    char* varName = (char*)malloc(size);
+    snprintf(varName, size, "v%d", offset);
+    return varName;
+}
+
 
 extern FILE* fout;
 int indent;
@@ -12,6 +40,7 @@ int indent;
 void programSemaParser(Node node) {
     pushScope();
     extDefListSemaParser(node->left);
+    printTacList(NULL);
     popScope();
 }
     /* ExtDefList */
@@ -61,6 +90,7 @@ void extDefSemaParser(Node node) {
                 symbol = (Symbol*)malloc(sizeof(Symbol));
                 symbol->name = funDecType->structure->name;
                 symbol->type = funDecType;
+                symbol->offset = -1;
                 insertSymbol(symbol);
                 #ifdef DEBUG
                 printf("insertSymbol_inExtDef:\n");
@@ -138,6 +168,7 @@ Type* specifierSemaParser(Node node) {
                 symbol = (Symbol*)malloc(sizeof(Symbol));
                 symbol->name = structId->string_value;
                 symbol->type = type;
+                symbol->offset = varCount++;
                 insertSymbol(symbol);
                 #ifdef DEBUG
                 printf("insertSymbol_inStructSpecifier:\n");
@@ -307,6 +338,7 @@ FieldList* varDecSemaParser(Node node, Type* type) {
     strcpy(buffer, fieldList->name);
     symbol->name = buffer;
     symbol->type = fieldList->type;
+    symbol->offset = varCount++;
     insertSymbol(symbol);
     #ifdef DEBUG
     printf("insertSymbol_inVarDec:\n");
@@ -421,6 +453,28 @@ Type* expSemaParser(Node node){
                 printf("Error type %d at Line %d: unmatching types appear at both sides of the assignment operator (=) \n", 5, node->left->lineno);
             } else {
                 type = leftType;
+            }
+            if (strcmp(node->left->left->name, "ID") == 0) {
+                char* target = getVar(node->left->left->string_value);
+                char* arg1 = NULL;
+                char* arg2 = NULL;
+                char* op = NULL;
+                if (strcmp(node->left->right->right->left->name, "ID") == 0) {
+                    arg1 = getVar(node->left->right->right->left->string_value);
+                } else if (strcmp(node->left->right->right->left->name, "INT") == 0) {
+                    arg1 = (char*)malloc(sizeof(char) * 10);
+                    sprintf(arg1, "%d", node->left->right->right->left->int_value);
+                } else if (strcmp(node->left->right->right->left->name, "FLOAT") == 0) {
+                    arg1 = (char*)malloc(sizeof(char) * 10);
+                    sprintf(arg1, "%f", node->left->right->right->left->float_value);
+                } else if (strcmp(node->left->right->right->left->name, "CHAR") == 0) {
+                    arg1 = (char*)malloc(sizeof(char) * 10);
+                    sprintf(arg1, "%c", node->left->right->right->left->string_value);
+                }
+                op = "=";
+                insertTac(target, op, arg1, arg2);
+            } else if (strcmp(node->left->left->name, "Exp") == 0){
+                
             }
             #ifdef DEBUG
             printf("ASSIGN_out\n");
