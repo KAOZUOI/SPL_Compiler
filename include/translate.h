@@ -4,6 +4,12 @@
 #include "APT.h"
 #include "type.h"
 
+typedef struct FuncParamLinkNode {
+    char* tag;
+    struct FuncParamLinkNode* prev;
+    struct FuncParamLinkNode* next;
+} FuncParamLinkNode;
+
 void programSemaParser(Node node);
 void extDefListSemaParser(Node node);
 void extDefSemaParser(Node node);
@@ -29,4 +35,7 @@ FieldList* decSemaParser(int isStructDef, Node node, Type* type, FieldList* fiel
 Type* expSemaParser(int isAss, Node node);
 
 int typeCmp(Type* typeA, Type* typeB);
+void addReadFunc();
+void addWriteFunc();
+int countLength(int num);
 #endif

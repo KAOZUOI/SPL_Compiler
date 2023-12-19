@@ -1,0 +1,25 @@
+int main()
+{
+    int number = 100;
+    int reversed = 0;
+    int original = number;
+    int flag = 0;
+    int digit = 0;
+    while (number != 0) {
+        digit = number - ((number / 10) * 10);
+        reversed = reversed * 10 + digit;
+        number = number / 10;
+    }
+
+    if(reversed == original){
+        flag = 1;
+    }else{
+        flag = 0; 
+    }
+
+    if(flag == 1){
+        write(1);
+    } else {
+        write(-1);
+    }
+}

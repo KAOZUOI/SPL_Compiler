@@ -1,6 +1,6 @@
 #ifndef _TAC
 #define _TAC
-
+#include <stdio.h>
 typedef struct tac
 {
     enum { FUNC = 0, READ, WRITE, LABEL, GOTO, IF, ASS, OPER, RETURN, PARAM, ARG, DEC} title;

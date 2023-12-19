@@ -42,6 +42,8 @@ void programSemaParser(Node node) {
     endTag = NULL;
     isEndTagDef = 0;
     pushScope();
+    addReadFunc();
+    addWriteFunc();
     head = newTac(NULL, NULL, NULL, NULL);
     curTac = head;
     extDefListSemaParser(node->left);
@@ -213,12 +215,17 @@ FieldList* decSemaParser(int isStructDef, Node node, Type* type, FieldList* fiel
 FieldList* varDecSemaParser(int isStructDef, int isFuncParam, Node node, Type* type) {
     Type* oldType = type;
     Node varDec = node->left;
-    while (strcmp(varDec->name, "VarDec") == 0) {
+    int spaces = 0;
+    int unit = type->space;
+    while (strcmp(varDec->name, "VarDec") == 0 && varDec->right->right->right->right != NULL) {
         Type* currentType = (Type*)malloc(sizeof(Type));
         currentType->array = (Array*)malloc(sizeof(Array));
         currentType->category = ARRAY;
         currentType->array->size = varDec->right->right->int_value;
         currentType->array->type = oldType;
+        currentType->array->type->space = unit;
+        spaces = unit * varDec->right->right->int_value;
+        unit = spaces;
         oldType = currentType;
         varDec = varDec->left;
     }
@@ -256,8 +263,7 @@ FieldList* varDecSemaParser(int isStructDef, int isFuncParam, Node node, Type* t
             }
         }
         insertHashmap(fieldList->name, fieldList->type->tag);
-        //print fieldList->type->tag
-        printf("%s %s\n", fieldList->name, fieldList->type->tag);
+        // printf("%s %s\n", fieldList->name, fieldList->type->tag);
     }
     // insert symbol
     symbol = (Symbol*)malloc(sizeof(Symbol));
@@ -319,6 +325,7 @@ Type* expSemaParser(int isAss, Node node){
     if(strcmp(node->left->name, "Exp") == 0){
         if(strcmp(node->left->right->name, "ASSIGN") == 0){
             Type* expType = expSemaParser(0, node->left->right->right);
+            // printf("expType: %s\n", expType->tag);
             Type* leftType = expSemaParser(1, node->left);
             if (!((strcmp(node->left->left->name, "ID") == 0 && node->left->left->right == NULL) || 
             (strcmp(node->left->left->name, "Exp") == 0 && strcmp(node->left->left->right->name, "DOT") == 0) || 
@@ -333,7 +340,7 @@ Type* expSemaParser(int isAss, Node node){
                 if(item != NULL) {
                     target = item->value;
                 }
-                if (strcmp(curTac->target, expType->tag) == 0) {
+                if (!strcmp(curTac->target, expType->tag)) {
                     if(target[0] == '*'){
                         curTac->next = newTac(target, NULL, expType->tag, NULL);
                         curTac->next->title = ASS;
@@ -586,7 +593,6 @@ Type* expSemaParser(int isAss, Node node){
             }
 
         } else if(strcmp(node->left->right->name, "DOT") == 0){
-
             Type* expType1 = expSemaParser(isAss, node->left);
             if(expType1->category != STRUCTURE){
                 printf("Error type %d at Line %d: the type of operands of \".\" must be a structure.\n", 13, node->left->lineno);
@@ -601,7 +607,69 @@ Type* expSemaParser(int isAss, Node node){
                     printf("Error type %d at Line %d: the structure does not have the field \"%s\".\n", 14, node->left->lineno, node->left->right->right->string_value);
                 }else{
                     type = fieldList->type;
-                    // TODO
+                    FieldList* tmp = expType1->structure;
+                    int isError = 0;
+                    int offset = 0;
+                    while(tmp != NULL){
+                        if(!strcmp(tmp->name, node->left->right->right->string_value)){
+                            isError = 1;
+                            type = (Type*)malloc(sizeof(Type));
+                            deepcopyType(type, tmp->type);
+                            char* addr = NULL;
+                            if (tmp->type->tag == NULL || strlen(tmp->type->tag) == 0){
+                                if (offset > 0){
+                                    char num[10] = {0};
+                                    char mrk[10] = "#";
+                                    int len = countLength(offset) + 1;
+                                    sprintf(num, "%d", offset);
+                                    strcat(mrk, num);
+                                    char* ost = (char*)malloc(sizeof(char)*len);
+                                    strncpy(ost, mrk, len);
+                                    // t? := addr + offset;
+                                    addr = generateT(tCnt);
+                                    tCnt++;
+                                    curTac->next = newTac(addr, "+", expType1->tag, ost);
+                                    curTac = curTac->next;
+                                    curTac->title = OPER;
+                                }else if (expType1->tag[0] == '&'){
+                                    // t? := &v?;
+                                    addr = generateT(tCnt);
+                                    tCnt++;
+                                    curTac->next = newTac(addr, NULL, expType1->tag, NULL);
+                                    curTac = curTac->next;
+                                    curTac->title = ASS;
+                                }else{
+                                    // v?;
+                                    addr = expType1->tag;
+                                }
+                                // t? := *addr
+                                if (tmp->type->category == STRUCTURE || tmp->type->category == ARRAY){
+                                    type->tag = addr;
+                                }else{
+                                    type->tag = generateT(tCnt);
+                                    tCnt++;
+                                    char* val = (char*)malloc(sizeof(char)*(strlen(addr) + 1));
+                                    strcat(val, "*");
+                                    strcat(val, addr);
+                                    insertHashmap(type->tag, val);
+                                    if (!isAss) {
+                                        curTac->next = newTac(type->tag, NULL, val, NULL);
+                                        curTac = curTac->next;
+                                        curTac->title = ASS;
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        // offset += tmp->type->dec;
+                        offset += tmp->type->space;
+                        tmp = tmp->next;
+                    }
+                    if (!isError){
+                        printf("Error type 14 at Line %d: no such member: %s\n", 
+                        node->left->lineno, node->left->right->right->string_value);
+                        errorCnt++;
+                    }
                 }
             }
         }
@@ -665,51 +733,108 @@ Type* expSemaParser(int isAss, Node node){
         }
     } else if(strcmp(node->left->name, "ID") == 0){
         Symbol* symbol = findSymbol(node->left->string_value);
+        // printf("symbol name %s\n", node->left->string_value);
+        // printf("symbol type %d\n", symbol->type->category);
         if(node->left->right != NULL){
             if(symbol == NULL){
                 printf("Error type %d at Line %d: a function is invoked without a definition \"%s\".\n", 1, node->left->lineno, node->left->string_value);
                 return NULL;
-            }else if(symbol->type->category != FUNCTION){
+            }else if(symbol->type == NULL || symbol->type->category != FUNCTION){
                 printf("Error type %d at Line %d: \"%s\" is not a function.\n", 11, node->left->lineno, node->left->string_value);
                 return NULL;
             }
             Type* funDecType = symbol->type;
+            // printf("funDecType->structure->name %s\n", funDecType->structure->name);
+            
             if(strcmp(node->left->right->right->name, "Args") == 0){
                 Node args = node->left->right->right;
                 FieldList* fieldList = funDecType->structure->next;
                 if(fieldList == NULL){
                     printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
                 }else{
-                    Node exp = args->left;
+                    Node argsExp = args->left;
+                    // printf("argsExp->left->name %s\n", argsExp->left->name);
+                    // printf("argsExp->left->string_value %s\n", argsExp->left->string_value);
+                    FuncParamLinkNode* fir = (FuncParamLinkNode*)malloc(sizeof(FuncParamLinkNode));
+                    fir->prev = NULL;
+                    fir->next = NULL;
                     while(1){
-                        Type* expType = expSemaParser(0, exp);
-                        if(expType != NULL){
+                        // printf("while(1) in\n");
+                        Type* expType = expSemaParser(0, argsExp);
+                        // printf("while(1) out\n");
+                        if(expType == NULL){
+                            break;
+                        } else {
                             if(!typeCmp(fieldList->type, expType)){
-
                                 printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
                                 break;
                             } else {
+                                fir->tag = (char*)malloc(sizeof(char) * strlen(expType->tag));
+                                strncpy(fir->tag, expType->tag, strlen(expType->tag));
+                                fir->next = (FuncParamLinkNode*)malloc(sizeof(FuncParamLinkNode));
+                                FuncParamLinkNode* tmp = fir;
+                                fir = fir->next;
+                                fir->prev = tmp;
                                 fieldList = fieldList->next;
-                                if(fieldList == NULL && exp->right == NULL){
-                                    type = funDecType->structure->type;
+                                if (fieldList == NULL && argsExp->right == NULL){
+                                    type = (Type*)malloc(sizeof(Type));
+                                    int success = deepcopyType(type, funDecType->structure->type);
+                                    if (!success){
+                                        free(type);
+                                        type = NULL;
+                                    }
+                                    fir = fir->prev;
                                     break;
-                                } else if(fieldList != NULL && exp->right == NULL){
-
+                                }else if(fieldList == NULL && argsExp->right != NULL){
                                     printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
+                                    errorCnt++;
                                     break;
-                                } else if(fieldList == NULL && exp->right != NULL){
-
+                                }else if(fieldList == NULL && argsExp->right != NULL){
                                     printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
+                                    errorCnt++;
                                     break;
                                 }
-                                exp = exp->right->right->left;
+                                // args = args->left->right->right; //caide
+                                argsExp = argsExp->right->right->left; //caide
                             }
                         }
+                    }// TODO
+                    if(!strcmp(funDecType->structure->name, "write")){
+                        curTac->next = newTac(fir->tag, NULL, NULL, NULL);
+                        curTac = curTac->next; curTac->title = WRITE;
+                    }else{
+                        while (fir != NULL){
+                            curTac->next = newTac(fir->tag, NULL, NULL, NULL);
+                            curTac = curTac->next; curTac->title = ARG;
+                            fir = fir->prev;
+                        }
+                        type->tag = generateT(tCnt);
+                        int calllen = strlen(funDecType->structure->name) + 5;
+                        char* arg1 = (char*)malloc(sizeof(char)*calllen);
+                        strcat(arg1, "CALL ");
+                        strcat(arg1, funDecType->structure->name);
+                        curTac->next = newTac(type->tag, NULL, arg1, NULL);
+                        curTac = curTac->next;
+                        curTac->title = ASS;
+                        tCnt++;
                     }
+
                 }
             } else {
                 if(funDecType->structure->next == NULL){
-                    type = funDecType->structure->type;
+                    type = (Type*)malloc(sizeof(Type));
+                    int success = deepcopyType(type, funDecType->structure->type);
+                    if (!success){
+                        free(type);
+                        type = NULL;
+                    }
+                    if (!strcmp(funDecType->structure->name, "read")){
+                        type->tag = generateT(tCnt);
+                        curTac->next = newTac(type->tag, NULL, NULL, NULL);
+                        curTac = curTac->next;
+                        curTac->title = READ;
+                        tCnt++;
+                    }
                 }else{
                     printf("Error type %d at Line %d: the function \"%s\" is not applicable for arguments.\n", 9, node->left->lineno, node->left->string_value);
                 }
@@ -814,7 +939,7 @@ void stmtParser(Node prev, Node node, Type* type){
                     stmtParser(prev, expIf->right->right, type);
                     popScope();
                 }
-                if(expIf->right->right->right->right != NULL){
+                if(expIf->right->right->right != NULL){
                     if(!isEndTagDef){
                         endTag = generateLabel(labelCnt++);
                         isEndTagDef++;
@@ -950,6 +1075,37 @@ int typeCmp(Type* typeA, Type* typeB) {
     return 0;
 }
 
+void addReadFunc(){
+    Type* readFunc = (Type*)malloc(sizeof(Type));
+    readFunc->category = FUNCTION;
+    readFunc->structure = (FieldList*)malloc(sizeof(FieldList));
+    readFunc->structure->name = "read";
+    readFunc->structure->type = (Type*)malloc(sizeof(Type));
+    readFunc->structure->type->category = PRIMITIVE;
+    readFunc->structure->type->primitive = TYPE_INT;
+    readFunc->structure->next = NULL;
+    Symbol* symbol = (Symbol*)malloc(sizeof(Symbol));
+    symbol->name = "read";
+    symbol->type = readFunc;
+    insertSymbol(symbol);
+}
+
+void addWriteFunc(){
+    Type* writeFunc = (Type*)malloc(sizeof(Type));
+    writeFunc->category = FUNCTION;
+    writeFunc->structure = (FieldList*)malloc(sizeof(FieldList));
+    writeFunc->structure->name = "write";
+    writeFunc->structure->type = NULL;
+    writeFunc->structure->next = (FieldList*)malloc(sizeof(FieldList));
+    writeFunc->structure->next->next = NULL;
+    writeFunc->structure->next->type = (Type*)malloc(sizeof(Type));
+    writeFunc->structure->next->type->category = PRIMITIVE;
+    writeFunc->structure->next->type->primitive = TYPE_INT;
+    Symbol* symbol = (Symbol*)malloc(sizeof(Symbol));
+    symbol->name = "write";
+    symbol->type = writeFunc;
+    insertSymbol(symbol);
+}
 
 int countLength(int num){
     int cnt = 0;
