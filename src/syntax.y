@@ -313,19 +313,18 @@ void yyerror (char const *s) {
 }
 
 int main (int argc, char **argv) {
-    char* tmp = (char *)malloc(sizeof(char) * (strlen(argv[1]) + 3));
+    char* tmp = (char *)malloc(sizeof(char) * (strlen(argv[1]) + 2));
     strcpy(tmp, argv[1]);
     char *end = tmp + strlen(tmp);
     while (end > tmp && *end != '.') {
         --end;
     }
     if (end > tmp) {
-        *(end + 1)= 'o';
-        *(end + 2)= 'u';
-        *(end + 3)= 't';
+        *(end + 1)= 'i';
+        *(end + 2)= 'r';
+        *(end + 3)= '\0';
     }
     fout = fopen(tmp, "w");
-    printf("%s\n", tmp);
     yyin = fopen(argv[1], "r");
     yyparse();
     /*while(1) {

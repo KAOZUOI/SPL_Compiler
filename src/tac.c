@@ -4,6 +4,7 @@
 #include "string.h"
 #include "hashmap.h"
 #include "translate.h"
+extern FILE* fout;
 
 char* titles[] = {"FUNCTION", "READ", "WRITE", "LABEL", "GOTO",
                 "IF", "ASS", "OPER", "RETURN", "PARAM", "ARG", "DEC"};
@@ -28,26 +29,26 @@ void printTacs(Tac* head){
         || head->title == RETURN || head->title == PARAM
         || head->title == ARG){
             if(head->title == LABEL || head->title == FUNC){
-                if(head->title == FUNC && lines > 0) { printf("\n"); }
-                printf("%s %s :\n", titles[head->title], head->target);
+                if(head->title == FUNC && lines > 0) { fprintf(fout, "\n"); }
+                fprintf(fout, "%s %s :\n", titles[head->title], head->target);
             }else{
-                printf("%s %s\n", titles[head->title], head->target);
+                fprintf(fout, "%s %s\n", titles[head->title], head->target);
             }
         }else if(head->title == GOTO){
-            printf("%s %s\n", titles[head->title], head->target);
+            fprintf(fout, "%s %s\n", titles[head->title], head->target);
             while (head != NULL && head->title == GOTO) {
                 head = head->next;
             }
             lines++;
             continue;
         }else if (head->title == IF){
-            printf("IF %s GOTO %s\n", head->arg1, head->target);
+            fprintf(fout, "IF %s GOTO %s\n", head->arg1, head->target);
         }else if(head->title == ASS) {
-            printf("%s := %s\n", head->target, head->arg1);
+            fprintf(fout, "%s := %s\n", head->target, head->arg1);
         }else if (head->title == OPER){
-            printf("%s := %s %s %s\n", head->target, head->arg1, head->op, head->arg2);
+            fprintf(fout, "%s := %s %s %s\n", head->target, head->arg1, head->op, head->arg2);
         }else if(head->title == DEC){
-            printf("%s %s %s\n", titles[head->title], head->arg1, head->arg2);
+            fprintf(fout, "%s %s %s\n", titles[head->title], head->arg1, head->arg2);
         }
         lines++;
         head = head->next;

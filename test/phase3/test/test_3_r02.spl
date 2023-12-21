@@ -13,17 +13,17 @@ int calculateBinomialCoefficient(int row, int col) {
     while (i < col) {
         coefficient = coefficient * (row - i);
         coefficient = coefficient / (i + 1);
-        i=i + 1;
+        i= i + 1;
     }
     
     return coefficient;
 }
 
 int main() {
-    int row, col,coefficient;
-    row = read();
-    col = read();
-    coefficient = calculateBinomialCoefficient(row, col);
-    write(coefficient);
+    int r, c, coe;
+    r = read();
+    c = read();
+    coe = calculateBinomialCoefficient(r, c);
+    write(coe);
     return 0;
 }
