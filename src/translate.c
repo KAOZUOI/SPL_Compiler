@@ -733,8 +733,8 @@ Type* expSemaParser(int isAss, Node node){
         }
     } else if(strcmp(node->left->name, "ID") == 0){
         Symbol* symbol = findSymbol(node->left->string_value);
-        // printf("symbol name %s\n", node->left->string_value);
-        // printf("symbol type %d\n", symbol->type->category);
+        printf("symbol name %s\n", node->left->string_value);
+        printf("symbol type %d\n", symbol->type->category);
         if(node->left->right != NULL){
             if(symbol == NULL){
                 printf("Error type %d at Line %d: a function is invoked without a definition \"%s\".\n", 1, node->left->lineno, node->left->string_value);
@@ -1014,23 +1014,20 @@ void stmtParser(Node prev, Node node, Type* type){
             curTac = curTac->next;
             popScope();
         } else {
-            // true condition
-            char* trueTag = (char*)malloc(sizeof(char) * strlen(onetag));
-            char* falseTag = (char*)malloc(sizeof(char) * strlen(zerotag));
-            strcpy(trueTag, onetag);
-            strcpy(falseTag, zerotag);
-            curTac->next = newTac(trueTag, NULL, NULL, NULL);
-            curTac->next->title = LABEL;
-            curTac = curTac->next;
+             //true label
+            char* otag = (char*)malloc(sizeof(char) * strlen(onetag));
+            char* ztag = (char*)malloc(sizeof(char) * strlen(zerotag));
+            strcpy(otag, onetag);
+            strcpy(ztag, zerotag);
+            curTac->next = newTac(otag, NULL, NULL, NULL);
+            curTac = curTac->next; curTac->title = LABEL;
             pushScope();
             stmtParser(prev, expWhile->right->right, type);
             curTac->next = newTac(firstTag, NULL, NULL, NULL);
-            curTac->next->title = GOTO;
-            curTac = curTac->next;
-            // false label
-            curTac->next = newTac(falseTag, NULL, NULL, NULL);
-            curTac->next->title = LABEL;
-            curTac = curTac->next;
+            curTac = curTac->next; curTac->title = GOTO;
+            //false label
+            curTac->next = newTac(ztag, NULL, NULL, NULL);
+            curTac = curTac->next; curTac->title = LABEL;
             popScope();
         }
     }

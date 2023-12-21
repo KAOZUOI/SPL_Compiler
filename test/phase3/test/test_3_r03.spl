@@ -1,6 +1,8 @@
 int main(){
     int N = 30;
-    int num = 0, i = 1, k = 1;
+    int num = 0;
+    int i = 1;
+    int k = 1;
     while(k <= N){
         while(i <= k){
             if(k == (k / i * i))

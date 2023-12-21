@@ -96,3 +96,16 @@ IF (null) GOTO label3
 [INFO] 2023-12-21 20:25:01,767 (irsim.py 567): Program has exited gracefully
 [INFO] 2023-12-21 20:25:01,767 (irsim.py 567): Total instructions = 117
 [INFO] 2023-12-21 20:25:03,506 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2023-12-21 20:45:14,372 (irsim.py 620): Parsed arguments: {'irpath': '/home/yangyk/SPL_Compiler/test/phase3/test/test_3_r03.ir', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2023-12-21 20:45:14,373 (irsim.py 567): File loaded successfully
+[INFO] 2023-12-21 20:45:19,629 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2023-12-21 21:26:52,645 (irsim.py 620): Parsed arguments: {'irpath': '/home/yangyk/SPL_Compiler/test/phase3/test/test_3_r03.ir', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2023-12-21 21:26:52,645 (irsim.py 567): File loaded successfully
+[INFO] 2023-12-21 21:26:54,206 (irsim.py 567): Program has exited gracefully
+[INFO] 2023-12-21 21:26:54,206 (irsim.py 567): Total instructions = 3685
+[INFO] 2023-12-21 21:28:57,087 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2023-12-21 21:29:19,740 (irsim.py 620): Parsed arguments: {'irpath': '/home/yangyk/SPL_Compiler/test/phase3/test/test_3_r04.ir', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2023-12-21 21:29:19,740 (irsim.py 567): File loaded successfully
+[INFO] 2023-12-21 21:29:32,342 (irsim.py 567): Program has exited gracefully
+[INFO] 2023-12-21 21:29:32,342 (irsim.py 567): Total instructions = 39589
+[INFO] 2023-12-21 21:30:53,431 (irsim.py 567): KeyboardInterrupt raised, quit program
