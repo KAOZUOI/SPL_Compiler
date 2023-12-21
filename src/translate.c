@@ -367,7 +367,7 @@ Type* expSemaParser(int isAss, Node node){
                 type->category = PRIMITIVE;
                 type->primitive = TYPE_INT;
                 int isAnd = !strcmp(node->left->right->name,"AND")? 1 : 0;
-                if (isAnd) {
+                if (isAnd){
                     int otagll = labelCnt;
                     int ztagl = labelCnt + 1;
                     int otagrl = labelCnt + 2;
@@ -376,12 +376,12 @@ Type* expSemaParser(int isAss, Node node){
                     char* otag = generateLabel(otagrl);
                     char* ztag = generateLabel(ztagl);
                     curTac->next = newTac(tmpTag, NULL, expType1->tag, NULL);
-                    curTac = curTac->next; curTac->next->title = IF;
+                    curTac = curTac->next; curTac->title = IF;
                     curTac->next = newTac(ztag, NULL, NULL, NULL);
                     curTac = curTac->next; curTac->title = GOTO;
                     curTac->next = newTac(tmpTag, NULL, NULL, NULL);
                     curTac = curTac->next; curTac->title = LABEL;
-                    curTac->next = newTac(otag, NULL, expType2->tag, NULL);
+                    curTac->next = newTac(otag, NULL, expType1->tag, NULL);
                     curTac = curTac->next; curTac->title = IF;
                     curTac->next = newTac(ztag, NULL, NULL, NULL);
                     curTac = curTac->next; curTac->title = GOTO;
@@ -405,7 +405,7 @@ Type* expSemaParser(int isAss, Node node){
                     curTac = curTac->next; curTac->title = GOTO;
                     curTac->next = newTac(tmpTag, NULL, NULL, NULL);
                     curTac = curTac->next; curTac->title = LABEL;
-                    curTac->next = newTac(otag, NULL, expType2->tag, NULL);
+                    curTac->next = newTac(otag, NULL, expType1->tag, NULL);
                     curTac = curTac->next; curTac->title = IF;
                     curTac->next = newTac(ztag, NULL, NULL, NULL);
                     curTac = curTac->next; curTac->title = GOTO;
@@ -927,14 +927,13 @@ void stmtParser(Node prev, Node node, Type* type){
                     stmtParser(prev, expIf->right->right, type);
                     popScope();
                 }else{
-                    // true condition
+                    //true label
                     trueTag = (char*)malloc(sizeof(char) * strlen(onetag));
                     falseTag = (char*)malloc(sizeof(char) * strlen(zerotag));
                     strcpy(trueTag, onetag);
                     strcpy(falseTag, zerotag);
                     curTac->next = newTac(trueTag, NULL, NULL, NULL);
-                    curTac->next->title = IF;
-                    curTac = curTac->next;
+                    curTac = curTac->next; curTac->title = LABEL;
                     pushScope();
                     stmtParser(prev, expIf->right->right, type);
                     popScope();

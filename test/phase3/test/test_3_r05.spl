@@ -1,10 +1,12 @@
 int main() {
-    int i, tu1, tu2, tu3, m, a, b, c;
-    a = 1;
-    b = 2;
-    c = 3;
-    tu1 = 1;
-    tu2 = 1;
+    int i;
+    int tu1 = 1;
+    int tu2 = 1;
+    int tu3;
+    int m;
+    int a = 1;
+    int b = 2;
+    int c = 3;
     m = read();
     if(m < 1)
         write(0);
