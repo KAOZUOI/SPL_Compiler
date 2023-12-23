@@ -1,6 +1,7 @@
 %{
     #include "APT.h"
     #include "lex.yy.c"
+    #include "optimize.h"
     #include "semantic.h"
 
     FILE* fout = NULL;
@@ -324,9 +325,13 @@ int main (int argc, char **argv) {
         *(end + 2)= 'r';
         *(end + 3)= '\0';
     }
-    fout = fopen(tmp, "w");
+    fout = fopen("./tmp", "w");
     yyin = fopen(argv[1], "r");
     yyparse();
+    rewind(fout);
+    fclose(yyin);
+    fclose(fout);
+    optimize("./tmp",tmp);
     /*while(1) {
         int token = yylex();
         if (token == 0) break;
