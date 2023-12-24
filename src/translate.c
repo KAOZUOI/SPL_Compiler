@@ -697,7 +697,7 @@ Type* expSemaParser(int isAss, Node node){
 
         type = expSemaParser(0, node->left->right);
         type = type;
-    } else if(strcmp(node->left->name, "MINUS") == 0){
+    } else if(strcmp(node->left->name, "MINUS") == 0){ // TODO
 
         Type* expType1 = expSemaParser(0, node->left->right);
         if(expType1->category != PRIMITIVE){
@@ -926,23 +926,52 @@ void stmtParser(Node prev, Node node, Type* type){
                 char* trueTag = NULL;
                 char* falseTag = NULL;
                 if(expType->tag != NULL && strlen(expType->tag) > 0){
-                    int trueLabel = labelCnt;
-                    int falseLabel = labelCnt + 1;
+                    int falseLabel = labelCnt;
                     labelCnt += 2;
-                    // true condition
-                    trueTag = generateLabel(trueLabel);
-                    curTac->next = newTac(trueTag, NULL, expType->tag, NULL);
+                    falseTag = generateLabel(falseLabel);
+                    // tag convert
+                    if (expType->tag[3] == '!') {
+                        expType->tag[3] = '=';
+                        expType->tag[4] = '=';
+                    } else if (expType->tag[3] == '=') {
+                        expType->tag[3] = '!';
+                        expType->tag[4] = '=';
+                    } else if (expType->tag[3] == '>' && expType->tag[4] == '=') {
+                        expType->tag[3] = '<';
+                        for (int i = 4; i < strlen(expType->tag); i++) {
+                            expType->tag[i - 1] = expType->tag[i];
+                        }
+                    } else if (expType->tag[3] == '<' && expType->tag[4] == '=') {
+                        expType->tag[3] = '>';
+                        for (int i = 4; i < strlen(expType->tag); i++) {
+                            expType->tag[i - 1] = expType->tag[i];
+                        }
+                    } else if (expType->tag[3] == '>' && expType->tag[4] != '=') {
+                        expType->tag[3] = '<';
+                        for (int i = strlen(expType->tag); i > 3; i--) {
+                            expType->tag[i] = expType->tag[i - 1];
+                        }
+                        expType->tag[4] = '=';
+                    } else if (expType->tag[3] == '<' && expType->tag[4] != '=') {
+                        expType->tag[3] = '>';
+                        for (int i = strlen(expType->tag); i > 3; i--) {
+                            expType->tag[i] = expType->tag[i - 1];
+                        }
+                        expType->tag[4] = '=';
+                    }
+                    printf ("expType->tag: %s\n", expType->tag);
+                    curTac->next = newTac(falseTag, NULL, expType->tag, NULL);
                     curTac->next->title = IF;
                     curTac = curTac->next;
-                    // false condition
-                    falseTag = generateLabel(falseLabel);
-                    curTac->next = newTac(falseTag, NULL, NULL, NULL);
-                    curTac->next->title = GOTO;
-                    curTac = curTac->next;
-                    // true label
-                    curTac->next = newTac(trueTag, NULL, NULL, NULL);
-                    curTac->next->title = LABEL;
-                    curTac = curTac->next;
+                    // // false condition
+                    // falseTag = generateLabel(falseLabel);
+                    // curTac->next = newTac(falseTag, NULL, NULL, NULL);
+                    // curTac->next->title = GOTO;
+                    // curTac = curTac->next;
+                    // // true label
+                    // curTac->next = newTac(trueTag, NULL, NULL, NULL);
+                    // curTac->next->title = LABEL;
+                    // curTac = curTac->next;
                     pushScope();
                     stmtParser(prev, expIf->right->right, type);
                     popScope();
