@@ -358,7 +358,7 @@ void optimize(const char* inPath, const char* outPath) {
                     break;
                 case 3:
                     debugInfo("%s\n", readBuf);
-                    if(findLabel(labelHead, readBuf + 5) == NULL)
+                    /*if(findLabel(labelHead, readBuf + 5) == NULL)*/
                         isUnreachable = true;
                     break;
                 case 4:
