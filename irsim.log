@@ -197,3 +197,23 @@ IF (null) GOTO label3
 [INFO] 2023-12-24 19:02:29,005 (irsim.py 567): Program has exited gracefully
 [INFO] 2023-12-24 19:02:29,005 (irsim.py 567): Total instructions = 21
 [INFO] 2023-12-24 19:02:29,774 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2023-12-24 19:21:29,756 (irsim.py 620): Parsed arguments: {'irpath': '/home/yangyk/SPL_Compiler/test/phase3/test/test_3_r03.ir', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2023-12-24 19:21:29,757 (irsim.py 567): File loaded successfully
+[INFO] 2023-12-24 19:21:30,817 (irsim.py 567): Program has exited gracefully
+[INFO] 2023-12-24 19:21:30,817 (irsim.py 567): Total instructions = 3311
+[INFO] 2023-12-24 19:21:31,849 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2023-12-24 19:21:35,644 (irsim.py 620): Parsed arguments: {'irpath': '/home/yangyk/SPL_Compiler/test/phase3/test/test_3_r04.ir', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2023-12-24 19:21:35,645 (irsim.py 567): File loaded successfully
+[INFO] 2023-12-24 19:21:46,490 (irsim.py 567): Program has exited gracefully
+[INFO] 2023-12-24 19:21:46,490 (irsim.py 567): Total instructions = 37275
+[INFO] 2023-12-24 19:21:52,062 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2023-12-24 19:22:00,615 (irsim.py 620): Parsed arguments: {'irpath': '/home/yangyk/SPL_Compiler/test/phase3/test/test_3_r06.ir', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2023-12-24 19:22:00,616 (irsim.py 567): File loaded successfully
+[INFO] 2023-12-24 19:22:01,176 (irsim.py 567): Program has exited gracefully
+[INFO] 2023-12-24 19:22:01,176 (irsim.py 567): Total instructions = 114
+[INFO] 2023-12-24 19:22:03,376 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2023-12-24 19:22:23,901 (irsim.py 620): Parsed arguments: {'irpath': '/home/yangyk/SPL_Compiler/test/phase3/test/test_3_r05.ir', 'inputs': '10', 'logpath': 'irsim.log'}
+[INFO] 2023-12-24 19:22:23,901 (irsim.py 567): File loaded successfully
+[INFO] 2023-12-24 19:22:24,375 (irsim.py 567): Program has exited gracefully
+[INFO] 2023-12-24 19:22:24,375 (irsim.py 567): Total instructions = 70
+[INFO] 2023-12-24 19:22:29,383 (irsim.py 567): KeyboardInterrupt raised, quit program
