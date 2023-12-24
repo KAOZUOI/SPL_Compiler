@@ -1,11 +1,15 @@
 # Phase 3
 
 ## Basic
+We generate IR code by translate.c firstly, and optimize it in a separated part optimize.c.  
+Our translation adopts the naming convention that variable names follow the pattern $tn$ or $vn$, and $labeln$ for label names.  
+Finally all of IR codes are connected by a linkedlist defined in tac.c.  
+
 ## Optional Features
 ##### Struct
 Structure variables can appear in the program, and they can be declared as function parameters. Still, assignment
-operations will not be directly performed on a structure variable.
-Test: 
+operations will not be directly performed on a structure variable.  
+Test:  
 ```
 struct Student {
     int ID;
@@ -24,8 +28,8 @@ int main() {
     write(y.score);
     return 0;
 }
-```
-Result:
+``` 
+Result:  
 ```
 FUNCTION main :
 DEC v0 8
@@ -51,7 +55,57 @@ t14 := &v1 + #4
 t15 := *t14
 WRITE t15
 RETURN #0
+```  
+
+##### Multi-dimensional arrays
+1-D arrays can be declared as function parameters, and multi-dimensional arrays can be defined as local variables.  
+Test:  
 ```
+struct Num {
+    int id;
+    int matrix[10][10];
+};
+
+int add (int a, int b) {
+    return a + b;
+}
+
+struct Num test(int row, int col) {
+    struct Num x;
+    x.id = 1;
+    x.matrix[0][0]= add(row, col);
+    x.matrix[0][1]= add(row, col + 1);
+    return x;
+}
+```  
+Result:  
+```
+FUNCTION add :
+PARAM v0
+PARAM v1
+t0 := v0 + v1
+RETURN t0
+
+FUNCTION test :
+PARAM v2
+PARAM v3
+DEC v4 404
+t1 := &v4
+*t1 := #1
+ARG v3
+ARG v2
+t3 := CALL add
+t4 := &v4 + #4
+*t4 := t3
+t6 := v3 + #1
+ARG t6
+ARG v2
+t7 := CALL add
+t8 := &v4 + #4
+t9 := t8 + #4
+*t9 := t7
+RETURN &v4
+```  
 ## IR optimize
 
 ### Unreachable code elimination
