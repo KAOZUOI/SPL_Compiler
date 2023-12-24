@@ -938,14 +938,16 @@ void stmtParser(Node prev, Node node, Type* type){
                         expType->tag[4] = '=';
                     } else if (expType->tag[3] == '>' && expType->tag[4] == '=') {
                         expType->tag[3] = '<';
-                        for (int i = 4; i < strlen(expType->tag); i++) {
+                        for (int i = 5; i < strlen(expType->tag); i++) {
                             expType->tag[i - 1] = expType->tag[i];
                         }
+                        expType->tag[strlen(expType->tag) - 1] = '\0';
                     } else if (expType->tag[3] == '<' && expType->tag[4] == '=') {
                         expType->tag[3] = '>';
-                        for (int i = 4; i < strlen(expType->tag); i++) {
+                        for (int i = 5; i < strlen(expType->tag); i++) {
                             expType->tag[i - 1] = expType->tag[i];
                         }
+                        expType->tag[strlen(expType->tag) - 1] = '\0';
                     } else if (expType->tag[3] == '>' && expType->tag[4] != '=') {
                         expType->tag[3] = '<';
                         for (int i = strlen(expType->tag); i > 3; i--) {

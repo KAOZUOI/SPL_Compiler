@@ -7,18 +7,19 @@ RETURN t0
 FUNCTION test :
 PARAM v2
 PARAM v3
-DEC v4 14004
+DEC v4 404
 t1 := &v4
-*t1 := #15
+*t1 := #1
 ARG v3
 ARG v2
 t3 := CALL add
 t4 := &v4 + #4
-t5 := #2 * #280
-t6 := t4 + t5
-t7 := #3 * #40
-t8 := t6 + t7
-t9 := #4 * #4
-t10 := t8 + t9
-*t10 := t3
+*t4 := t3
+t6 := v3 + #1
+ARG t6
+ARG v2
+t7 := CALL add
+t8 := &v4 + #4
+t9 := t8 + #4
+*t9 := t7
 RETURN &v4

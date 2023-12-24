@@ -1,0 +1,23 @@
+FUNCTION fibonacci :
+PARAM v0
+IF v0 != #0 GOTO label0
+RETURN #0
+LABEL label0 :
+IF v0 != #1 GOTO label3
+RETURN #1
+LABEL label3 :
+t0 := v0 - #1
+ARG t0
+t1 := CALL fibonacci
+t2 := v0 - #2
+ARG t2
+t3 := CALL fibonacci
+t4 := t1 + t3
+RETURN t4
+
+FUNCTION main :
+READ v1
+ARG v1
+t6 := CALL fibonacci
+WRITE t6
+RETURN #0

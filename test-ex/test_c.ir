@@ -1,0 +1,33 @@
+FUNCTION isPrime :
+PARAM v0
+v1 := #2
+IF v0 > #1 GOTO label0
+RETURN #0
+LABEL label0 :
+LABEL label2 :
+t0 := v1 * v1
+IF t0 <= v0 GOTO label3
+GOTO label4
+LABEL label3 :
+t1 := v0 / v1
+t2 := t1 * v1
+t3 := v0 - t2
+IF t3 != #0 GOTO label5
+RETURN #0
+LABEL label5 :
+v1 := v1 + #1
+GOTO label2
+LABEL label4 :
+RETURN #1
+
+FUNCTION main :
+READ v2
+ARG v2
+t6 := CALL isPrime
+IF t6 != #1 GOTO label7
+WRITE #1
+GOTO label9
+LABEL label7 :
+WRITE #0
+LABEL label9 :
+RETURN #0

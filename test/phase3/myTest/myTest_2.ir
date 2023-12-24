@@ -2,17 +2,23 @@ FUNCTION main :
 DEC v0 8
 DEC v1 8
 t0 := &v0
-*t0 := #1
+*t0 := #0
 t2 := &v0 + #4
-*t2 := #100
+*t2 := #90
 t4 := &v1
-*t4 := #2
+*t4 := #1
 t6 := &v1 + #4
-*t6 := #90
-t8 := &v1
+*t6 := #100
+t8 := &v0
 t9 := *t8
 WRITE t9
 t10 := &v0 + #4
 t11 := *t10
 WRITE t11
+t12 := &v1
+t13 := *t12
+WRITE t13
+t14 := &v1 + #4
+t15 := *t14
+WRITE t15
 RETURN #0

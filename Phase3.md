@@ -108,10 +108,50 @@ RETURN &v4
 ```  
 ## IR optimize
 
-### Unreachable code elimination
-1. 判断块前是否有无条件跳转的 `GOTO` 指令，如果有则不可达。不可达块中出现 `LABEL` 则认为该不可达块结束，后面的块恢复为可达。
-![unreachable](./img/unreachable.png)
-2. `IF` 指令跳转如果恒为真，则检查跳转的label,如果未定义，则后方的块都不可达知道找到label定义，然后删除 `IF` 和对应label。否则不处理。（数据流分析好麻烦，摆了）
+1. 判断块前是否有无条件跳转的 `GOTO` 指令，如果有则不可达。不可达块中出现 `LABEL` 则认为该不可达块结束，后面的块恢复为可达。  
+Test:  
+```
+int main() {
+    if (1>2) {
+        int a=0;
+        a=1+a;
+        write(a);
+    } else {
+        write(- 1);
+    }
 
-### Constant folding
-同上，数据流分析摆了
+    return 0;
+}
+
+```
+Result:  
+Raw:  
+```
+FUNCTION main :
+IF #1 <= #2 GOTO label0
+v0 := #0
+v0 := #1 + v0
+WRITE v0
+GOTO label2
+LABEL label0 :
+t1 := #0 - #1
+WRITE t1
+LABEL label2 :
+RETURN #0
+
+```  
+Optimized:  
+```
+FUNCTION main :
+GOTO label0
+LABEL label0 :
+t1 := #0 - #1
+WRITE t1
+LABEL label2 :
+RETURN #0
+
+```  
+2. `IF` 指令跳转如果恒为真，则检查跳转的label,如果未定义，则后方的块都不可达知道找到label定义，然后删除 `IF` 和对应label。否则不处理。
+
+3. `IF` 指令条件取反，节省GOTO指令
+

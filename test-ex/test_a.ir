@@ -1,0 +1,17 @@
+FUNCTION factorial :
+PARAM v0
+IF v0 != #0 GOTO label0
+RETURN #1
+LABEL label0 :
+t0 := v0 - #1
+ARG t0
+t1 := CALL factorial
+t2 := v0 * t1
+RETURN t2
+
+FUNCTION main :
+READ v1
+ARG v1
+t4 := CALL factorial
+WRITE t4
+RETURN #0

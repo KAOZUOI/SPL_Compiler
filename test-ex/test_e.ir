@@ -1,0 +1,24 @@
+FUNCTION gcd :
+PARAM v0
+PARAM v1
+LABEL label0 :
+IF v1 != #0 GOTO label1
+GOTO label2
+LABEL label1 :
+v2 := v0
+v0 := v1
+t0 := v2 / v1
+t1 := t0 * v1
+v1 := v2 - t1
+GOTO label0
+LABEL label2 :
+RETURN v0
+
+FUNCTION main :
+v3 := #48
+v4 := #18
+ARG v4
+ARG v3
+t3 := CALL gcd
+WRITE t3
+RETURN #0
