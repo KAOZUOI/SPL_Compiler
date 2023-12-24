@@ -197,11 +197,16 @@ static VarNode** parseRhsExp(const char* exp, VarNode* varHead, enum ExpType* ty
 
 static void parseLhsExp(const char* exp, VarNode* varHead, VarNode** rhs, enum ExpType opType) {
     VarNode* lhs = addVar(varHead, exp, 0, false);
-    if(opType == NONE) {
+    lhs->constant = false;
+    return;
+    if (opType == NONE)
+    {
         if((lhs->constant = rhs[0]->constant)) {
             lhs->value = rhs[0]->value;
         }
-    } else {
+    }
+    else
+    {
         if(rhs[0]->constant && rhs[1]->constant) {
             lhs->constant = true;
             switch(opType) {
@@ -275,6 +280,20 @@ static bool processIF(const char* exp, VarNode* varHead, LabelNode* labelHead, F
         ParseSingleVar(tmpRhs, varHead, &rhsPtr);
         if(!lhsPtr->constant || !rhsPtr->constant) {
             return false;
+        }
+        switch (exp[match->rm_so + 1]) {
+            case '=':
+                if (lhsPtr->value != rhsPtr->value) return false;
+                break;
+            case '!':
+                if (lhsPtr->value == rhsPtr->value) return false;
+                break;
+            case '>':
+                if (lhsPtr->value <= rhsPtr->value) return false;
+                break;
+            case '<':
+                if (lhsPtr->value >= rhsPtr->value) return false;
+                break;
         }
         printf("Constant if: %s %s %s\n", lhsPtr->name, exp + match->rm_so + 1, rhsPtr->name);
         ret = regcomp(&regex, " GOTO ", 0);
@@ -352,9 +371,9 @@ void optimize(const char* inPath, const char* outPath) {
                     debugInfo("Write: %s\n", readBuf + strlen("WRITE"));
                     break;
                 case 2:
-                    // if(processIF(readBuf + 3, varHead, labelHead, outputFile, &isUnreachable)) {
-                    //     goto NO_PRINT;
-                    // }
+                    if(processIF(readBuf + 3, varHead, labelHead, outputFile, &isUnreachable)) {
+                        goto NO_PRINT;
+                    }
                     break;
                 case 3:
                     debugInfo("%s\n", readBuf);

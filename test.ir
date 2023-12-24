@@ -1,9 +1,5 @@
 FUNCTION main :
-IF #1 <= #2 GOTO label0
-v0 := #0
-v0 := #1 + v0
-WRITE v0
-GOTO label2
+GOTO label0
 LABEL label0 :
 t1 := #0 - #1
 WRITE t1
