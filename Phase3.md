@@ -109,7 +109,12 @@ RETURN &v4
 ## IR optimize
 
 1. 判断块前是否有无条件跳转的 `GOTO` 指令，如果有则不可达。不可达块中出现 `LABEL` 则认为该不可达块结束，后面的块恢复为可达。  
-Test:  
+
+2. `IF` 指令跳转如果恒为真，则检查跳转的label,如果未定义，则后方的块都不可达知道找到label定义，然后删除 `IF` 和对应label。否则不处理。
+
+3. `IF` 指令条件取反，节省GOTO指令  
+
+##### Test:  
 ```
 int main() {
     if (1>2) {
@@ -124,7 +129,7 @@ int main() {
 }
 
 ```
-Result:  
+##### Result:  
 Raw:  
 ```
 FUNCTION main :
@@ -151,7 +156,3 @@ LABEL label2 :
 RETURN #0
 
 ```  
-2. `IF` 指令跳转如果恒为真，则检查跳转的label,如果未定义，则后方的块都不可达知道找到label定义，然后删除 `IF` 和对应label。否则不处理。
-
-3. `IF` 指令条件取反，节省GOTO指令
-
