@@ -27,7 +27,7 @@ void stmtListParser(Node prev, Node node, Type* type);
 void stmtParser(Node prev, Node node, Type* type);
 
 
-FieldList* defListSemaParser(int isStructDef, Node node, FieldList* fieldList);
+FieldList* defListSemaParser(int isStructDef, Node node, FieldList* fieldList, Type* structure, int totalSpace);
 FieldList* defSemaParser(int isStructDef, Node node, FieldList* fieldList);
 FieldList* decListSemaParser(int isStructDef, Node node, Type* type, FieldList* fieldList);
 FieldList* decSemaParser(int isStructDef, Node node, Type* type, FieldList* fieldList);

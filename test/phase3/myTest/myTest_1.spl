@@ -1,25 +1,18 @@
-int main()
+struct Apple
 {
-    int number = 100;
-    int reversed = 0;
-    int original = number;
-    int flag = 0;
-    int digit = 0;
-    while (number != 0) {
-        digit = number - ((number / 10) * 10);
-        reversed = reversed * 10 + digit;
-        number = number / 10;
-    }
+    int a;
+    int number[10][5][7][10];
+};
 
-    if(reversed == original){
-        flag = 1;
-    }else{
-        flag = 0; 
-    }
+int add (int a, int b)
+{
+    return a + b;
+}
 
-    if(flag == 1){
-        write(1);
-    } else {
-        write(-1);
-    }
+struct Apple test(int c, int d)
+{
+    struct Apple aa;
+    aa.a = 15;
+    aa.number[0][2][3][4] = add(c, d);
+    return aa;
 }

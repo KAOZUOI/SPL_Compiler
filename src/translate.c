@@ -127,12 +127,13 @@ Type* specifierSemaParser(Node node) {
                 // DefList
                 Node defL = structId->right->right;
                 pushScope();
-                type->structure = defListSemaParser(1, defL, NULL);
+                type->structure = defListSemaParser(1, defL, NULL, type, 0);
                 popScope();
                 // insert symbol
                 symbol = (Symbol*)malloc(sizeof(Symbol));
                 symbol->name = structId->string_value;
                 symbol->type = type;
+                printf("struct space %d\n", symbol->type->space);
                 insertSymbol(symbol);
             }else {
                 // Struct ID
@@ -152,7 +153,7 @@ Type* specifierSemaParser(Node node) {
 }
 
     /* DefList */
-FieldList* defListSemaParser(int isStructDef, Node node, FieldList* fieldList) {
+FieldList* defListSemaParser(int isStructDef, Node node, FieldList* fieldList, Type* structure, int totalSpace) {
     // $
     if (!strcmp(node->name, "Epsilon")) {
         return fieldList;
@@ -160,20 +161,31 @@ FieldList* defListSemaParser(int isStructDef, Node node, FieldList* fieldList) {
     // Def DefList
     if (fieldList == NULL) {
         fieldList = defSemaParser(isStructDef, node->left, fieldList);
+        totalSpace = fieldList->type->space;
+        if (isStructDef) {
+            structure->space = totalSpace;
+        }
     }else {
-        //print fieldList
         fieldList->next = defSemaParser(isStructDef, node->left, fieldList);
-
+        totalSpace += fieldList->next->type->space;
+        if (isStructDef) {
+            structure->space = totalSpace;
+        }
+        
     }
-    defListSemaParser(isStructDef, node->left->right, fieldList);
+    defListSemaParser(isStructDef, node->left->right, fieldList, structure, totalSpace);
     return fieldList;
 }
+
+
     /* Def */
 FieldList* defSemaParser(int isStructDef, Node node, FieldList* fieldList) {
     Type* type = specifierSemaParser(node->left);
     fieldList = decListSemaParser(isStructDef, node->left->right, type, fieldList);
     return fieldList;
 }
+
+
 
     /* DecList */
 FieldList* decListSemaParser(int isStructDef, Node node, Type* type, FieldList* fieldList) {
@@ -213,11 +225,16 @@ FieldList* decSemaParser(int isStructDef, Node node, Type* type, FieldList* fiel
 }
     /* varDec */
 FieldList* varDecSemaParser(int isStructDef, int isFuncParam, Node node, Type* type) {
-    Type* oldType = type;
+    Type* oldType = (Type*)malloc(sizeof(Type));
+    int success = deepcopyType(oldType, type);
+    if (!success){
+        free(oldType);
+        oldType = NULL;
+    }
     Node varDec = node->left;
     int spaces = 0;
     int unit = type->space;
-    while (strcmp(varDec->name, "VarDec") == 0 && varDec->right->right->right->right != NULL) {
+    while (strcmp(varDec->name, "VarDec") == 0 && varDec->right != NULL) {
         Type* currentType = (Type*)malloc(sizeof(Type));
         currentType->array = (Array*)malloc(sizeof(Array));
         currentType->category = ARRAY;
@@ -229,7 +246,9 @@ FieldList* varDecSemaParser(int isStructDef, int isFuncParam, Node node, Type* t
         oldType = currentType;
         varDec = varDec->left;
     }
+    printf("space:%d\n", unit);
 
+    oldType->space = unit;
     FieldList* fieldList = (FieldList*)malloc(sizeof(FieldList));
     fieldList->name = varDec->string_value; // ID->string_value
     fieldList->type = oldType;
@@ -271,6 +290,8 @@ FieldList* varDecSemaParser(int isStructDef, int isFuncParam, Node node, Type* t
     strcpy(buffer, fieldList->name);
     symbol->name = buffer;
     symbol->type = fieldList->type;
+    printf("True name:%s\n", symbol->name);
+    printf("True space:%d\n", symbol->type->space);
     insertSymbol(symbol);
     return fieldList;
 }
@@ -543,9 +564,8 @@ Type* expSemaParser(int isAss, Node node){
                 char* addr = NULL;
                 if ((expType2->tag[0] == '#' && expType2->tag[1] != '0')
                 || expType2->tag[0] == 'v'){
-                    // int unit = expType1->array->type->dec;
-                    int unit = 4;
-                    char* decs = NULL;
+                    int unit = expType1->array->type->space;
+                    char* spc = NULL;
                     char num[10] = {0};
                     char mrk[10] = "#";
                     int len = countLength(unit) + 1;
@@ -556,19 +576,19 @@ Type* expSemaParser(int isAss, Node node){
                     if (expType2->tag[0] == '#' 
                     && expType2->tag[1] == '1'
                     && expType2->tag[2] == '\0'){
-                        decs = ost;
+                        spc = ost;
                     }else{
                         // t? := unit * INT
-                        decs = generateT(tCnt);
+                        spc = generateT(tCnt);
                         tCnt++;
-                        curTac->next = newTac(decs, "*", expType2->tag, ost);
+                        curTac->next = newTac(spc, "*", expType2->tag, ost);
                         curTac = curTac->next;
                         curTac->title = OPER;
                     }
-                    // t? := addr + decs
+                    // t? := addr + spc
                     addr = generateT(tCnt);
                     tCnt++;
-                    curTac->next = newTac(addr, "+", expType1->tag, decs);
+                    curTac->next = newTac(addr, "+", expType1->tag, spc);
                     curTac = curTac->next;
                     curTac->title = OPER;
                 }else{
@@ -868,7 +888,7 @@ Type* expSemaParser(int isAss, Node node){
 }
 
 void compStParser(Node prev, Node node, Type* type){
-    defListSemaParser(0, node->left->right, NULL);
+    defListSemaParser(0, node->left->right, NULL, NULL, 0);
     stmtListParser(prev, node->left->right->right, type);
 }
 

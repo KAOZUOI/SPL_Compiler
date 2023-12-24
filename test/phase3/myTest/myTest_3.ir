@@ -1,0 +1,5 @@
+FUNCTION main :
+v0 := #1
+v1 := #2
+v2 := v0 + v1
+RETURN v2

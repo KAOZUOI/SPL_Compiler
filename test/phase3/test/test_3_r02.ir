@@ -28,10 +28,10 @@ LABEL label6 :
 RETURN v2
 
 FUNCTION main :
-READ v6
-READ v6
-ARG v6
-ARG v6
+READ v4
+READ v5
+ARG v5
+ARG v4
 v6 := CALL calculateBinomialCoefficient
 WRITE v6
 RETURN #0

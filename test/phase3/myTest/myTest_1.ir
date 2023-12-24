@@ -1,0 +1,24 @@
+FUNCTION add :
+PARAM v0
+PARAM v1
+t0 := v0 + v1
+RETURN t0
+
+FUNCTION test :
+PARAM v2
+PARAM v3
+DEC v4 14004
+t1 := &v4
+*t1 := #15
+ARG v3
+ARG v2
+t3 := CALL add
+t4 := &v4 + #4
+t5 := #2 * #280
+t6 := t4 + t5
+t7 := #3 * #40
+t8 := t6 + t7
+t9 := #4 * #4
+t10 := t8 + t9
+*t10 := t3
+RETURN &v4
