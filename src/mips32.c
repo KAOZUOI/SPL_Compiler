@@ -15,14 +15,14 @@ VarNode *all_variables = NULL;
 void add_variable(const char *var_name) {
     // 首先检查变量是否已存在于列表中
     VarNode *current = all_variables;
-    _mips_printf("have");
+    // _mips_printf("have");
     while (current != NULL) {
         if (strcmp(current->var_name, var_name) == 0) {
             return; // 变量已存在，无需添加
         }
         current = current->next;
     }
-    _mips_printf("add");
+    // _mips_printf("add");
     // 创建新节点并添加到列表中
     VarNode *new_node = (VarNode *)malloc(sizeof(VarNode));
     strcpy(new_node->var_name, var_name);
@@ -144,7 +144,7 @@ Register spill_register(tac_opd *opd) {
 
 
 
-char* loadVar2Reg(tac_opd *opd, int registerNumber){
+char* loadVar2Reg(tac_opd *opd, int registerNumber) {
     if (opd == NULL) {
         _mips_printf("Error: NULL operand in loadVar2Reg\n");
         return NULL;
@@ -162,18 +162,18 @@ char* loadVar2Reg(tac_opd *opd, int registerNumber){
         } else {
             sprintf(buffer, "li $t%d, %d", registerNumber, opd->int_val);
         }
+    } else if (opd->kind == OP_VARIABLE) {
+        // 从标签地址加载变量到寄存器
+        sprintf(buffer, "lw $t%d, _%s", registerNumber, opd->char_val);
     } else {
-        struct VarDesc *varDesc = find_var_desc(opd->char_val);
-        if (varDesc == NULL) {
-            _mips_printf("Error: Variable '%s' not found in loadVar2Reg\n", opd->char_val);
-            free(buffer);
-            return NULL;
-        }
-        sprintf(buffer, "lw $t%d, %d($fp)", registerNumber, varDesc->offset);
+        _mips_printf("Error: Unsupported operand type in loadVar2Reg\n");
+        free(buffer);
+        return NULL;
     }
 
     return buffer;
 }
+
 
 void emit_data_section(FILE *fd) {
     fprintf(fd, ".data\n");
@@ -199,128 +199,89 @@ tac *emit_function(tac *function) {
 }
 
 
-tac *emit_assign(tac *assign){
+tac *emit_assign(tac *assign) {
+    // 添加变量到列表（如果它们尚未存在）
     add_variable(_tac_quadruple(assign).left->char_val);
     if (_tac_quadruple(assign).right->kind != OP_CONSTANT) {
         add_variable(_tac_quadruple(assign).right->char_val);
     }
 
-    Register x, y;
+    // 右侧值的加载
+    char *mipsLwBufRight = loadVar2Reg(_tac_quadruple(assign).right, 0);
 
-    x = get_register_w(_tac_quadruple(assign).left);
-    if(_tac_quadruple(assign).right->kind == OP_CONSTANT){
-        _mips_printf("assign");
-        _mips_iprintf("li %s, %d", _reg_name(x),
-                                   _tac_quadruple(assign).right->int_val);
-    }
-    else{
-        y = get_register(_tac_quadruple(assign).right);
-        _mips_iprintf("move %s, %s", _reg_name(x), _reg_name(y));
-    }
+    // 执行赋值操作
+    _mips_iprintf("%s", mipsLwBufRight);
+    _mips_iprintf("sw $t0, _%s", _tac_quadruple(assign).left->char_val);
+
+    // 释放动态分配的内存
+    free(mipsLwBufRight);
+
     return assign->next;
 }
 
 tac *emit_add(tac *add){
-    Register x, y, z;
+    // 加载右操作数
+    char *mipsLwBuf1 = loadVar2Reg(_tac_quadruple(add).r1, 0);
+    char *mipsLwBuf2 = loadVar2Reg(_tac_quadruple(add).r2, 1);
+    _mips_iprintf("%s", mipsLwBuf1);
+    _mips_iprintf("%s", mipsLwBuf2);
 
-    x = get_register_w(_tac_quadruple(add).left);
-    if(_tac_quadruple(add).r1->kind == OP_CONSTANT){
-        y = get_register(_tac_quadruple(add).r2);
-        _mips_iprintf("addi %s, %s, %d", _reg_name(x),
-                                         _reg_name(y),
-                                         _tac_quadruple(add).r1->int_val);
-    }
-    else if(_tac_quadruple(add).r2->kind == OP_CONSTANT){
-        y = get_register(_tac_quadruple(add).r1);
-        _mips_iprintf("addi %s, %s, %d", _reg_name(x),
-                                         _reg_name(y),
-                                         _tac_quadruple(add).r2->int_val);
-    }
-    else{
-        y = get_register(_tac_quadruple(add).r1);
-        z = get_register(_tac_quadruple(add).r2);
-        _mips_iprintf("add %s, %s, %s", _reg_name(x),
-                                        _reg_name(y),
-                                        _reg_name(z));
-    }
+    // 执行加法
+    _mips_iprintf("add $t2, $t0, $t1");
+
+    // 结果存回内存
+    _mips_iprintf("sw $t2, _%s", _tac_quadruple(add).left->char_val);
+
+    free(mipsLwBuf1);
+    free(mipsLwBuf2);
+
     return add->next;
 }
 
-tac *emit_sub(tac *sub){
-    Register x, y, z;
 
-    x = get_register_w(_tac_quadruple(sub).left);
-    if(_tac_quadruple(sub).r1->kind == OP_CONSTANT){
-        y = get_register(_tac_quadruple(sub).r2);
-        _mips_iprintf("neg %s, %s", _reg_name(y), _reg_name(y));
-        _mips_iprintf("addi %s, %s, %d", _reg_name(x),
-                                         _reg_name(y),
-                                         _tac_quadruple(sub).r1->int_val);
-    }
-    else if(_tac_quadruple(sub).r2->kind == OP_CONSTANT){
-        y = get_register(_tac_quadruple(sub).r1);
-        _mips_iprintf("addi %s, %s, -%d", _reg_name(x),
-                                          _reg_name(y),
-                                          _tac_quadruple(sub).r2->int_val);
-    }
-    else{
-        y = get_register(_tac_quadruple(sub).r1);
-        z = get_register(_tac_quadruple(sub).r2);
-        _mips_iprintf("sub %s, %s, %s", _reg_name(x),
-                                        _reg_name(y),
-                                        _reg_name(z));
-    }
+tac *emit_sub(tac *sub) {
+    char *mipsLwBuf1 = loadVar2Reg(_tac_quadruple(sub).r1, 0);
+    char *mipsLwBuf2 = loadVar2Reg(_tac_quadruple(sub).r2, 1);
+    _mips_iprintf("%s", mipsLwBuf1);
+    _mips_iprintf("%s", mipsLwBuf2);
+
+    _mips_iprintf("sub $t2, $t0, $t1");
+    _mips_iprintf("sw $t2, _%s", _tac_quadruple(sub).left->char_val);
+
+    free(mipsLwBuf1);
+    free(mipsLwBuf2);
+
     return sub->next;
 }
 
-tac *emit_mul(tac *mul){
-    Register x, y, z;
+tac *emit_mul(tac *mul) {
+    char *mipsLwBuf1 = loadVar2Reg(_tac_quadruple(mul).r1, 0);
+    char *mipsLwBuf2 = loadVar2Reg(_tac_quadruple(mul).r2, 1);
+    _mips_iprintf("%s", mipsLwBuf1);
+    _mips_iprintf("%s", mipsLwBuf2);
 
-    x = get_register_w(_tac_quadruple(mul).left);
-    if(_tac_quadruple(mul).r1->kind == OP_CONSTANT){
-        y = get_register_w(_tac_quadruple(mul).r1);
-        z = get_register(_tac_quadruple(mul).r2);
-        _mips_iprintf("lw %s, %d", _reg_name(y),
-                                   _tac_quadruple(mul).r1->int_val);
-    }
-    else if(_tac_quadruple(mul).r2->kind == OP_CONSTANT){
-        y = get_register(_tac_quadruple(mul).r1);
-        z = get_register_w(_tac_quadruple(mul).r2);
-        _mips_iprintf("lw %s, %d", _reg_name(z),
-                                   _tac_quadruple(mul).r2->int_val);
-    }
-    else{
-        y = get_register(_tac_quadruple(mul).r1);
-        z = get_register(_tac_quadruple(mul).r2);
-    }
-    _mips_iprintf("mul %s, %s, %s", _reg_name(x),
-                                    _reg_name(y),
-                                    _reg_name(z));
+    _mips_iprintf("mul $t2, $t0, $t1");
+    _mips_iprintf("sw $t2, _%s", _tac_quadruple(mul).left->char_val);
+
+    free(mipsLwBuf1);
+    free(mipsLwBuf2);
+
     return mul->next;
 }
 
-tac *emit_div(tac *div){
-    Register x, y, z;
+tac *emit_div(tac *div) {
+    char *mipsLwBuf1 = loadVar2Reg(_tac_quadruple(div).r1, 0);
+    char *mipsLwBuf2 = loadVar2Reg(_tac_quadruple(div).r2, 1);
+    _mips_iprintf("%s", mipsLwBuf1);
+    _mips_iprintf("%s", mipsLwBuf2);
 
-    x = get_register_w(_tac_quadruple(div).left);
-    if(_tac_quadruple(div).r1->kind == OP_CONSTANT){
-        y = get_register_w(_tac_quadruple(div).r1);
-        z = get_register(_tac_quadruple(div).r2);
-        _mips_iprintf("lw %s, %d", _reg_name(y),
-                                   _tac_quadruple(div).r1->int_val);
-    }
-    else if(_tac_quadruple(div).r2->kind == OP_CONSTANT){
-        y = get_register(_tac_quadruple(div).r1);
-        z = get_register_w(_tac_quadruple(div).r2);
-        _mips_iprintf("lw %s, %d", _reg_name(z),
-                                   _tac_quadruple(div).r2->int_val);
-    }
-    else{
-        y = get_register(_tac_quadruple(div).r1);
-        z = get_register(_tac_quadruple(div).r2);
-    }
-    _mips_iprintf("div %s, %s", _reg_name(y), _reg_name(z));
-    _mips_iprintf("mflo %s", _reg_name(x));
+    _mips_iprintf("div $t0, $t1");
+    _mips_iprintf("mflo $t2");
+    _mips_iprintf("sw $t2, _%s", _tac_quadruple(div).left->char_val);
+
+    free(mipsLwBuf1);
+    free(mipsLwBuf2);
+
     return div->next;
 }
 
@@ -579,9 +540,75 @@ static tac* (*emitter[])(tac*) = {
     emit_read, emit_write
 };
 
+void collect_variables(tac *head) {
+    for (tac *current_tac = head; current_tac != NULL; current_tac = current_tac->next) {
+        if (current_tac->code.kind == ASSIGN) {
+            if (current_tac->code.assign.left->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.assign.left->char_val);
+            }
+            if (current_tac->code.assign.right->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.assign.right->char_val);
+            }
+        }
+        if (current_tac->code.kind == ADD) {
+            if (current_tac->code.add.left->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.add.left->char_val);
+            }
+            if (current_tac->code.add.r1->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.add.r1->char_val);
+            }
+            if (current_tac->code.add.r2->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.add.r2->char_val);
+            }
+        }
+        if (current_tac->code.kind == SUB) {
+            if (current_tac->code.sub.left->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.sub.left->char_val);
+            }
+            if (current_tac->code.sub.r1->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.sub.r1->char_val);
+            }
+            if (current_tac->code.sub.r2->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.sub.r2->char_val);
+            }
+        }
+        if (current_tac->code.kind == MUL) {
+            if (current_tac->code.mul.left->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.mul.left->char_val);
+            }
+            if (current_tac->code.mul.r1->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.mul.r1->char_val);
+            }
+            if (current_tac->code.mul.r2->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.mul.r2->char_val);
+            }
+        }
+        if (current_tac->code.kind == DIV) {
+            if (current_tac->code.div.left->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.div.left->char_val);
+            }
+            if (current_tac->code.div.r1->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.div.r1->char_val);
+            }
+            if (current_tac->code.div.r2->kind == OP_VARIABLE) {
+                add_variable(current_tac->code.div.r2->char_val);
+            }
+        }
+        
+        
+        // 检查其他 TAC 类型并收集变量名...
+    }
+}
+
+
 tac *emit_code(tac *head){
     tac *(*tac_emitter)(tac*);
     tac *tac_code = head;
+    collect_variables(head);
+    emit_data_section(fd);
+    emit_preamble();
+    emit_read_function();
+    emit_write_function();
     
     while(tac_code != NULL){
         if(_tac_kind(tac_code) != NONE){
@@ -592,11 +619,9 @@ tac *emit_code(tac *head){
             tac_code = tac_code->next;
         }
     }
-    emit_data_section(fd);
-    emit_preamble();
-    emit_read_function();
-    emit_write_function();
-    clear_local_vars(); // 清理所有剩余的局部变量
+
+    clear_local_vars();
+    
 }
 
 /* translate a TAC list into mips32 assembly
