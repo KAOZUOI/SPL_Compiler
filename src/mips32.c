@@ -278,29 +278,22 @@ tac *emit_div(tac *div) {
 }
 
 tac *emit_addr(tac *addr){
-    Register x, y;
-
-    x = get_register_w(_tac_quadruple(addr).left);
-    y = get_register(_tac_quadruple(addr).right);
-    _mips_iprintf("move %s, %s", _reg_name(x), _reg_name(y));
+    _mips_iprintf( "la $t0, _%s", _tac_quadruple(addr).right->char_val);
+    _mips_iprintf( "sw $t0, _%s", _tac_quadruple(addr).left->char_val);
     return addr->next;
 }
 
 tac *emit_fetch(tac *fetch){
-    Register x, y;
-
-    x = get_register_w(_tac_quadruple(fetch).left);
-    y = get_register(_tac_quadruple(fetch).raddr);
-    _mips_iprintf("lw %s, 0(%s)", _reg_name(x), _reg_name(y));
+    _mips_iprintf("lw $t0, _%s", _tac_quadruple(fetch).raddr->char_val);
+    _mips_iprintf("lw $t1, 0($t0)");
+    _mips_iprintf("sw $t1, _%s", _tac_quadruple(fetch).left->char_val);
     return fetch->next;
 }
 
 tac *emit_deref(tac *deref){
-    Register x, y;
-
-    x = get_register(_tac_quadruple(deref).laddr);
-    y = get_register(_tac_quadruple(deref).right);
-    _mips_iprintf("sw %s, 0(%s)", _reg_name(y), _reg_name(x));
+    _mips_iprintf("lw $t0, _%s", _tac_quadruple(deref).right->char_val);
+    _mips_iprintf("lw $t1, _%s", _tac_quadruple(deref).laddr->char_val);
+    _mips_iprintf("sw $t1, 0($t0)");
     return deref->next;
 }
 
