@@ -1,19 +1,15 @@
-int main() {
-    int numbers[5];
-    int sum = 0;
-    int i = 0;
-
-    numbers[0] = 10;
-    numbers[1] = 20;
-    numbers[2] = 30;
-    numbers[3] = 40;
-    numbers[4] = 50;
-
-    while (i < 5) {
-        sum = sum + numbers[i];
-        i = i + 1;
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = a;
+        a = b;
+        b = temp - (temp / b) * b;
     }
+    return a;
+}
 
-    write(sum);
+int main() {
+    int num1 = 48;
+    int num2 = 18;
+    write(gcd(num1, num2));
     return 0;
 }

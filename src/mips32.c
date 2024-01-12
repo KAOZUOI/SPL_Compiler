@@ -394,7 +394,11 @@ tac *emit_ifeq(tac *ifeq){
 }
 
 tac *emit_return(tac *return_) {
-    _mips_iprintf("lw $v0, _%s", _tac_quadruple(return_).var->char_val);
+    if(_tac_quadruple(return_).var->kind == OP_CONSTANT){
+        _mips_iprintf("li $v0, %d", _tac_quadruple(return_).var->int_val);
+    }
+    else
+        _mips_iprintf("lw $v0, _%s", _tac_quadruple(return_).var->char_val);
     _mips_iprintf("jr $ra");
     return return_->next;
 }
@@ -485,7 +489,10 @@ tac *emit_read(tac *read){
 }
 
 tac *emit_write(tac *write){
-    _mips_iprintf("lw $a0, _%s", _tac_quadruple(write).p->char_val);
+    if(_tac_quadruple(write).p->kind == OP_CONSTANT)
+        _mips_iprintf("li $a0, %d", _tac_quadruple(write).p->int_val);
+    else
+        _mips_iprintf("lw $a0, _%s", _tac_quadruple(write).p->char_val);
     _mips_iprintf("addi $sp, $sp, -4");
     _mips_iprintf("sw $ra, 0($sp)");
     _mips_iprintf("jal write");
