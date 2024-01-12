@@ -11,6 +11,9 @@ FILE *fd;
 struct RegDesc regs[NUM_REGS];
 struct VarDesc *vars = NULL;
 VarNode *all_variables = NULL;
+int all_variables_count = 0;
+int arg_count = 0;
+int param_count = 0;
 
 void add_variable(const char *var_name) {
     // 首先检查变量是否已存在于列表中
@@ -38,17 +41,6 @@ void add_local_var(const char *var_name, int offset) {
     new_var->offset = offset;
     new_var->next = vars;
     vars = new_var;
-}
-
-// 清理函数结束时的局部变量
-void clear_local_vars() {
-    struct VarDesc *current = vars;
-    while (current != NULL && current->offset < 0) { // 假设局部变量offset为负
-        struct VarDesc *temp = current;
-        current = current->next;
-        free(temp);
-    }
-    vars = current; // 更新全局变量列表
 }
 
 void _mips_printf(const char *fmt, ...){
@@ -388,11 +380,8 @@ tac *emit_ifne(tac *ifne){
 }
 
 tac *emit_ifeq(tac *ifeq){
-    _mips_printf("inifeq0");
     char* mipsLwBuf1 = loadVar2Reg(_tac_quadruple(ifeq).c1, 0);
-    _mips_printf("inifeq1");
     char* mipsLwBuf2 = loadVar2Reg(_tac_quadruple(ifeq).c2, 1);
-    _mips_printf("inifeq2");
 
     _mips_iprintf("%s", mipsLwBuf1);
     _mips_iprintf("%s", mipsLwBuf2);
@@ -405,9 +394,7 @@ tac *emit_ifeq(tac *ifeq){
 }
 
 tac *emit_return(tac *return_) {
-    clear_local_vars();  // 清理局部变量
-    Register x = get_register(_tac_quadruple(return_).var);
-    _mips_iprintf("move $v0, %s", _reg_name(x));
+    _mips_iprintf("lw $v0, _%s", _tac_quadruple(return_).var->char_val);
     _mips_iprintf("jr $ra");
     return return_->next;
 }
@@ -419,20 +406,14 @@ tac *emit_dec(tac *dec) {
 }
 
 
-// 全局变量来跟踪参数的数量
-static int arg_count = 0;
+
 
 tac *emit_arg(tac *arg) {
-    Register x = get_register(_tac_quadruple(arg).var);
-
-    if (arg_count < 4) {
-        // 将参数移动到 $a0-$a3 寄存器
-        _mips_iprintf("move $a%d, %s", arg_count, _reg_name(x));
-    } else {
-        // 将参数推送到栈上
-        _mips_iprintf("addi $sp, $sp, -4");
-        _mips_iprintf("sw %s, 0($sp)", _reg_name(x));
-    }
+    char* mipsLwBuf = loadVar2Reg(_tac_quadruple(arg).var, 0);
+    _mips_iprintf("%s", mipsLwBuf);
+    // 将参数推送到栈上
+    _mips_iprintf("addi $sp, $sp, -4");
+    _mips_iprintf("sw $t0, 0($sp)");
     arg_count++;
     return arg->next;
 }
@@ -441,12 +422,35 @@ tac *emit_arg(tac *arg) {
 
 
 tac *emit_call(tac *call) {
+    // 将所有变量保存到栈上
+    _mips_iprintf("addi $sp, $sp, -%d", all_variables_count * 4 + 4);
+    int i = 0;
+    VarNode *all_variables_copy = all_variables;
+    while (all_variables_copy != NULL) {
+        _mips_iprintf("lw $t0, _%s", all_variables_copy->var_name);
+        _mips_iprintf("sw $t0, %d($sp)", i * 4);
+        i++;
+        all_variables_copy = all_variables_copy->next;
+    }
+    _mips_iprintf("sw $ra, %d($sp)", i * 4);
+
+    param_count = 0;
     _mips_iprintf("jal %s", _tac_quadruple(call).funcname); // 跳转并链接
 
+    // 恢复所有变量
+    all_variables_copy = all_variables;
+    i = 0;
+    while (all_variables_copy != NULL) {
+        _mips_iprintf("lw $t0, %d($sp)", i * 4);
+        _mips_iprintf("sw $t0, _%s", all_variables_copy->var_name);
+        i++;
+        all_variables_copy = all_variables_copy->next;
+    }
+    _mips_iprintf("lw $ra, %d($sp)", i * 4);
+    _mips_iprintf("addi $sp, $sp, %d", all_variables_count * 4 + 4 + arg_count * 4);
     // 处理函数返回值
     if (_tac_quadruple(call).ret != NULL) {
-        Register ret = get_register_w(_tac_quadruple(call).ret);
-        _mips_iprintf("move %s, $v0", _reg_name(ret)); // 将返回值移到目标寄存器
+        _mips_iprintf("sw $v0, _%s", _tac_quadruple(call).ret->char_val);
     }
 
     // 重置参数计数
@@ -458,19 +462,11 @@ tac *emit_call(tac *call) {
 
 
 
-static int param_count = 0;
 
 tac *emit_param(tac *param) {
-    Register x = get_register_w(_tac_quadruple(param).p);
+    _mips_iprintf("lw $t0, %d($sp)", param_count * 4 + all_variables_count * 4 + 4);
+    _mips_iprintf("sw $t0, _%s", _tac_quadruple(param).p->char_val);
 
-    if (param_count < 4) {
-        // 从 $a0-$a3 寄存器加载参数
-        _mips_iprintf("move %s, $a%d", _reg_name(x), param_count);
-    } else {
-        // 从栈加载参数
-        int offset = (param_count - 4) * 4 + 8; // 假设有 8 字节的返回地址和帧指针
-        _mips_iprintf("lw %s, %d($fp)", _reg_name(x), offset);
-    }
     param_count++;
 
     return param->next;
@@ -479,21 +475,17 @@ tac *emit_param(tac *param) {
 
 
 tac *emit_read(tac *read){
-    Register x = get_register(_tac_quadruple(read).p);
-
     _mips_iprintf("addi $sp, $sp, -4");
     _mips_iprintf("sw $ra, 0($sp)");
     _mips_iprintf("jal read");
     _mips_iprintf("lw $ra, 0($sp)");
     _mips_iprintf("addi $sp, $sp, 4");
-    _mips_iprintf("move %s, $v0", _reg_name(x));
+    _mips_iprintf("sw $v0, _%s", _tac_quadruple(read).p->char_val);
     return read->next;
 }
 
 tac *emit_write(tac *write){
-    Register x = get_register_w(_tac_quadruple(write).p);
-
-    _mips_iprintf("move $a0, %s", _reg_name(x));
+    _mips_iprintf("lw $a0, _%s", _tac_quadruple(write).p->char_val);
     _mips_iprintf("addi $sp, $sp, -4");
     _mips_iprintf("sw $ra, 0($sp)");
     _mips_iprintf("jal write");
@@ -594,17 +586,35 @@ void collect_variables(tac *head) {
                 add_variable(current_tac->code.div.r2->char_val);
             }
         }
-        
-        
-        // 检查其他 TAC 类型并收集变量名...
+        if(current_tac->code.kind == READ){
+            if(current_tac->code.read.p->kind == OP_VARIABLE){
+                add_variable(current_tac->code.read.p->char_val);
+            }
+        }
+        if(current_tac->code.kind == WRITE){
+            if(current_tac->code.write.p->kind == OP_VARIABLE){
+                add_variable(current_tac->code.write.p->char_val);
+            }
+        }
+        if(current_tac->code.kind == CALL){
+            if(current_tac->code.call.ret->kind == OP_VARIABLE){
+                add_variable(current_tac->code.call.ret->char_val);
+            }
+        }
     }
 }
 
+void count_variables(tac *head) {
+    for (VarNode *current = all_variables; current != NULL; current = current->next) {
+        all_variables_count++;
+    }
+}
 
 tac *emit_code(tac *head){
     tac *(*tac_emitter)(tac*);
     tac *tac_code = head;
     collect_variables(head);
+    count_variables(head);
     emit_data_section(fd);
     emit_preamble();
     emit_read_function();
@@ -619,8 +629,6 @@ tac *emit_code(tac *head){
             tac_code = tac_code->next;
         }
     }
-
-    clear_local_vars();
     
 }
 

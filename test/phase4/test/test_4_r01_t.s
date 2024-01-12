@@ -1,0 +1,691 @@
+.data
+_v40: .word 0
+_v35: .word 0
+_v39: .word 0
+_v38: .word 0
+_v37: .word 0
+_v36: .word 0
+_v33: .word 0
+_v34: .word 0
+_v32: .word 0
+_v25: .word 0
+_v31: .word 0
+_v30: .word 0
+_v29: .word 0
+_v26: .word 0
+_v28: .word 0
+_v27: .word 0
+_v20: .word 0
+_v24: .word 0
+_v21: .word 0
+_v23: .word 0
+_v22: .word 0
+_v12: .word 0
+_v2: .word 0
+_v18: .word 0
+_v17: .word 0
+_v16: .word 0
+_v13: .word 0
+_v15: .word 0
+_v14: .word 0
+_v7: .word 0
+_v3: .word 0
+_v11: .word 0
+_v8: .word 0
+_v10: .word 0
+_v1: .word 0
+_v9: .word 0
+_v5: .word 0
+_v0: .word 0
+_v4: .word 0
+_prmpt: .asciiz "Enter an integer: "
+_eol: .asciiz "\n"
+.globl main
+.text
+read:
+  li $v0, 4
+  la $a0, _prmpt
+  syscall
+  li $v0, 5
+  syscall
+  jr $ra
+write:
+  li $v0, 1
+  syscall
+  li $v0, 4
+  la $a0, _eol
+  syscall
+  move $v0, $0
+  jr $ra
+hanoi:
+  lw $t0, 160($sp)
+  sw $t0, _v0
+  lw $t0, 164($sp)
+  sw $t0, _v1
+  lw $t0, 168($sp)
+  sw $t0, _v2
+  lw $t0, 172($sp)
+  sw $t0, _v3
+  lw $t0, _v0
+  sw $t0, _v4
+  li $t0, 1
+  sw $t0, _v5
+  lw $t0, _v4
+  lw $t1, _v5
+  beq $t0, $t1, label0
+  j label1
+label0:
+  lw $t0, _v1
+  sw $t0, _v9
+  li $t0, 10000
+  sw $t0, _v10
+  lw $t0, _v9
+  lw $t1, _v10
+  mul $t2, $t0, $t1
+  sw $t2, _v8
+  lw $t0, _v3
+  sw $t0, _v11
+  lw $t0, _v8
+  lw $t1, _v11
+  add $t2, $t0, $t1
+  sw $t2, _v7
+  lw $a0, _v7
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal write
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  j label2
+label1:
+  lw $t0, _v0
+  sw $t0, _v14
+  li $t0, 1
+  sw $t0, _v15
+  lw $t0, _v14
+  lw $t1, _v15
+  sub $t2, $t0, $t1
+  sw $t2, _v13
+  lw $t0, _v1
+  sw $t0, _v16
+  lw $t0, _v3
+  sw $t0, _v17
+  lw $t0, _v2
+  sw $t0, _v18
+  lw $t0, _v18
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  lw $t0, _v17
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  lw $t0, _v16
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  lw $t0, _v13
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  addi $sp, $sp, -160
+  lw $t0, _v40
+  sw $t0, 0($sp)
+  lw $t0, _v35
+  sw $t0, 4($sp)
+  lw $t0, _v39
+  sw $t0, 8($sp)
+  lw $t0, _v38
+  sw $t0, 12($sp)
+  lw $t0, _v37
+  sw $t0, 16($sp)
+  lw $t0, _v36
+  sw $t0, 20($sp)
+  lw $t0, _v33
+  sw $t0, 24($sp)
+  lw $t0, _v34
+  sw $t0, 28($sp)
+  lw $t0, _v32
+  sw $t0, 32($sp)
+  lw $t0, _v25
+  sw $t0, 36($sp)
+  lw $t0, _v31
+  sw $t0, 40($sp)
+  lw $t0, _v30
+  sw $t0, 44($sp)
+  lw $t0, _v29
+  sw $t0, 48($sp)
+  lw $t0, _v26
+  sw $t0, 52($sp)
+  lw $t0, _v28
+  sw $t0, 56($sp)
+  lw $t0, _v27
+  sw $t0, 60($sp)
+  lw $t0, _v20
+  sw $t0, 64($sp)
+  lw $t0, _v24
+  sw $t0, 68($sp)
+  lw $t0, _v21
+  sw $t0, 72($sp)
+  lw $t0, _v23
+  sw $t0, 76($sp)
+  lw $t0, _v22
+  sw $t0, 80($sp)
+  lw $t0, _v12
+  sw $t0, 84($sp)
+  lw $t0, _v2
+  sw $t0, 88($sp)
+  lw $t0, _v18
+  sw $t0, 92($sp)
+  lw $t0, _v17
+  sw $t0, 96($sp)
+  lw $t0, _v16
+  sw $t0, 100($sp)
+  lw $t0, _v13
+  sw $t0, 104($sp)
+  lw $t0, _v15
+  sw $t0, 108($sp)
+  lw $t0, _v14
+  sw $t0, 112($sp)
+  lw $t0, _v7
+  sw $t0, 116($sp)
+  lw $t0, _v3
+  sw $t0, 120($sp)
+  lw $t0, _v11
+  sw $t0, 124($sp)
+  lw $t0, _v8
+  sw $t0, 128($sp)
+  lw $t0, _v10
+  sw $t0, 132($sp)
+  lw $t0, _v1
+  sw $t0, 136($sp)
+  lw $t0, _v9
+  sw $t0, 140($sp)
+  lw $t0, _v5
+  sw $t0, 144($sp)
+  lw $t0, _v0
+  sw $t0, 148($sp)
+  lw $t0, _v4
+  sw $t0, 152($sp)
+  sw $ra, 156($sp)
+  jal hanoi
+  lw $t0, 0($sp)
+  sw $t0, _v40
+  lw $t0, 4($sp)
+  sw $t0, _v35
+  lw $t0, 8($sp)
+  sw $t0, _v39
+  lw $t0, 12($sp)
+  sw $t0, _v38
+  lw $t0, 16($sp)
+  sw $t0, _v37
+  lw $t0, 20($sp)
+  sw $t0, _v36
+  lw $t0, 24($sp)
+  sw $t0, _v33
+  lw $t0, 28($sp)
+  sw $t0, _v34
+  lw $t0, 32($sp)
+  sw $t0, _v32
+  lw $t0, 36($sp)
+  sw $t0, _v25
+  lw $t0, 40($sp)
+  sw $t0, _v31
+  lw $t0, 44($sp)
+  sw $t0, _v30
+  lw $t0, 48($sp)
+  sw $t0, _v29
+  lw $t0, 52($sp)
+  sw $t0, _v26
+  lw $t0, 56($sp)
+  sw $t0, _v28
+  lw $t0, 60($sp)
+  sw $t0, _v27
+  lw $t0, 64($sp)
+  sw $t0, _v20
+  lw $t0, 68($sp)
+  sw $t0, _v24
+  lw $t0, 72($sp)
+  sw $t0, _v21
+  lw $t0, 76($sp)
+  sw $t0, _v23
+  lw $t0, 80($sp)
+  sw $t0, _v22
+  lw $t0, 84($sp)
+  sw $t0, _v12
+  lw $t0, 88($sp)
+  sw $t0, _v2
+  lw $t0, 92($sp)
+  sw $t0, _v18
+  lw $t0, 96($sp)
+  sw $t0, _v17
+  lw $t0, 100($sp)
+  sw $t0, _v16
+  lw $t0, 104($sp)
+  sw $t0, _v13
+  lw $t0, 108($sp)
+  sw $t0, _v15
+  lw $t0, 112($sp)
+  sw $t0, _v14
+  lw $t0, 116($sp)
+  sw $t0, _v7
+  lw $t0, 120($sp)
+  sw $t0, _v3
+  lw $t0, 124($sp)
+  sw $t0, _v11
+  lw $t0, 128($sp)
+  sw $t0, _v8
+  lw $t0, 132($sp)
+  sw $t0, _v10
+  lw $t0, 136($sp)
+  sw $t0, _v1
+  lw $t0, 140($sp)
+  sw $t0, _v9
+  lw $t0, 144($sp)
+  sw $t0, _v5
+  lw $t0, 148($sp)
+  sw $t0, _v0
+  lw $t0, 152($sp)
+  sw $t0, _v4
+  lw $ra, 156($sp)
+  addi $sp, $sp, 176
+  sw $v0, _v12
+  lw $t0, _v1
+  sw $t0, _v22
+  li $t0, 10000
+  sw $t0, _v23
+  lw $t0, _v22
+  lw $t1, _v23
+  mul $t2, $t0, $t1
+  sw $t2, _v21
+  lw $t0, _v3
+  sw $t0, _v24
+  lw $t0, _v21
+  lw $t1, _v24
+  add $t2, $t0, $t1
+  sw $t2, _v20
+  lw $a0, _v20
+  addi $sp, $sp, -4
+  sw $ra, 0($sp)
+  jal write
+  lw $ra, 0($sp)
+  addi $sp, $sp, 4
+  lw $t0, _v0
+  sw $t0, _v27
+  li $t0, 1
+  sw $t0, _v28
+  lw $t0, _v27
+  lw $t1, _v28
+  sub $t2, $t0, $t1
+  sw $t2, _v26
+  lw $t0, _v2
+  sw $t0, _v29
+  lw $t0, _v1
+  sw $t0, _v30
+  lw $t0, _v3
+  sw $t0, _v31
+  lw $t0, _v31
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  lw $t0, _v30
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  lw $t0, _v29
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  lw $t0, _v26
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  addi $sp, $sp, -160
+  lw $t0, _v40
+  sw $t0, 0($sp)
+  lw $t0, _v35
+  sw $t0, 4($sp)
+  lw $t0, _v39
+  sw $t0, 8($sp)
+  lw $t0, _v38
+  sw $t0, 12($sp)
+  lw $t0, _v37
+  sw $t0, 16($sp)
+  lw $t0, _v36
+  sw $t0, 20($sp)
+  lw $t0, _v33
+  sw $t0, 24($sp)
+  lw $t0, _v34
+  sw $t0, 28($sp)
+  lw $t0, _v32
+  sw $t0, 32($sp)
+  lw $t0, _v25
+  sw $t0, 36($sp)
+  lw $t0, _v31
+  sw $t0, 40($sp)
+  lw $t0, _v30
+  sw $t0, 44($sp)
+  lw $t0, _v29
+  sw $t0, 48($sp)
+  lw $t0, _v26
+  sw $t0, 52($sp)
+  lw $t0, _v28
+  sw $t0, 56($sp)
+  lw $t0, _v27
+  sw $t0, 60($sp)
+  lw $t0, _v20
+  sw $t0, 64($sp)
+  lw $t0, _v24
+  sw $t0, 68($sp)
+  lw $t0, _v21
+  sw $t0, 72($sp)
+  lw $t0, _v23
+  sw $t0, 76($sp)
+  lw $t0, _v22
+  sw $t0, 80($sp)
+  lw $t0, _v12
+  sw $t0, 84($sp)
+  lw $t0, _v2
+  sw $t0, 88($sp)
+  lw $t0, _v18
+  sw $t0, 92($sp)
+  lw $t0, _v17
+  sw $t0, 96($sp)
+  lw $t0, _v16
+  sw $t0, 100($sp)
+  lw $t0, _v13
+  sw $t0, 104($sp)
+  lw $t0, _v15
+  sw $t0, 108($sp)
+  lw $t0, _v14
+  sw $t0, 112($sp)
+  lw $t0, _v7
+  sw $t0, 116($sp)
+  lw $t0, _v3
+  sw $t0, 120($sp)
+  lw $t0, _v11
+  sw $t0, 124($sp)
+  lw $t0, _v8
+  sw $t0, 128($sp)
+  lw $t0, _v10
+  sw $t0, 132($sp)
+  lw $t0, _v1
+  sw $t0, 136($sp)
+  lw $t0, _v9
+  sw $t0, 140($sp)
+  lw $t0, _v5
+  sw $t0, 144($sp)
+  lw $t0, _v0
+  sw $t0, 148($sp)
+  lw $t0, _v4
+  sw $t0, 152($sp)
+  sw $ra, 156($sp)
+  jal hanoi
+  lw $t0, 0($sp)
+  sw $t0, _v40
+  lw $t0, 4($sp)
+  sw $t0, _v35
+  lw $t0, 8($sp)
+  sw $t0, _v39
+  lw $t0, 12($sp)
+  sw $t0, _v38
+  lw $t0, 16($sp)
+  sw $t0, _v37
+  lw $t0, 20($sp)
+  sw $t0, _v36
+  lw $t0, 24($sp)
+  sw $t0, _v33
+  lw $t0, 28($sp)
+  sw $t0, _v34
+  lw $t0, 32($sp)
+  sw $t0, _v32
+  lw $t0, 36($sp)
+  sw $t0, _v25
+  lw $t0, 40($sp)
+  sw $t0, _v31
+  lw $t0, 44($sp)
+  sw $t0, _v30
+  lw $t0, 48($sp)
+  sw $t0, _v29
+  lw $t0, 52($sp)
+  sw $t0, _v26
+  lw $t0, 56($sp)
+  sw $t0, _v28
+  lw $t0, 60($sp)
+  sw $t0, _v27
+  lw $t0, 64($sp)
+  sw $t0, _v20
+  lw $t0, 68($sp)
+  sw $t0, _v24
+  lw $t0, 72($sp)
+  sw $t0, _v21
+  lw $t0, 76($sp)
+  sw $t0, _v23
+  lw $t0, 80($sp)
+  sw $t0, _v22
+  lw $t0, 84($sp)
+  sw $t0, _v12
+  lw $t0, 88($sp)
+  sw $t0, _v2
+  lw $t0, 92($sp)
+  sw $t0, _v18
+  lw $t0, 96($sp)
+  sw $t0, _v17
+  lw $t0, 100($sp)
+  sw $t0, _v16
+  lw $t0, 104($sp)
+  sw $t0, _v13
+  lw $t0, 108($sp)
+  sw $t0, _v15
+  lw $t0, 112($sp)
+  sw $t0, _v14
+  lw $t0, 116($sp)
+  sw $t0, _v7
+  lw $t0, 120($sp)
+  sw $t0, _v3
+  lw $t0, 124($sp)
+  sw $t0, _v11
+  lw $t0, 128($sp)
+  sw $t0, _v8
+  lw $t0, 132($sp)
+  sw $t0, _v10
+  lw $t0, 136($sp)
+  sw $t0, _v1
+  lw $t0, 140($sp)
+  sw $t0, _v9
+  lw $t0, 144($sp)
+  sw $t0, _v5
+  lw $t0, 148($sp)
+  sw $t0, _v0
+  lw $t0, 152($sp)
+  sw $t0, _v4
+  lw $ra, 156($sp)
+  addi $sp, $sp, 176
+  sw $v0, _v25
+label2:
+  move $t0, $zero
+  sw $t0, _v32
+  lw $v0, _v32
+  jr $ra
+main:
+  li $t0, 3
+  sw $t0, _v34
+  lw $t0, _v34
+  sw $t0, _v33
+  lw $t0, _v33
+  sw $t0, _v36
+  li $t0, 1
+  sw $t0, _v37
+  li $t0, 2
+  sw $t0, _v38
+  li $t0, 3
+  sw $t0, _v39
+  lw $t0, _v39
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  lw $t0, _v38
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  lw $t0, _v37
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  lw $t0, _v36
+  addi $sp, $sp, -4
+  sw $t0, 0($sp)
+  addi $sp, $sp, -160
+  lw $t0, _v40
+  sw $t0, 0($sp)
+  lw $t0, _v35
+  sw $t0, 4($sp)
+  lw $t0, _v39
+  sw $t0, 8($sp)
+  lw $t0, _v38
+  sw $t0, 12($sp)
+  lw $t0, _v37
+  sw $t0, 16($sp)
+  lw $t0, _v36
+  sw $t0, 20($sp)
+  lw $t0, _v33
+  sw $t0, 24($sp)
+  lw $t0, _v34
+  sw $t0, 28($sp)
+  lw $t0, _v32
+  sw $t0, 32($sp)
+  lw $t0, _v25
+  sw $t0, 36($sp)
+  lw $t0, _v31
+  sw $t0, 40($sp)
+  lw $t0, _v30
+  sw $t0, 44($sp)
+  lw $t0, _v29
+  sw $t0, 48($sp)
+  lw $t0, _v26
+  sw $t0, 52($sp)
+  lw $t0, _v28
+  sw $t0, 56($sp)
+  lw $t0, _v27
+  sw $t0, 60($sp)
+  lw $t0, _v20
+  sw $t0, 64($sp)
+  lw $t0, _v24
+  sw $t0, 68($sp)
+  lw $t0, _v21
+  sw $t0, 72($sp)
+  lw $t0, _v23
+  sw $t0, 76($sp)
+  lw $t0, _v22
+  sw $t0, 80($sp)
+  lw $t0, _v12
+  sw $t0, 84($sp)
+  lw $t0, _v2
+  sw $t0, 88($sp)
+  lw $t0, _v18
+  sw $t0, 92($sp)
+  lw $t0, _v17
+  sw $t0, 96($sp)
+  lw $t0, _v16
+  sw $t0, 100($sp)
+  lw $t0, _v13
+  sw $t0, 104($sp)
+  lw $t0, _v15
+  sw $t0, 108($sp)
+  lw $t0, _v14
+  sw $t0, 112($sp)
+  lw $t0, _v7
+  sw $t0, 116($sp)
+  lw $t0, _v3
+  sw $t0, 120($sp)
+  lw $t0, _v11
+  sw $t0, 124($sp)
+  lw $t0, _v8
+  sw $t0, 128($sp)
+  lw $t0, _v10
+  sw $t0, 132($sp)
+  lw $t0, _v1
+  sw $t0, 136($sp)
+  lw $t0, _v9
+  sw $t0, 140($sp)
+  lw $t0, _v5
+  sw $t0, 144($sp)
+  lw $t0, _v0
+  sw $t0, 148($sp)
+  lw $t0, _v4
+  sw $t0, 152($sp)
+  sw $ra, 156($sp)
+  jal hanoi
+  lw $t0, 0($sp)
+  sw $t0, _v40
+  lw $t0, 4($sp)
+  sw $t0, _v35
+  lw $t0, 8($sp)
+  sw $t0, _v39
+  lw $t0, 12($sp)
+  sw $t0, _v38
+  lw $t0, 16($sp)
+  sw $t0, _v37
+  lw $t0, 20($sp)
+  sw $t0, _v36
+  lw $t0, 24($sp)
+  sw $t0, _v33
+  lw $t0, 28($sp)
+  sw $t0, _v34
+  lw $t0, 32($sp)
+  sw $t0, _v32
+  lw $t0, 36($sp)
+  sw $t0, _v25
+  lw $t0, 40($sp)
+  sw $t0, _v31
+  lw $t0, 44($sp)
+  sw $t0, _v30
+  lw $t0, 48($sp)
+  sw $t0, _v29
+  lw $t0, 52($sp)
+  sw $t0, _v26
+  lw $t0, 56($sp)
+  sw $t0, _v28
+  lw $t0, 60($sp)
+  sw $t0, _v27
+  lw $t0, 64($sp)
+  sw $t0, _v20
+  lw $t0, 68($sp)
+  sw $t0, _v24
+  lw $t0, 72($sp)
+  sw $t0, _v21
+  lw $t0, 76($sp)
+  sw $t0, _v23
+  lw $t0, 80($sp)
+  sw $t0, _v22
+  lw $t0, 84($sp)
+  sw $t0, _v12
+  lw $t0, 88($sp)
+  sw $t0, _v2
+  lw $t0, 92($sp)
+  sw $t0, _v18
+  lw $t0, 96($sp)
+  sw $t0, _v17
+  lw $t0, 100($sp)
+  sw $t0, _v16
+  lw $t0, 104($sp)
+  sw $t0, _v13
+  lw $t0, 108($sp)
+  sw $t0, _v15
+  lw $t0, 112($sp)
+  sw $t0, _v14
+  lw $t0, 116($sp)
+  sw $t0, _v7
+  lw $t0, 120($sp)
+  sw $t0, _v3
+  lw $t0, 124($sp)
+  sw $t0, _v11
+  lw $t0, 128($sp)
+  sw $t0, _v8
+  lw $t0, 132($sp)
+  sw $t0, _v10
+  lw $t0, 136($sp)
+  sw $t0, _v1
+  lw $t0, 140($sp)
+  sw $t0, _v9
+  lw $t0, 144($sp)
+  sw $t0, _v5
+  lw $t0, 148($sp)
+  sw $t0, _v0
+  lw $t0, 152($sp)
+  sw $t0, _v4
+  lw $ra, 156($sp)
+  addi $sp, $sp, 176
+  sw $v0, _v35
+  move $t0, $zero
+  sw $t0, _v40
+  lw $v0, _v40
+  jr $ra

@@ -1,31 +1,28 @@
 FUNCTION fact :
 PARAM v1
-v3 := #1
-IF v1 == v3 GOTO label1
+IF v1 == #1 GOTO label1
 GOTO label2
 LABEL label1 :
 RETURN v1
-GOTO label3
 LABEL label2 :
-v10 := #1
-v8 := v1 - v10
-ARG v8
-v7 := CALL fact
-v5 := v1 * v7
-RETURN v5
-LABEL label3 :
+t1 := v1 - #1
+ARG t1
+t2 := CALL fact
+t3 := v1 * t2
+RETURN t3
+
 FUNCTION main :
-READ v14
-v16 := #1
-IF v14 > v16 GOTO label4
+READ t4
+v2 := t4
+IF v2 > #1 GOTO label3
+GOTO label4
+LABEL label3 :
+ARG v2
+t5 := CALL fact
+v3 := t5
 GOTO label5
 LABEL label4 :
-ARG v14
-v18 := CALL fact
-GOTO label6
+v3 := #1
 LABEL label5 :
-v21 := #1
-LABEL label6 :
-WRITE v21
-v24 := #0
-RETURN v24
+WRITE v3
+RETURN #0
